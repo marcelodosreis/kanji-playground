@@ -93,5 +93,5 @@ engine.loadSprite("background", "./assets/background.png", {
 // engine.loadSound("flamethrower", "./assets/sounds/flamethrower.mp3");
 
 // MAPS
-engine.loadSprite("room001", "./src/scenes/room-001/room-001-map.png");
-engine.loadSprite("room002", "./src/scenes/room-002/room-002-map.png");
+engine.loadSprite("room001", "./assets/maps/room-001/image.png");
+engine.loadSprite("room002", "./assets/maps/room-002/image.png");
