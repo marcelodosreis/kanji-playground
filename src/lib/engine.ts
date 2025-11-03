@@ -1,16 +1,16 @@
-import kaplay, { type KAPLAYCtx } from "kaplay";
+import kaplay from "kaplay";
 
 const scale = 1;
 export const engine = kaplay({
-  global: false,
-  touchToMouse: true,
   canvas: document.getElementById("game") as HTMLCanvasElement,
   width: 640 * scale,
   height: 360 * scale,
+  // letterbox: true,
+  touchToMouse: true,
   scale,
+  pixelDensity: devicePixelRatio,
+  debug: true,
 });
-
-export type Engine = KAPLAYCtx;
 
 engine.loadFont("glyphmesss", "./fonts/glyphmesss.ttf");
 
@@ -90,5 +90,5 @@ engine.loadSprite("background", "./assets/background.png", {
 // engine.loadSound("flamethrower", "./assets/sounds/flamethrower.mp3");
 
 // MAPS
-// engine.loadSprite("room1", "./maps/room1.png");
-// engine.loadSprite("room2", "./maps/room2.png");
+engine.loadSprite("room001", "./src/scenes/room-001/map.png");
+engine.loadSprite("room002", "./src/scenes/room-002/map.png");

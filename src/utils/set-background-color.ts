@@ -1,4 +1,4 @@
-import type { Engine } from "../lib/engine";
+import type { Engine } from "../types/engine";
 
 export function setBackgroundColor(engine: Engine, hex: string) {
   engine.add([
