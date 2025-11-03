@@ -8,15 +8,11 @@ async function main() {
     await fetch("./src/scenes/room-001/room-001-map.json")
   ).json();
   
-  const room002TiledMap: TiledMap = await (
-    await fetch("./src/scenes/room-002/room-002-map.json")
-  ).json();
-
   console.log(room001TiledMap)
 
   engine.scene("intro", () => null);
   engine.scene("room001", () => room001(engine, room001TiledMap));
-  engine.scene("room002", () => room002(engine, room002TiledMap));
+  engine.scene("room002", () => room002());
 
   engine.go("room001");
 }
