@@ -1,6 +1,6 @@
-import type { EngineGameObj, EngineEventCtrl } from "./engine";
+import type { PlayerEngineGameObj, EngineEventCtrl } from "./engine";
 
-export interface Player extends EngineGameObj {
+export interface Player extends PlayerEngineGameObj {
   speed: number;
   isAttacking: boolean;
   controlHandlers: EngineEventCtrl[];

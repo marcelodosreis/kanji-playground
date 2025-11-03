@@ -41,13 +41,13 @@ export interface TiledObject {
   visible: boolean;
   x: number;
   y: number;
-
   polygon?: [
     {
       x: number;
       y: number;
     }
   ];
+  properties: [{ value: number }];
 }
 
 interface TiledTileset {

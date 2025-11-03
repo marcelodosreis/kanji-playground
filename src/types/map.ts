@@ -1,3 +1,3 @@
-import type { GameObj, PosComp, SpriteComp } from "kaplay";
+import type { MapEngineGameObj } from "./engine";
 
-export type LoadedMap = GameObj<PosComp | SpriteComp>
+export type Map = MapEngineGameObj;

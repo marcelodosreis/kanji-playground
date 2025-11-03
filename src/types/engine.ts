@@ -14,7 +14,7 @@ import type {
 
 export type Engine = KAPLAYCtx;
 
-export type EngineGameObj = GameObj<
+export type PlayerEngineGameObj = GameObj<
   | PosComp
   | SpriteComp
   | AreaComp
@@ -24,5 +24,7 @@ export type EngineGameObj = GameObj<
   | OpacityComp
   | HealthComp
 >;
+
+export type MapEngineGameObj = GameObj<PosComp | SpriteComp>
 
 export type EngineEventCtrl = KEventController;

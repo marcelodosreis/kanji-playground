@@ -1,10 +1,10 @@
 import type { Engine } from "../types/engine";
-import type { LoadedMap } from "../types/map";
+import type { Map } from "../types/map";
 import type { TiledObject } from "../types/tiledMap";
 
 export function setMapCollider(
   engine: Engine,
-  map: LoadedMap,
+  map: Map,
   colliders: TiledObject[]
 ) {
   for (const collider of colliders) {
@@ -20,6 +20,7 @@ export function setMapCollider(
           shape: new engine.Polygon(coordinates),
           collisionIgnore: ["collider"],
         }),
+        engine.body({ isStatic: true }),
         "collider",
         collider.type,
       ]);
