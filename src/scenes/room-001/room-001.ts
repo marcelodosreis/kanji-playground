@@ -1,5 +1,7 @@
+import { createPlayer } from "../../entities/player";
 import type { Engine } from "../../types/engine";
 import type { LoadedMap } from "../../types/map";
+import { type Player } from "../../types/player";
 import type { TiledMap, TiledObject } from "../../types/tiledMap";
 
 import { setBackgroundColor } from "../../utils/set-background-color";
@@ -16,11 +18,15 @@ export function room001(engine: Engine, tiledMap: TiledMap) {
   ]);
 
   const colliders: TiledObject[] = layers[4].objects || [];
+  const positions: TiledObject[] = [];
 
   for (const layer of layers) {
+    if (layer.name === "positions" && layer.objects) {
+      positions.push(...layer.objects);
+      continue;
+    }
     if (layer.name === "colliders" && layer.objects) {
       colliders?.push(...layer.objects);
-      break;
     }
   }
 
@@ -29,4 +35,15 @@ export function room001(engine: Engine, tiledMap: TiledMap) {
   engine.camScale(2);
   engine.camPos(170, 100);
   engine.setGravity(1000);
+
+  const player = engine.add<Player>(createPlayer(engine));
+
+  for (const position of positions) {
+    if (position.name === "player") {
+      player.setPosition(position.x, position.y);
+      player.setControls();
+      player.setEvents();
+      player.enablePassthrough();
+    }
+  }
 }

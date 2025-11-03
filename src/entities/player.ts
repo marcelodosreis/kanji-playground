@@ -1,0 +1,132 @@
+import { state } from "../state/global-state-manager";
+import type { Engine } from "../types/engine";
+import type { Player } from "../types/player";
+
+export function createPlayer(engine: Engine): Player {
+  const custom = {
+    speed: 150,
+    isAttacking: false,
+    controlHandlers: [] as Player["controlHandlers"],
+
+    setPosition(this: Player, x: number, y: number) {
+      this.pos.x = x;
+      this.pos.y = y;
+    },
+
+    setControls(this: Player) {
+      this.cleanupControls?.();
+
+      this.controlHandlers = [];
+
+      this.controlHandlers.push(
+        engine.onKeyPress((key) => {
+          if (key === "x") {
+            if (this.curAnim() !== "jump") {
+              this.play("jump");
+            }
+            this.doubleJump();
+          }
+
+          if (key === "z" && this.curAnim() !== "attack" && this.isGrounded()) {
+            this.isAttacking = true;
+            this.add([
+              engine.pos(this.flipX ? -25 : 0, 10),
+              engine.area({ shape: new engine.Rect(engine.vec2(0), 25, 10) }),
+              "sword-hitbox",
+            ]);
+            this.play("attack");
+
+            this.onAnimEnd((anim) => {
+              if (anim === "attack") {
+                const swordHitbox = engine.get("sword-hitbox", {
+                  recursive: true,
+                })[0];
+                if (swordHitbox) engine.destroy(swordHitbox);
+                this.isAttacking = false;
+                this.play("idle");
+              }
+            });
+          }
+        })
+      );
+
+      this.controlHandlers.push(
+        engine.onKeyDown((key) => {
+          if (key === "left" && !this.isAttacking) {
+            if (this.curAnim() !== "run" && this.isGrounded()) this.play("run");
+            this.flipX = true;
+            this.move(-this.speed, 0);
+            return;
+          }
+          if (key === "right" && !this.isAttacking) {
+            if (this.curAnim() !== "run" && this.isGrounded()) this.play("run");
+            this.flipX = false;
+            this.move(this.speed, 0);
+            return;
+          }
+        })
+      );
+
+      this.controlHandlers.push(
+        engine.onKeyRelease(() => {
+          const anim = this.curAnim();
+          if (
+            anim !== "idle" &&
+            anim !== "jump" &&
+            anim !== "fall" &&
+            anim !== "attack"
+          ) {
+            this.play("idle");
+          }
+        })
+      );
+    },
+    cleanupControls(this: Player) {
+      for (const ctrl of this.controlHandlers) {
+        ctrl?.cancel?.();
+      }
+      this.controlHandlers = [];
+    },
+
+    setEvents(this: Player) {
+      this.onFall(() => {
+        this.play("fall");
+      });
+
+      this.onFallOff(() => {
+        this.play("fall");
+      });
+
+      this.onGround(() => {
+        this.play("idle");
+      });
+
+      this.onHeadbutt(() => {
+        this.play("fall");
+      });
+    },
+
+    enablePassthrough(this: Player) {
+      this.onBeforePhysicsResolve((collision) => {
+        if (collision.target.is("passthrough") && this.isJumping()) {
+          collision.preventResolution();
+        }
+      });
+    },
+  };
+
+  const obj = engine.make([
+    engine.pos(),
+    engine.sprite("player"),
+    engine.area({ shape: new engine.Rect(engine.vec2(0, 18), 12, 12) }),
+    engine.anchor("center"),
+    engine.body({ mass: 100, jumpForce: 320 }),
+    engine.doubleJump(state.current().isDoubleJumpUnlocked ? 2 : 1),
+    engine.opacity(),
+    engine.health(state.current().playerHp),
+    "player",
+    custom,
+  ]);
+
+  return obj;
+}

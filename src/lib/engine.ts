@@ -1,7 +1,8 @@
 import kaplay from "kaplay";
+import type { Engine } from "../types/engine";
 
 const scale = 1;
-export const engine = kaplay({
+export const engine: Engine = kaplay({
   canvas: document.getElementById("game") as HTMLCanvasElement,
   width: 640 * scale,
   height: 360 * scale,
