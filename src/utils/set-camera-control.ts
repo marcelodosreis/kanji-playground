@@ -1,4 +1,4 @@
-import { state } from "../state/global-state-manager";
+import { state } from "../core/state";
 import type { Engine } from "../types/engine";
 import type { Map } from "../types/map";
 import type { Player } from "../types/player";
