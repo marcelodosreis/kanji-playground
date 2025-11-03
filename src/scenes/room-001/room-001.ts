@@ -1,13 +1,18 @@
 import type { Engine } from "../../types/engine";
-import type { TiledMap } from "../../types/tiledMap";
+import type { LoadedMap } from "../../types/map";
+import type { TiledMap, TiledObject } from "../../types/tiledMap";
 
 import { setBackgroundColor } from "../../utils/set-background-color";
+import { setMapCollider } from "../../utils/set-map-collider";
 
 export function room001(engine: Engine, tiledMap: TiledMap) {
   setBackgroundColor(engine, "#a2aed5");
   const layers = tiledMap.layers;
-  const map = engine.add([engine.pos(0, 0), engine.sprite("room001")]);
-  const colliders = layers[4].objects;
+  const map: LoadedMap = engine.add([
+    engine.pos(0, 0),
+    engine.sprite("room001"),
+  ]);
+  const colliders: TiledObject[] = layers[4].objects || [];
 
   for (const layer of layers) {
     if (layer.name === "colliders" && layer.objects) {
@@ -15,4 +20,6 @@ export function room001(engine: Engine, tiledMap: TiledMap) {
       break;
     }
   }
+
+  setMapCollider(engine, map, colliders);
 }

@@ -31,7 +31,7 @@ interface TiledLayer {
   objects?: TiledObject[];
 }
 
-interface TiledObject {
+export interface TiledObject {
   height: number;
   width: number;
   id: number;
@@ -41,6 +41,13 @@ interface TiledObject {
   visible: boolean;
   x: number;
   y: number;
+
+  polygon?: [
+    {
+      x: number;
+      y: number;
+    }
+  ];
 }
 
 interface TiledTileset {
