@@ -5,7 +5,7 @@ export const engine = kaplay({
   canvas: document.getElementById("game") as HTMLCanvasElement,
   width: 640 * scale,
   height: 360 * scale,
-  // letterbox: true,
+  letterbox: false,
   touchToMouse: true,
   scale,
   pixelDensity: devicePixelRatio,
