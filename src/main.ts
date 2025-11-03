@@ -1,7 +1,7 @@
 import { engine } from "./core/engine";
 import { room001 } from "./scenes/room-001/room-001";
 import { room002 } from "./scenes/room-002/room-002";
-import type { TiledMap } from "./types/tiledMap";
+import type { TiledMap } from "./types/tiled-map";
 
 async function main() {
   const room001TiledMap: TiledMap = await (

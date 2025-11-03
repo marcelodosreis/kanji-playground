@@ -2,7 +2,7 @@ import { state } from "../core/state";
 import type { Engine } from "../types/engine";
 import type { Map } from "../types/map";
 import type { Player } from "../types/player";
-import type { TiledMap } from "../types/tiledMap";
+import type { TiledMap } from "../types/tiled-map";
 
 export function setCameraControl(
   engine: Engine,

@@ -4,14 +4,21 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/styles/styles.css">
-    <title>kanji-playground</title>
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <title>kanji-Playground</title>
   </head>
   <body>
     <div id="app">
       <div id="ui"></div>
-      <canvas id="game"></canvas>
+      <canvas id="game" tabindex="0"></canvas>
     </div>
     <script type="module" src="./src/main.ts"></script>
+    <script>
+      const canvas = document.getElementById("game");
+      window.addEventListener("load", () => canvas.focus());
+      window.addEventListener("focus", () => canvas.focus());
+      document.addEventListener("click", () => canvas.focus());
+      canvas.focus();
+    </script>
   </body>
 </html>

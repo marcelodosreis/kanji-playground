@@ -2,7 +2,7 @@ import { createPlayer } from "../../entities/player";
 import type { Engine } from "../../types/engine";
 import type { Map } from "../../types/map";
 import { type Player } from "../../types/player";
-import type { TiledMap, TiledObject } from "../../types/tiledMap";
+import type { TiledMap, TiledObject } from "../../types/tiled-map";
 
 import { setBackgroundColor } from "../../utils/set-background-color";
 import { setCameraControl } from "../../utils/set-camera-control";

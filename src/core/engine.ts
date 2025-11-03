@@ -25,6 +25,8 @@ engine.loadSprite("player", "./assets/sprites/player.png", {
     fall: { from: 54, to: 54, loop: true },
     explode: { from: 64, to: 69 },
     attack: { from: 24, to: 28, speed: 16 },
+    // attack: { from: 32, to: 34, speed: 16 },
+    // attack: { from: 40, to: 44, speed: 16 },
   },
 });
 
