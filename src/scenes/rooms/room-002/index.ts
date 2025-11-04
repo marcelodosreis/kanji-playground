@@ -6,7 +6,7 @@ import type { Map } from "../../../types/map";
 import { CartridgeManager } from "../../../core/manager/cartridge";
 import { CameraManager } from "../../../core/manager/camera";
 import { ExitManager } from "../../../core/manager/exit";
-import { MapManager } from "../../../core/manager/map/map";
+import { MapManager } from "../../../core/manager/map";
 import { PlayerManager } from "../../../core/manager/player";
 import { UIManager } from "../../../core/manager/ui";
 import { setBackgroundColor } from "../../../utils/set-background-color";
@@ -42,6 +42,7 @@ export class Room002Scene {
   private previousSceneData: EngineGameObj;
   private map!: Map;
   private player!: Player;
+  private config = CONFIG;
 
   constructor(params: Room002Params) {
     this.engine = params.engine;
@@ -52,16 +53,16 @@ export class Room002Scene {
   }
 
   public initialize(): void {
-    setBackgroundColor(this.engine, CONFIG.BACKGROUND_COLOR);
+    setBackgroundColor(this.engine, this.config.BACKGROUND_COLOR);
 
     MapManager.setup({
       engine: this.engine,
       tiledMap: this.tiledMap,
-      cameraScale: CONFIG.CAMERA_SCALE,
-      collidersLayerIndex: CONFIG.COLLIDERS_LAYER_INDEX,
-      gravity: CONFIG.GRAVITY,
-      initialCameraPos: CONFIG.INITIAL_CAMERA_POS,
-      mapSpriteName: CONFIG.MAP_SPRITE_NAME,
+      cameraScale: this.config.CAMERA_SCALE,
+      collidersLayerIndex: this.config.COLLIDERS_LAYER_INDEX,
+      gravity: this.config.GRAVITY,
+      initialCameraPos: this.config.INITIAL_CAMERA_POS,
+      mapSpriteName: this.config.MAP_SPRITE_NAME,
       setMap: (map: Map) => (this.map = map),
     });
 
@@ -70,17 +71,17 @@ export class Room002Scene {
       map: this.map,
       tiledMap: this.tiledMap,
       previousSceneData: this.previousSceneData,
-      playerStartNames: CONFIG.PLAYER_START_NAMES,
-      entranceExitMapping: CONFIG.ENTRANCE_EXIT_MAPPING,
+      playerStartNames: this.config.PLAYER_START_NAMES,
+      entranceExitMapping: this.config.ENTRANCE_EXIT_MAPPING,
       positionOffset: { x: this.map.pos.x, y: this.map.pos.y },
       respawnConfig: {
-        bounds: CONFIG.RESPAWN_BOUNDS,
-        roomName: CONFIG.RESPAWN_ROOM_NAME,
+        bounds: this.config.RESPAWN_BOUNDS,
+        roomName: this.config.RESPAWN_ROOM_NAME,
         exitName: "exit-2",
       },
     });
 
-    CartridgeManager.spawnAll({
+    CartridgeManager.setup({
       engine: this.engine,
       map: this.map,
       tiledMap: this.tiledMap,
@@ -91,19 +92,19 @@ export class Room002Scene {
       map: this.map,
       player: this.player,
       tiledMap: this.tiledMap,
-      initialCameraPos: CONFIG.INITIAL_CAMERA_POS,
-      cameraZonesLayerIndex: CONFIG.CAMERA_ZONES_LAYER_INDEX,
+      initialCameraPos: this.config.INITIAL_CAMERA_POS,
+      cameraZonesLayerIndex: this.config.CAMERA_ZONES_LAYER_INDEX,
     });
 
     ExitManager.setup({
       engine: this.engine,
       map: this.map,
       tiledMap: this.tiledMap,
-      exitsLayerIndex: CONFIG.EXITS_LAYER_INDEX,
-      exitRoomName: CONFIG.EXIT_ROOM_NAME,
+      exitsLayerIndex: this.config.EXITS_LAYER_INDEX,
+      exitRoomName: this.config.EXIT_ROOM_NAME,
     });
 
-    UIManager.setupHealthBar({
+    UIManager.setup({
       engine: this.engine,
     });
   }

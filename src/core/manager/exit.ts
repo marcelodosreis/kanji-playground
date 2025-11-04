@@ -11,7 +11,7 @@ type SetupParams = {
 };
 
 export class ExitManager {
-  static setup(params: SetupParams): void {
+  public static setup(params: SetupParams): void {
     const exits = this.getExits(params.tiledMap, params.exitsLayerIndex);
     exits.forEach((exit) => this.createExitZone(params, exit));
   }

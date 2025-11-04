@@ -4,11 +4,15 @@ import type { TiledObject } from "../../../types/tiled-map";
 import { state } from "../../state";
 
 export class BossBarrierManager {
-  static isBossBarrier(collider: TiledObject): boolean {
+  public static isBossBarrier(collider: TiledObject): boolean {
     return collider.name === "boss-barrier";
   }
 
-  static addBossBarrier(engine: Engine, map: Map, collider: TiledObject): void {
+  public static addBossBarrier(
+    engine: Engine,
+    map: Map,
+    collider: TiledObject
+  ): void {
     const bossBarrier = this.createBossBarrierEntity(engine, map, collider);
     this.setupCollisionHandlers(engine, bossBarrier);
   }

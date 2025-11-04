@@ -20,7 +20,7 @@ type SetupParams = {
 };
 
 export class PlayerManager {
-  static setup(params: SetupParams): Player {
+  public static setup(params: SetupParams): Player {
     const player = this.createPlayer(params);
     const startPosition = this.findStartPosition(params);
 

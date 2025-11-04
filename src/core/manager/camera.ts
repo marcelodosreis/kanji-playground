@@ -15,7 +15,7 @@ type CameraSetupParams = {
 };
 
 export class CameraManager {
-  static setup(params: CameraSetupParams): void {
+  public static setup(params: CameraSetupParams): void {
     this.setInitialCameraPosition(params);
     this.setupCameraFollow(params);
     this.setupCameraZones(params);

@@ -6,7 +6,7 @@ type SetupHealthBarParams = {
 };
 
 export class UIManager {
-  static setupHealthBar(params: SetupHealthBarParams): void {
+  public static setup(params: SetupHealthBarParams): void {
     const healthBar = this.createHealthBar(params.engine);
     this.initializeHealthBar(params.engine, healthBar);
   }

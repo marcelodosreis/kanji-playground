@@ -10,7 +10,7 @@ type SpawnParams = {
 };
 
 export class CartridgeManager {
-  static spawnAll(params: SpawnParams): void {
+  public static setup(params: SpawnParams): void {
     const { engine, map, tiledMap } = params;
 
     const positions = tiledMap.layers[5].objects as TiledObject[];

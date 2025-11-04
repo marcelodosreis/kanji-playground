@@ -14,7 +14,7 @@ type SpawnAllParams = {
 };
 
 export class EnemyManager {
-  static spawnAll(params: SpawnAllParams): void {
+  public static setup(params: SpawnAllParams): void {
     const { tiledMap } = params;
     const positions = this.getSpawnPositions(tiledMap);
 
