@@ -6,7 +6,6 @@ import { createPlayer } from "../../entities/player";
 import { type Boss } from "../../types/boss";
 import type { Enemy } from "../../types/enemy";
 import type { Engine } from "../../types/engine";
-import type { Map } from "../../types/map";
 import { type Player } from "../../types/player";
 import type { TiledMap, TiledObject } from "../../types/tiled-map";
 

@@ -89,7 +89,7 @@ export function setMapCollider(
         player.setControls();
       });
 
-      bossBarrier.onCollideEnd("player", (player) => {
+      bossBarrier.onCollideEnd("player", () => {
         const currentState = state.current();
         if (currentState.isPlayerInBossFight || currentState.isBossDefeated)
           return;
