@@ -107,28 +107,22 @@ export class MenuManager {
   }
 
   private static setupInput(engine: Engine, buttons: FocusableButton[]): void {
-    let keyboardIndex = 0;
-    let hoverIndex: number | null = null;
+    let index = 0;
 
     function updateFocus() {
       buttons.forEach((btn, i) => {
-        if (hoverIndex !== null) {
-          if (i === hoverIndex) btn.focus();
-          else btn.blur();
-        } else {
-          if (i === keyboardIndex) btn.focus();
-          else btn.blur();
-        }
+        if (i === index) btn.focus();
+        else btn.blur();
       });
     }
 
     buttons.forEach((btn, i) => {
       btn.on("hoverenter", () => {
-        hoverIndex = i;
+        index = i;
         updateFocus();
       });
       btn.on("hoverleave", () => {
-        hoverIndex = null;
+        index = i;
         updateFocus();
       });
     });
@@ -136,20 +130,18 @@ export class MenuManager {
     updateFocus();
 
     const keyHandler = engine.onKeyPress((key) => {
-      if (hoverIndex !== null) return;
-
       if (key === "up") {
-        keyboardIndex = (keyboardIndex - 1 + buttons.length) % buttons.length;
+        index = (index - 1 + buttons.length) % buttons.length;
         updateFocus();
         return;
       }
       if (key === "down") {
-        keyboardIndex = (keyboardIndex + 1) % buttons.length;
+        index = (index + 1) % buttons.length;
         updateFocus();
         return;
       }
       if (key === "enter") {
-        buttons[keyboardIndex].select();
+        buttons[index].select();
         return;
       }
     });
