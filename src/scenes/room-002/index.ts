@@ -9,6 +9,7 @@ import { ExitManager } from "../../core/manager/exit";
 import { MapManager } from "../../core/manager/map";
 import { PlayerManager } from "../../core/manager/player";
 import { UIManager } from "../../core/manager/ui";
+import { setBackgroundColor } from "../../utils/set-background-color";
 
 type Room002Params = {
   engine: Engine;
@@ -51,6 +52,8 @@ export class Room002 {
   }
 
   public initialize(): void {
+    setBackgroundColor(this.engine, CONFIG.BACKGROUND_COLOR);
+
     MapManager.setup({
       engine: this.engine,
       tiledMap: this.tiledMap,

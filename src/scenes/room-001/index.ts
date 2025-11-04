@@ -9,6 +9,7 @@ import type { Engine, EngineGameObj } from "../../types/engine";
 import type { Map } from "../../types/map";
 import type { Player } from "../../types/player";
 import type { TiledMap } from "../../types/tiled-map";
+import { setBackgroundColor } from "../../utils/set-background-color";
 
 type Room001Params = {
   engine: Engine;
@@ -49,6 +50,8 @@ export class Room001 {
   }
 
   public initialize(): void {
+    setBackgroundColor(this.engine, CONFIG.BACKGROUND_COLOR);
+
     MapManager.setup({
       engine: this.engine,
       tiledMap: this.tiledMap,
