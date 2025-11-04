@@ -40,4 +40,6 @@ export type EnemyEngineGameObj = GameObj<
 
 export type MapEngineGameObj = GameObj<PosComp | SpriteComp>;
 
+export type EngineGameObj = GameObj
+
 export type EngineEventCtrl = KEventController;
