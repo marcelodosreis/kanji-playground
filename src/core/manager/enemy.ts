@@ -1,5 +1,5 @@
-import { DroneEntity } from "../../entities/drone";
-import { BossEntity } from "../../entities/boss";
+import { DroneEntity } from "../entities/drone";
+import { BossEntity } from "../entities/boss";
 import type { Engine } from "../../types/engine";
 import type { Map } from "../../types/map";
 import type { TiledMap, TiledObject } from "../../types/tiled-map";

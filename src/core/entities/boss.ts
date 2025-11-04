@@ -1,10 +1,10 @@
-import { state } from "../core/state";
-import type { Boss } from "../types/boss";
-import type { Engine } from "../types/engine";
-import type { Position } from "../types/position";
-import type { Player } from "../types/player";
-import { createBlink } from "../utils/create-blink";
-import { createNotificationBox } from "../utils/create-notification-box";
+import { state } from "../state";
+import type { Boss } from "../../types/boss";
+import type { Engine } from "../../types/engine";
+import type { Position } from "../../types/position";
+import type { Player } from "../../types/player";
+import { createBlink } from "../../utils/create-blink";
+import { createNotificationBox } from "../../utils/create-notification-box";
 
 export function BossEntity(engine: Engine, initialPos: Position): Boss {
   return engine.make([

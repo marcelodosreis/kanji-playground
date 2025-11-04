@@ -1,7 +1,7 @@
-import type { Enemy } from "../types/enemy";
-import type { Engine } from "../types/engine";
-import type { Player } from "../types/player";
-import type { Position } from "../types/position";
+import type { Enemy } from "../../types/enemy";
+import type { Engine } from "../../types/engine";
+import type { Player } from "../../types/player";
+import type { Position } from "../../types/position";
 
 export function DroneEntity(engine: Engine, initialPos: Position): Enemy {
   return engine.make([

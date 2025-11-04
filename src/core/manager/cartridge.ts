@@ -1,4 +1,4 @@
-import { CartridgeEntity } from "../../entities/cartridge";
+import { CartridgeEntity } from "../entities/cartridge";
 import type { Engine } from "../../types/engine";
 import type { Map } from "../../types/map";
 import type { TiledMap, TiledObject } from "../../types/tiled-map";

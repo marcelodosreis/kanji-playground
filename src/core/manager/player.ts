@@ -2,7 +2,7 @@ import type { Engine, EngineGameObj } from "../../types/engine";
 import type { Map } from "../../types/map";
 import type { Player } from "../../types/player";
 import type { TiledMap, TiledObject } from "../../types/tiled-map";
-import { PlayerEntity } from "../../entities/player";
+import { PlayerEntity } from "../entities/player";
 
 type SetupParams = {
   engine: Engine;

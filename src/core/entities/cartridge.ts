@@ -1,6 +1,6 @@
-import { state } from "../core/state.js";
-import type { Engine } from "../types/engine.js";
-import type { Position } from "../types/position.js";
+import { state } from "../state.js";
+import type { Engine } from "../../types/engine.js";
+import type { Position } from "../../types/position.js";
 
 export function CartridgeEntity(engine: Engine, pos: Position) {
   const cartridge = engine.make([
