@@ -1,16 +1,11 @@
 import { engine } from "./core/engine";
 import { room001 } from "./scenes/room-001";
 import { room002 } from "./scenes/room-002";
-import type { TiledMap } from "./types/tiled-map";
 import { setBackgroundColor } from "./utils/set-background-color";
 import { createNotificationBox } from "./utils/create-notification-box";
 import { menu } from "./scenes/menu";
 import { menuControls } from "./scenes/menu-controls";
-
-async function loadTiledMap(path: string): Promise<TiledMap> {
-  const response = await fetch(path);
-  return response.json();
-}
+import { loadTiledMap } from "./utils/load-tiles-map";
 
 async function registerScenes() {
   const room001TiledMap = await loadTiledMap(
@@ -19,6 +14,14 @@ async function registerScenes() {
   const room002TiledMap = await loadTiledMap(
     "./assets/maps/room-002/config.json"
   );
+
+  engine.scene("menu", () => {
+    menu(engine);
+  });
+
+  engine.scene("menu-controls", () => {
+    menuControls(engine);
+  });
 
   engine.scene("room001", (previousSceneData) => {
     room001(engine, room001TiledMap, previousSceneData);
@@ -36,14 +39,6 @@ async function registerScenes() {
         "You escaped the factory!\n The End. Thanks for playing!"
       )
     );
-  });
-
-  engine.scene("menu", () => {
-    menu(engine);
-  });
-
-  engine.scene("menu-controls", () => {
-    menuControls(engine);
   });
 }
 
