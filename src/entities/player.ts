@@ -4,7 +4,7 @@ import type { Player } from "../types/player";
 import { createBlink } from "../utils/create-blink";
 
 export function createPlayer(engine: Engine): Player {
-    return engine.make([
+  return engine.make([
     engine.pos(),
     engine.sprite("player"),
     engine.area({ shape: new engine.Rect(engine.vec2(0, 18), 12, 12) }),
@@ -111,7 +111,7 @@ export function createPlayer(engine: Engine): Player {
         this: Player,
         boundValue: number,
         destinationName: string,
-        previousSceneData = { exitName: null }
+        previousSceneData: { exitName: null }
       ) {
         engine.onUpdate(() => {
           if (this.pos.y > boundValue) {

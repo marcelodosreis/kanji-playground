@@ -12,51 +12,62 @@ import type { TiledMap, TiledObject } from "../../types/tiled-map";
 
 import { setBackgroundColor } from "../../utils/set-background-color";
 import { setCameraControl } from "../../utils/set-camera-control";
-import { setCameraZOnes } from "../../utils/set-camera-zones";
+import { setCameraZones } from "../../utils/set-camera-zones";
 import { setMapCollider } from "../../utils/set-map-collider";
 import { healthBar } from "../../utils/create-health-bar";
+import type { GameObj } from "kaplay";
+import { setExitZones } from "../../utils/set-exit-zones";
 
-export function room001(engine: Engine, tiledMap: TiledMap) {
+export function room001(
+  engine: Engine,
+  tiledMap: TiledMap,
+  prevSceneData: GameObj
+) {
   setBackgroundColor(engine, "#a2aed5");
-
-  const layers = tiledMap.layers;
-
-  const map: Map = engine.add([engine.pos(0, 0), engine.sprite("room001")]);
-
-  const colliders: TiledObject[] = layers[4].objects || [];
-  const positions: TiledObject[] = [];
-  const cameras: TiledObject[] = [];
-
-  for (const layer of layers) {
-    if (layer.name === "cameras" && layer.objects) {
-      cameras.push(...layer.objects);
-    }
-    if (layer.name === "positions" && layer.objects) {
-      positions.push(...layer.objects);
-      continue;
-    }
-    if (layer.name === "colliders" && layer.objects) {
-      colliders?.push(...layer.objects);
-    }
-  }
-
-  setMapCollider(engine, map, colliders);
-  setCameraZOnes(engine, map, cameras);
 
   engine.camScale(2);
   engine.camPos(170, 100);
   engine.setGravity(1000);
 
-  const player = engine.add<Player>(createPlayer(engine));
+  const roomLayers = tiledMap.layers;
+
+  const map = engine.add([engine.pos(0, 0), engine.sprite("room001")]);
+  const colliders = roomLayers[4].objects as TiledObject[];
+
+  setMapCollider(engine, map, colliders);
+
+  const player = map.add<Player>(createPlayer(engine));
+
   setCameraControl(engine, map, player, tiledMap);
 
+  const positions = roomLayers[5].objects as TiledObject[];
   for (const position of positions) {
-    if (position.name === "player") {
+    if (position.name === "player" && !prevSceneData.exitName) {
       player.setPosition(position.x, position.y);
       player.setControls();
-      player.setEvents();
       player.enablePassthrough();
-      player.respawnIfOutOfBounds(1000, "room001")
+      player.setEvents();
+      player.respawnIfOutOfBounds(1000, "room001");
+      continue;
+    }
+
+    if (position.name === "entrance-1" && prevSceneData.exitName === "exit-1") {
+      player.setPosition(position.x, position.y);
+      player.setControls();
+      player.enablePassthrough();
+      player.setEvents();
+      player.respawnIfOutOfBounds(1000, "room001");
+      engine.camPos(player.pos);
+      continue;
+    }
+
+    if (position.name === "entrance-2" && prevSceneData.exitName === "exit-2") {
+      player.setPosition(position.x, position.y);
+      player.setControls();
+      player.enablePassthrough();
+      player.setEvents();
+      player.respawnIfOutOfBounds(1000, "room001");
+      engine.camPos(player.pos);
       continue;
     }
 
@@ -66,12 +77,11 @@ export function room001(engine: Engine, tiledMap: TiledMap) {
       );
       drone.setBehavior();
       drone.setEvents();
+      continue;
     }
 
     if (position.name === "boss" && !state.current().isBossDefeated) {
-      const boss = map.add<Boss>(
-        createBoss(engine, engine.vec2(position.x, position.y))
-      );
+      const boss = map.add<Boss>(createBoss(engine, engine.vec2(position.x, position.y)));
       boss.setBehavior();
       boss.setEvents();
     }
@@ -80,6 +90,13 @@ export function room001(engine: Engine, tiledMap: TiledMap) {
       map.add(createCartridge(engine, engine.vec2(position.x, position.y)));
     }
   }
+
+  const cameras = roomLayers[6].objects as TiledObject[];
+
+  setCameraZones(engine, map, cameras);
+
+  const exits = roomLayers[7].objects as TiledObject[];
+  setExitZones(engine, map, exits, "room002");
 
   healthBar.setEvents();
   healthBar.trigger("update");

@@ -2,7 +2,7 @@ import type { Engine } from "../types/engine";
 import type { Map } from "../types/map";
 import type { TiledObject } from "../types/tiled-map";
 
-export function setCameraZOnes(
+export function setCameraZones(
   engine: Engine,
   map: Map,
   cameras: TiledObject[]

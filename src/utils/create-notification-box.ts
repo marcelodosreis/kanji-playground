@@ -17,7 +17,7 @@ export function createNotificationBox(engine: Engine, content: string) {
   container.add([
     engine.text(content, {
       font: "glyphmesss",
-      size: 32,
+      size: 24,
     }),
     engine.color(engine.Color.fromHex("#eacfba")),
     engine.area(),
