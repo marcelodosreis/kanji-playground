@@ -18,18 +18,10 @@ async function main() {
 
   engine.scene("room001", (previousSceneData) => {
     room001(engine, room001TiledMap, previousSceneData);
-    const esc = engine.onKeyPress("escape", () => {
-      engine.go("menu");
-    });
-    engine.onSceneLeave(() => esc.cancel());
   });
 
   engine.scene("room002", (previousSceneData) => {
     room002(engine, room002TiledMap, previousSceneData);
-    const esc = engine.onKeyPress("escape", () => {
-      engine.go("menu");
-    });
-    engine.onSceneLeave(() => esc.cancel());
   });
 
   engine.scene("final-exit", () => {
@@ -40,10 +32,6 @@ async function main() {
         "You escaped the factory!\n The End. Thanks for playing!"
       )
     );
-    const esc = engine.onKeyPress("escape", () => {
-      engine.go("menu");
-    });
-    engine.onSceneLeave(() => esc.cancel());
   });
 
   engine.scene("menu", () => {

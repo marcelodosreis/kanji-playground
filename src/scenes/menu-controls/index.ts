@@ -96,9 +96,9 @@ export function menuControls(engine: Engine) {
       buttons[index].select();
       return;
     }
-    if (key === "escape") {
-      engine.go("menu");
-    }
+    // if (key === "escape") {
+    //   engine.go("menu");
+    // }
   });
 
   engine.onSceneLeave(() => {
