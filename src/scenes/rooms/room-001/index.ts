@@ -74,7 +74,6 @@ export class Room001Scene {
       respawnConfig: {
         bounds: 1000,
         roomName: this.config.MAP_SPRITE_NAME,
-        exitName: "room001",
       },
     });
 
