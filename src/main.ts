@@ -1,9 +1,9 @@
 import { engine } from "./core/engine";
 
-import { menu } from "./scenes/menu";
-import { menuControls } from "./scenes/menu-controls";
-import { Room001 } from "./scenes/room-001";
-import { Room002 } from "./scenes/room-002";
+import { HomeMenu } from "./scenes/menus/home";
+import { ControlsMenu } from "./scenes/menus/controls";
+import { Room001Scene } from "./scenes/rooms/room-001";
+import { Room002Scene } from "./scenes/rooms/room-002";
 
 import { createNotificationBox } from "./utils/create-notification-box";
 import { loadTiledMap } from "./utils/load-tiles-map";
@@ -18,19 +18,19 @@ async function registerScenes() {
   );
 
   engine.scene("menu", () => {
-    menu(engine);
+    HomeMenu(engine);
   });
 
   engine.scene("menu-controls", () => {
-    menuControls(engine);
+    ControlsMenu(engine);
   });
 
   engine.scene("room001", (previousSceneData) => {
-    new Room001({ engine, tiledMap: room001TiledMap, previousSceneData });
+    new Room001Scene({ engine, tiledMap: room001TiledMap, previousSceneData });
   });
 
   engine.scene("room002", (previousSceneData) => {
-    new Room002({ engine, tiledMap: room002TiledMap, previousSceneData });
+    new Room002Scene({ engine, tiledMap: room002TiledMap, previousSceneData });
   });
 
   engine.scene("final-exit", () => {

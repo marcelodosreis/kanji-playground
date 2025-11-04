@@ -1,6 +1,6 @@
-import type { Engine } from "../../types/engine";
-import { setBackgroundColor } from "../../utils/set-background-color";
-import { createFocusableButton } from "../../utils/create-focusable-button";
+import type { Engine } from "../../../types/engine";
+import { setBackgroundColor } from "../../../utils/set-background-color";
+import { createFocusableButton } from "../../../utils/create-focusable-button";
 
 interface MenuItem {
   label: string;
@@ -9,18 +9,18 @@ interface MenuItem {
 
 const CONFIG = {
   bgColor: "#20214a",
-  title: "KANJI - PLAYGROUND",
-  subtitle: "Arrow keys to navigate • Enter to select • Click to choose",
+  title: "CONTROLS",
+  subtitle: "Remap and options",
   titleSize: 24,
   subtitleSize: 12,
-  buttonWidth: 220,
+  buttonWidth: 260,
   buttonHeight: 28,
   buttonGap: 14,
   centerX: 320,
-  startY: 140,
+  startY: 150,
 };
 
-export function menu(engine: Engine) {
+export function ControlsMenu(engine: Engine) {
   setBackgroundColor(engine, CONFIG.bgColor);
   engine.camScale(1);
   engine.camPos(320, 180);
@@ -49,12 +49,9 @@ export function menu(engine: Engine) {
   ]);
 
   const items: MenuItem[] = [
-    {
-      label: "Start Game",
-      action: () => engine.go("room001", { exitName: null }),
-    },
-    { label: "Controls", action: () => engine.go("menu-controls") },
-    { label: "Quit", action: () => {} },
+    { label: "Remap Keys", action: () => {} },
+    { label: "Reset To Default", action: () => {} },
+    { label: "Back", action: () => engine.go("menu") },
   ];
 
   const buttons = items.map((item, i) => {
@@ -99,6 +96,9 @@ export function menu(engine: Engine) {
       buttons[index].select();
       return;
     }
+    // if (key === "escape") {
+    //   engine.go("menu");
+    // }
   });
 
   engine.onSceneLeave(() => {

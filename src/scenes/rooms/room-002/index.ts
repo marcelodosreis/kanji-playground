@@ -1,17 +1,17 @@
-import { CameraManager } from "../../core/manager/camera";
-import { CartridgeManager } from "../../core/manager/cartridge";
-import { EnemyManager } from "../../core/manager/enemy";
-import { ExitManager } from "../../core/manager/exit";
-import { MapManager } from "../../core/manager/map";
-import { PlayerManager } from "../../core/manager/player";
-import { UIManager } from "../../core/manager/ui";
-import type { Engine, EngineGameObj } from "../../types/engine";
-import type { Map } from "../../types/map";
-import type { Player } from "../../types/player";
-import type { TiledMap } from "../../types/tiled-map";
-import { setBackgroundColor } from "../../utils/set-background-color";
+import type { Engine, EngineGameObj } from "../../../types/engine";
+import type { Player } from "../../../types/player";
+import type { TiledMap } from "../../../types/tiled-map";
+import type { Map } from "../../../types/map";
 
-type Room001Params = {
+import { CartridgeManager } from "../../../core/manager/cartridge";
+import { CameraManager } from "../../../core/manager/camera";
+import { ExitManager } from "../../../core/manager/exit";
+import { MapManager } from "../../../core/manager/map";
+import { PlayerManager } from "../../../core/manager/player";
+import { UIManager } from "../../../core/manager/ui";
+import { setBackgroundColor } from "../../../utils/set-background-color";
+
+type Room002Params = {
   engine: Engine;
   tiledMap: TiledMap;
   previousSceneData: EngineGameObj;
@@ -22,26 +22,28 @@ const CONFIG = {
   CAMERA_SCALE: 2,
   INITIAL_CAMERA_POS: { x: 170, y: 100 },
   GRAVITY: 1000,
-  MAP_SPRITE_NAME: "room001",
+  MAP_SPRITE_NAME: "room002",
   COLLIDERS_LAYER_INDEX: 4,
-  PLAYER_START_NAMES: ["player", "entrance-1", "entrance-2"],
+  PLAYER_START_NAMES: ["entrance-1", "entrance-2"],
   ENTRANCE_EXIT_MAPPING: {
     "entrance-1": "exit-1",
     "entrance-2": "exit-2",
   },
   CAMERA_ZONES_LAYER_INDEX: 6,
   EXITS_LAYER_INDEX: 7,
-  EXIT_ROOM_NAME: "room002",
+  EXIT_ROOM_NAME: "room001",
+  RESPAWN_BOUNDS: 1000,
+  RESPAWN_ROOM_NAME: "room002",
 };
 
-export class Room001 {
+export class Room002Scene {
   private engine: Engine;
   private tiledMap: TiledMap;
   private previousSceneData: EngineGameObj;
   private map!: Map;
   private player!: Player;
 
-  constructor(params: Room001Params) {
+  constructor(params: Room002Params) {
     this.engine = params.engine;
     this.tiledMap = params.tiledMap;
     this.previousSceneData = params.previousSceneData;
@@ -73,18 +75,12 @@ export class Room001 {
       previousSceneData: this.previousSceneData,
       playerStartNames: CONFIG.PLAYER_START_NAMES,
       entranceExitMapping: CONFIG.ENTRANCE_EXIT_MAPPING,
+      positionOffset: { x: this.map.pos.x, y: this.map.pos.y },
       respawnConfig: {
-        bounds: 1000,
-        roomName: CONFIG.MAP_SPRITE_NAME,
-        exitName: "room001",
+        bounds: CONFIG.RESPAWN_BOUNDS,
+        roomName: CONFIG.RESPAWN_ROOM_NAME,
+        exitName: "exit-2",
       },
-    });
-
-    EnemyManager.spawnAll({
-      engine: this.engine,
-      map: this.map,
-      tiledMap: this.tiledMap,
-      isBossDefeated: false,
     });
 
     CartridgeManager.spawnAll({
@@ -100,11 +96,6 @@ export class Room001 {
       tiledMap: this.tiledMap,
       initialCameraPos: CONFIG.INITIAL_CAMERA_POS,
       cameraZonesLayerIndex: CONFIG.CAMERA_ZONES_LAYER_INDEX,
-      previousSceneExitName: this.previousSceneData.exitName,
-    });
-
-    UIManager.setupHealthBar({
-      engine: this.engine,
     });
 
     ExitManager.setup({
@@ -113,6 +104,10 @@ export class Room001 {
       tiledMap: this.tiledMap,
       exitsLayerIndex: CONFIG.EXITS_LAYER_INDEX,
       exitRoomName: CONFIG.EXIT_ROOM_NAME,
+    });
+
+    UIManager.setupHealthBar({
+      engine: this.engine,
     });
   }
 }

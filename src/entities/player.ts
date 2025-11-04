@@ -11,7 +11,7 @@ export function createPlayer(engine: Engine): Player {
     engine.area({ shape: new engine.Rect(engine.vec2(0, 18), 12, 12) }),
     engine.anchor("center"),
     engine.body({ mass: 100, jumpForce: 320 }),
-    engine.doubleJump(4),
+    engine.doubleJump(state.current().isDoubleJumpUnlocked ? 2 : 1),
     engine.opacity(),
     engine.health(state.current().playerHp),
     {
