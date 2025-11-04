@@ -7,14 +7,18 @@ import { createNotificationBox } from "./utils/create-notification-box";
 import { menu } from "./scenes/menu";
 import { menuControls } from "./scenes/menu-controls";
 
-async function main() {
-  const room001TiledMap: TiledMap = await (
-    await fetch("./assets/maps/room-001/config.json")
-  ).json();
+async function loadTiledMap(path: string): Promise<TiledMap> {
+  const response = await fetch(path);
+  return response.json();
+}
 
-  const room002TiledMap: TiledMap = await (
-    await fetch("./assets/maps/room-002/config.json")
-  ).json();
+async function registerScenes() {
+  const room001TiledMap = await loadTiledMap(
+    "./assets/maps/room-001/config.json"
+  );
+  const room002TiledMap = await loadTiledMap(
+    "./assets/maps/room-002/config.json"
+  );
 
   engine.scene("room001", (previousSceneData) => {
     room001(engine, room001TiledMap, previousSceneData);
@@ -41,7 +45,10 @@ async function main() {
   engine.scene("menu-controls", () => {
     menuControls(engine);
   });
+}
 
+async function main() {
+  await registerScenes();
   engine.go("menu");
 }
 

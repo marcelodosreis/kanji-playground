@@ -5,6 +5,7 @@ import type { Position } from "../types/position";
 
 export function createDrone(engine: Engine, initialPos: Position): Enemy {
   return engine.make([
+    "drone",
     engine.pos(initialPos),
     engine.sprite("drone", { anim: "flying" }),
     engine.area({ shape: new engine.Rect(engine.vec2(0), 12, 12) }),
@@ -19,7 +20,6 @@ export function createDrone(engine: Engine, initialPos: Position): Enemy {
       "retreat",
     ]),
     engine.health(1),
-    "drone",
     {
       speed: 100,
       pursuitSpeed: 150,
@@ -95,7 +95,7 @@ export function createDrone(engine: Engine, initialPos: Position): Enemy {
         });
 
         this.on("explode", () => {
-        //   engine.play("boom");
+          //   engine.play("boom");
           this.collisionIgnore = ["player"];
           this.unuse("body");
           this.play("explode");

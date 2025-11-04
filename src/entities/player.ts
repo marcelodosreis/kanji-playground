@@ -5,6 +5,7 @@ import { createBlink } from "../utils/create-blink";
 
 export function createPlayer(engine: Engine): Player {
   return engine.make([
+    "player",
     engine.pos(),
     engine.sprite("player"),
     engine.area({ shape: new engine.Rect(engine.vec2(0, 18), 12, 12) }),
@@ -13,7 +14,6 @@ export function createPlayer(engine: Engine): Player {
     engine.doubleJump(state.current().isDoubleJumpUnlocked ? 2 : 1),
     engine.opacity(),
     engine.health(state.current().playerHp),
-    "player",
     {
       speed: 150,
       controlHandlers: [],
