@@ -1,7 +1,7 @@
 import { engine } from "./core/engine";
 
-import { HomeMenu } from "./scenes/menus/home";
-import { ControlsMenu } from "./scenes/menus/controls";
+import { HomeMenuScene } from "./scenes/menus/home";
+import { ControlsMenuScene } from "./scenes/menus/controls";
 import { Room001Scene } from "./scenes/rooms/room-001";
 import { Room002Scene } from "./scenes/rooms/room-002";
 
@@ -18,11 +18,11 @@ async function registerScenes() {
   );
 
   engine.scene("menu", () => {
-    HomeMenu(engine);
+    new HomeMenuScene({ engine });
   });
 
   engine.scene("menu-controls", () => {
-    ControlsMenu(engine);
+    new ControlsMenuScene({ engine });
   });
 
   engine.scene("room001", (previousSceneData) => {

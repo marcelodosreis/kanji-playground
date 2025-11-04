@@ -1,4 +1,5 @@
 import type { Engine } from "../types/engine";
+import type { FocusableButton } from "../types/focusable-button";
 
 interface FocusableButtonOptions {
   label: string;
@@ -10,7 +11,7 @@ interface FocusableButtonOptions {
 export function createFocusableButton(
   engine: Engine,
   opts: FocusableButtonOptions
-) {
+): FocusableButton {
   const { label, width, height, onSelect } = opts;
   const baseColor = engine.Color.fromHex("#ffffff");
   const focusColor = engine.Color.fromHex("#ffe28a");
@@ -57,21 +58,24 @@ export function createFocusableButton(
   }
 
   bg.onHover(() => {
-    focus();
+    bg.trigger("hoverenter");
+  });
+
+  bg.onHoverEnd(() => {
+    bg.trigger("hoverleave");
   });
 
   bg.onClick(() => {
     select();
   });
 
-  // @ts-expect-error
-  bg.focus = focus;
-  // @ts-expect-error
-  bg.blur = blur;
-  // @ts-expect-error
-  bg.select = select;
-  // @ts-expect-error
-  bg.isFocused = () => focused;
+  applyFocus(false);
 
-  return bg;
+  const btn = bg as unknown as FocusableButton;
+  btn.focus = focus;
+  btn.blur = blur;
+  btn.select = select;
+  btn.isFocused = () => focused;
+
+  return btn;
 }
