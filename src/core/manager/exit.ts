@@ -12,44 +12,74 @@ type SetupParams = {
 
 export class ExitManager {
   static setup(params: SetupParams): void {
-    const { engine, map, tiledMap, exitsLayerIndex, exitRoomName } = params;
+    const exits = this.getExits(params.tiledMap, params.exitsLayerIndex);
+    exits.forEach((exit) => this.createExitZone(params, exit));
+  }
 
-    const exits = tiledMap.layers[exitsLayerIndex].objects as TiledObject[];
-    for (const exit of exits) {
-      const exitZone = map.add([
-        engine.pos(exit.x, exit.y),
-        engine.area({
-          shape: new engine.Rect(engine.vec2(0), exit.width, exit.height),
-          collisionIgnore: ["collider"],
-        }),
-        engine.body({ isStatic: true }),
-        exit.name,
-      ]);
+  private static getExits(
+    tiledMap: TiledMap,
+    layerIndex: number
+  ): TiledObject[] {
+    return tiledMap.layers[layerIndex].objects as TiledObject[];
+  }
 
-      exitZone.onCollide("player", async () => {
-        const camPos = engine.camPos();
+  private static createExitZone(params: SetupParams, exit: TiledObject): void {
+    const { engine, map } = params;
+    const exitZone = map.add([
+      engine.pos(exit.x, exit.y),
+      engine.area({
+        shape: new engine.Rect(engine.vec2(0), exit.width, exit.height),
+        collisionIgnore: ["collider"],
+      }),
+      engine.body({ isStatic: true }),
+      exit.name,
+    ]);
 
-        const background = engine.add([
-          engine.pos(camPos.x - engine.width(), camPos.y - engine.height() / 2),
-          engine.rect(engine.width(), engine.height()),
-          engine.color("#20214a"),
-        ]);
+    exitZone.onCollide("player", () => this.handlePlayerExit(params, exit));
+  }
 
-        await engine.tween(
-          background.pos.x,
-          0,
-          0.3,
-          (val) => (background.pos.x = val),
-          engine.easings.linear
-        );
+  private static async handlePlayerExit(
+    params: SetupParams,
+    exit: TiledObject
+  ): Promise<void> {
+    const { engine, exitRoomName } = params;
+    const camPos = engine.camPos();
 
-        if (exit.name === "final-exit") {
-          engine.go("final-exit");
-          return;
-        }
+    const background = this.createBackground(engine, camPos);
+    await this.tweenBackgroundToZero(engine, background);
 
-        engine.go(exitRoomName, { exitName: exit.name });
-      });
+    if (exit.name === "final-exit") {
+      engine.go("final-exit");
+      return;
     }
+
+    engine.go(exitRoomName, { exitName: exit.name });
+  }
+
+  private static createBackground(
+    engine: Engine,
+    camPos: { x: number; y: number }
+  ) {
+    return engine.add([
+      engine.pos(camPos.x - engine.width(), camPos.y - engine.height() / 2),
+      engine.rect(engine.width(), engine.height()),
+      engine.color("#20214a"),
+    ]);
+  }
+
+  private static tweenBackgroundToZero(
+    engine: Engine,
+    background: any
+  ): Promise<void> {
+    return new Promise((resolve) => {
+      engine.tween(
+        background.pos.x,
+        0,
+        0.3,
+        (val) => (background.pos.x = val),
+        engine.easings.linear
+      );
+      setTimeout(resolve, 400);
+    });
   }
 }

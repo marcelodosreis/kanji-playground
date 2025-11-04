@@ -7,35 +7,46 @@ type SetupHealthBarParams = {
 
 export class UIManager {
   static setupHealthBar(params: SetupHealthBarParams): void {
-    const { engine } = params;
+    const healthBar = this.createHealthBar(params.engine);
+    this.initializeHealthBar(params.engine, healthBar);
+  }
 
-    const healthBar = engine.make([
+  private static createHealthBar(engine: Engine): EngineGameObj {
+    return engine.make([
       engine.sprite("healthBar", { frame: 0 }),
       engine.fixed(),
       engine.pos(10, -10),
       engine.scale(3),
-      {
-        hpMapping: {
-          1: 2,
-          2: 1,
-          3: 0,
-        },
-        setEvents(this: EngineGameObj) {
-          this.on("update", () => {
-            const currentHp = state.current().playerHp;
-            if (currentHp === 0) {
-              engine.destroy(this);
-              return;
-            }
-            this.frame = this.hpMapping[currentHp];
-          });
-        },
-      },
+      this.createHealthBarBehavior(engine),
     ]);
+  }
 
-    const hb: EngineGameObj = healthBar;
-    hb.setEvents();
-    hb.trigger("update");
-    engine.add(hb);
+  private static createHealthBarBehavior(engine: Engine) {
+    return {
+      hpMapping: {
+        1: 2,
+        2: 1,
+        3: 0,
+      },
+      setEvents(this: EngineGameObj) {
+        this.on("update", () => {
+          const currentHp = state.current().playerHp;
+          if (currentHp === 0) {
+            engine.destroy(this);
+            return;
+          }
+          this.frame = this.hpMapping[currentHp];
+        });
+      },
+    };
+  }
+
+  private static initializeHealthBar(
+    engine: Engine,
+    healthBar: EngineGameObj
+  ): void {
+    healthBar.setEvents();
+    healthBar.trigger("update");
+    engine.add(healthBar);
   }
 }

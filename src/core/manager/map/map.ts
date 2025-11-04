@@ -17,26 +17,23 @@ type SetupParams = {
 
 export class MapManager {
   static setup(params: SetupParams): void {
-    const {
-      engine,
-      tiledMap,
-      setMap,
-      cameraScale,
-      initialCameraPos,
-      gravity,
-      mapSpriteName,
-      collidersLayerIndex,
-    } = params;
+    this.configureEngine(
+      params.engine,
+      params.cameraScale,
+      params.initialCameraPos,
+      params.gravity
+    );
 
-    this.configureEngine(engine, cameraScale, initialCameraPos, gravity);
+    const map = this.createMap(params.engine, params.mapSpriteName);
+    params.setMap(map);
 
-    const map = this.createMap(engine, mapSpriteName);
-    setMap(map);
+    const colliders = this.extractColliders(
+      params.tiledMap,
+      params.collidersLayerIndex
+    );
 
-    const colliders = this.extractColliders(tiledMap, collidersLayerIndex);
-
-    this.processColliders(engine, map, colliders);
-    this.processBossBarriers(engine, map, colliders);
+    this.processColliders(params.engine, map, colliders);
+    this.processBossBarriers(params.engine, map, colliders);
   }
 
   private static configureEngine(

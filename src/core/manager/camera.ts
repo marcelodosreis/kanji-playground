@@ -16,65 +16,97 @@ type CameraSetupParams = {
 
 export class CameraManager {
   static setup(params: CameraSetupParams): void {
-    const {
-      engine,
-      map,
-      player,
-      tiledMap,
-      cameraZonesLayerIndex,
-      previousSceneExitName,
-    } = params;
+    this.setInitialCameraPosition(params);
+    this.setupCameraFollow(params);
+    this.setupCameraZones(params);
+  }
 
+  private static setInitialCameraPosition(params: CameraSetupParams): void {
+    const { engine, player, initialCameraPos, previousSceneExitName } = params;
     if (!previousSceneExitName) {
-      engine.camPos(params.initialCameraPos.x, params.initialCameraPos.y);
+      this.setCameraPosition(engine, initialCameraPos.x, initialCameraPos.y);
     } else {
-      engine.camPos(player.pos);
+      this.setCameraPosition(engine, player.pos.x, player.pos.y);
     }
+  }
+
+  private static setCameraPosition(engine: Engine, x: number, y: number): void {
+    engine.camPos(x, y);
+  }
+
+  private static setupCameraFollow(params: CameraSetupParams): void {
+    const { engine, map, player, tiledMap } = params;
 
     engine.onUpdate(() => {
       if (state.current().isPlayerInBossFight) return;
 
-      if (map.pos.x + 160 > player.pos.x) {
-        engine.camPos(map.pos.x + 160, engine.camPos().y);
-        return;
-      }
-
-      if (
-        player.pos.x >
-        map.pos.x + tiledMap.width * tiledMap.tilewidth - 160
-      ) {
-        engine.camPos(
-          map.pos.x + tiledMap.width * tiledMap.tilewidth - 160,
-          engine.camPos().y
-        );
-        return;
-      }
-
-      engine.camPos(player.pos.x, engine.camPos().y);
+      const targetX = this.calculateCameraX(map, player, tiledMap);
+      this.setCameraPosition(engine, targetX, engine.camPos().y);
     });
+  }
 
+  private static calculateCameraX(
+    map: Map,
+    player: Player,
+    tiledMap: TiledMap
+  ): number {
+    const leftBound = map.pos.x + 160;
+    const rightBound = map.pos.x + tiledMap.width * tiledMap.tilewidth - 160;
+    const playerX = player.pos.x;
+
+    if (playerX < leftBound) return leftBound;
+    if (playerX > rightBound) return rightBound;
+    return playerX;
+  }
+
+  private static setupCameraZones(params: CameraSetupParams): void {
+    const { engine, map, tiledMap, cameraZonesLayerIndex } = params;
     const cameras = tiledMap.layers[cameraZonesLayerIndex]
       .objects as TiledObject[];
-    for (const camera of cameras) {
-      const cameraZone = map.add([
-        engine.area({
-          shape: new engine.Rect(engine.vec2(0), camera.width, camera.height),
-          collisionIgnore: ["collider"],
-        }),
-        engine.pos(camera.x, camera.y),
-      ]);
 
-      cameraZone.onCollide("player", () => {
-        if (engine.camPos().x !== camera.properties[0].value) {
-          engine.tween(
-            engine.camPos().y,
-            camera.properties[0].value,
-            0.8,
-            (val) => engine.camPos(engine.camPos().x, val),
-            engine.easings.linear
-          );
-        }
-      });
+    cameras.forEach((camera) => {
+      const cameraZone = this.createCameraZone(engine, map, camera);
+      this.setupCameraZoneCollision(engine, cameraZone, camera);
+    });
+  }
+
+  private static createCameraZone(
+    engine: Engine,
+    map: Map,
+    camera: TiledObject
+  ) {
+    return map.add([
+      engine.area({
+        shape: new engine.Rect(engine.vec2(0), camera.width, camera.height),
+        collisionIgnore: ["collider"],
+      }),
+      engine.pos(camera.x, camera.y),
+    ]);
+  }
+
+  private static setupCameraZoneCollision(
+    engine: Engine,
+    cameraZone: any,
+    camera: TiledObject
+  ): void {
+    cameraZone.onCollide("player", () => {
+      this.handleCameraZoneCollision(engine, camera);
+    });
+  }
+
+  private static handleCameraZoneCollision(
+    engine: Engine,
+    camera: TiledObject
+  ) {
+    const targetY = camera.properties[0].value;
+    if (engine.camPos().y !== targetY) {
+      engine.tween(
+        engine.camPos().y,
+        targetY,
+        0.8,
+        (val) => engine.camPos(engine.camPos().x, val),
+        engine.easings.linear
+      );
     }
   }
 }
