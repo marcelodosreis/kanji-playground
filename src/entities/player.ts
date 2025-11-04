@@ -107,17 +107,18 @@ export function createPlayer(engine: Engine): Player {
         }
       },
 
-      // respawnIfOutOfBounds(
-      //   boundValue,
-      //   destinationName,
-      //   previousSceneData = { exitName: null }
-      // ) {
-      //   engine.onUpdate(() => {
-      //     if (this.pos.y > boundValue) {
-      //       engine.go(destinationName, previousSceneData);
-      //     }
-      //   });
-      // },
+      respawnIfOutOfBounds(
+        this: Player,
+        boundValue: number,
+        destinationName: string,
+        previousSceneData = { exitName: null }
+      ) {
+        engine.onUpdate(() => {
+          if (this.pos.y > boundValue) {
+            engine.go(destinationName, previousSceneData);
+          }
+        });
+      },
 
       setEvents(this: Player) {
         this.onFall(() => {
@@ -148,13 +149,13 @@ export function createPlayer(engine: Engine): Player {
           }
 
           state.set("playerHp", state.current().maxPlayerHp);
-          engine.play("boom");
+          // engine.play("boom");
           this.play("explode");
         });
 
         this.onAnimEnd((anim) => {
           if (anim === "explode") {
-            engine.go("room1");
+            engine.go("room001");
           }
         });
       },

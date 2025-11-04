@@ -1,6 +1,7 @@
 import { state } from "../../core/state";
 import { createBoss } from "../../entities/boss";
 import { createDrone } from "../../entities/drone";
+import { createCartridge } from "../../entities/cartridge";
 import { createPlayer } from "../../entities/player";
 import { type Boss } from "../../types/boss";
 import type { Enemy } from "../../types/enemy";
@@ -13,6 +14,7 @@ import { setBackgroundColor } from "../../utils/set-background-color";
 import { setCameraControl } from "../../utils/set-camera-control";
 import { setCameraZOnes } from "../../utils/set-camera-zones";
 import { setMapCollider } from "../../utils/set-map-collider";
+import { healthBar } from "../../utils/create-health-bar";
 
 export function room001(engine: Engine, tiledMap: TiledMap) {
   setBackgroundColor(engine, "#a2aed5");
@@ -54,6 +56,7 @@ export function room001(engine: Engine, tiledMap: TiledMap) {
       player.setControls();
       player.setEvents();
       player.enablePassthrough();
+      player.respawnIfOutOfBounds(1000, "room001")
       continue;
     }
 
@@ -72,5 +75,13 @@ export function room001(engine: Engine, tiledMap: TiledMap) {
       boss.setBehavior();
       boss.setEvents();
     }
+
+    if (position.type === "cartridge") {
+      map.add(createCartridge(engine, engine.vec2(position.x, position.y)));
+    }
   }
+
+  healthBar.setEvents();
+  healthBar.trigger("update");
+  engine.add(healthBar);
 }

@@ -10,4 +10,5 @@ export interface Player extends PlayerEngineGameObj {
   enablePassthrough(): void;
   enableDoubleJump(): void;
   cleanupControls?(): void;
+  respawnIfOutOfBounds(boundValue: number, destinationName: string): void;
 }
