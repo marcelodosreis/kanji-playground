@@ -4,6 +4,8 @@ import { room002 } from "./scenes/room-002";
 import type { TiledMap } from "./types/tiled-map";
 import { setBackgroundColor } from "./utils/set-background-color";
 import { createNotificationBox } from "./utils/create-notification-box";
+import { menu } from "./scenes/menu";
+import { menuControls } from "./scenes/menu-controls";
 
 async function main() {
   const room001TiledMap: TiledMap = await (
@@ -16,9 +18,18 @@ async function main() {
 
   engine.scene("room001", (previousSceneData) => {
     room001(engine, room001TiledMap, previousSceneData);
+    const esc = engine.onKeyPress("escape", () => {
+      engine.go("menu");
+    });
+    engine.onSceneLeave(() => esc.cancel());
   });
+
   engine.scene("room002", (previousSceneData) => {
     room002(engine, room002TiledMap, previousSceneData);
+    const esc = engine.onKeyPress("escape", () => {
+      engine.go("menu");
+    });
+    engine.onSceneLeave(() => esc.cancel());
   });
 
   engine.scene("final-exit", () => {
@@ -29,24 +40,21 @@ async function main() {
         "You escaped the factory!\n The End. Thanks for playing!"
       )
     );
+    const esc = engine.onKeyPress("escape", () => {
+      engine.go("menu");
+    });
+    engine.onSceneLeave(() => esc.cancel());
   });
+
+  engine.scene("menu", () => {
+    menu(engine);
+  });
+
+  engine.scene("menu-controls", () => {
+    menuControls(engine);
+  });
+
+  engine.go("menu");
 }
-
-engine.scene("intro", () => {
-  setBackgroundColor(engine, "#20214a");
-  engine.add(
-    createNotificationBox(
-      engine,
-      "Escape the factory!\nUse arrow keys to move, x to jump, z to attack.\nPress Enter to start!"
-    )
-  );
-  engine.onKeyPress("enter", () => {
-    const context = new AudioContext();
-    context.resume();
-    engine.go("room001", { exitName: null });
-  });
-});
-
-engine.go("intro");
 
 main();
