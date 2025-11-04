@@ -64,12 +64,8 @@ export class PlayerManager {
     player.setEvents();
 
     if (respawnConfig) {
-      const { bounds, roomName, exitName } = respawnConfig;
-      player.respawnIfOutOfBounds(
-        bounds,
-        roomName,
-        exitName ? { exitName } : undefined
-      );
+      const { bounds, roomName } = respawnConfig;
+      player.respawnIfOutOfBounds(bounds, roomName, { exitName: null });
     }
 
     return player;

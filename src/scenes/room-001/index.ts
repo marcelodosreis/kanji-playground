@@ -70,6 +70,11 @@ export class Room001 {
       previousSceneData: this.previousSceneData,
       playerStartNames: CONFIG.PLAYER_START_NAMES,
       entranceExitMapping: CONFIG.ENTRANCE_EXIT_MAPPING,
+      respawnConfig: {
+        bounds: 1000,
+        roomName: CONFIG.MAP_SPRITE_NAME,
+        exitName: "room001",
+      },
     });
 
     EnemyManager.spawnAll({

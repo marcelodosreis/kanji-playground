@@ -20,7 +20,10 @@ export function setExitZones(
     ]);
 
     exitZone.onCollide("player", async () => {
-      const background = engine.add([
+      console.log("DEBUG",exit);
+
+
+      const background = await engine.add([
         engine.pos(-engine.width(), 0),
         engine.rect(engine.width(), engine.height()),
         engine.color("#20214a"),
