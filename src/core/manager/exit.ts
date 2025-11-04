@@ -75,11 +75,11 @@ export class ExitManager {
       engine.tween(
         background.pos.x,
         0,
-        0.3,
+        0.5,
         (val) => (background.pos.x = val),
         engine.easings.linear
       );
-      setTimeout(resolve, 400);
+      setTimeout(resolve, 500);
     });
   }
 }

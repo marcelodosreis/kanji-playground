@@ -4,10 +4,9 @@ import { HomeMenuScene } from "./scenes/menus/home";
 import { ControlsMenuScene } from "./scenes/menus/controls";
 import { Room001Scene } from "./scenes/rooms/room-001";
 import { Room002Scene } from "./scenes/rooms/room-002";
+import { FinalExitScene } from "./scenes/menus/final";
 
-import { createNotificationBox } from "./utils/create-notification-box";
 import { loadTiledMap } from "./utils/load-tiles-map";
-import { setBackgroundColor } from "./utils/set-background-color";
 
 async function registerScenes() {
   const room001TiledMap = await loadTiledMap(
@@ -34,13 +33,7 @@ async function registerScenes() {
   });
 
   engine.scene("final-exit", () => {
-    setBackgroundColor(engine, "#20214a");
-    engine.add(
-      createNotificationBox(
-        engine,
-        "You escaped the factory!\n The End. Thanks for playing!"
-      )
-    );
+    new FinalExitScene({ engine });
   });
 }
 
