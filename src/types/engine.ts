@@ -38,6 +38,16 @@ export type EnemyEngineGameObj = GameObj<
   | HealthComp
 >;
 
+export type BossEngineGameObj = GameObj<
+  | PosComp
+  | SpriteComp
+  | AreaComp
+  | AnchorComp
+  | BodyComp
+  | StateComp
+  | HealthComp
+>;
+
 export type MapEngineGameObj = GameObj<PosComp | SpriteComp>;
 
 export type EngineGameObj = GameObj

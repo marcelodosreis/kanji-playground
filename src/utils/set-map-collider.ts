@@ -86,17 +86,10 @@ export function setMapCollider(
         if (currentState.isPlayerInBossFight) return;
         player.disableControls();
         player.play("idle");
-        await engine.tween(
-          player.pos.x,
-          player.pos.x + 25,
-          0.2,
-          (val) => (player.pos.x = val),
-          engine.easings.linear
-        );
         player.setControls();
       });
 
-      bossBarrier.onCollideEnd("player", () => {
+      bossBarrier.onCollideEnd("player", (player) => {
         const currentState = state.current();
         if (currentState.isPlayerInBossFight || currentState.isBossDefeated)
           return;

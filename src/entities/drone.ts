@@ -1,5 +1,6 @@
 import type { Enemy } from "../types/enemy";
 import type { Engine } from "../types/engine";
+import type { Player } from "../types/player";
 import type { Position } from "../types/position";
 
 export function createDrone(engine: Engine, initialPos: Position): Enemy {
@@ -24,7 +25,7 @@ export function createDrone(engine: Engine, initialPos: Position): Enemy {
       pursuitSpeed: 150,
       range: 100,
       setBehavior(this: Enemy) {
-        const player = engine.get("player", { recursive: true })[0];
+        const player = engine.get("player", { recursive: true })[0] as Player;
 
         this.onStateEnter("patrol-right", async () => {
           await engine.wait(3);
@@ -79,7 +80,7 @@ export function createDrone(engine: Engine, initialPos: Position): Enemy {
       },
 
       setEvents(this: Enemy) {
-        const player = engine.get("player", { recursive: true })[0];
+        const player = engine.get("player", { recursive: true })[0] as Player;
 
         this.onCollide("player", () => {
           if (player.isAttacking) return;

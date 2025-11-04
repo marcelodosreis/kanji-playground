@@ -1,9 +1,10 @@
 import { state } from "../core/state";
 import type { Engine } from "../types/engine";
 import type { Player } from "../types/player";
+import { createBlink } from "../utils/create-blink";
 
 export function createPlayer(engine: Engine): Player {
-  return engine.make([
+    return engine.make([
     engine.pos(),
     engine.sprite("player"),
     engine.area({ shape: new engine.Rect(engine.vec2(0, 18), 12, 12) }),
@@ -15,8 +16,8 @@ export function createPlayer(engine: Engine): Player {
     "player",
     {
       speed: 150,
+      controlHandlers: [],
       isAttacking: false,
-      controlHandlers: [], // Adicione esta linha
       setPosition(this: Player, x: number, y: number) {
         this.pos.x = x;
         this.pos.y = y;
@@ -106,6 +107,18 @@ export function createPlayer(engine: Engine): Player {
         }
       },
 
+      // respawnIfOutOfBounds(
+      //   boundValue,
+      //   destinationName,
+      //   previousSceneData = { exitName: null }
+      // ) {
+      //   engine.onUpdate(() => {
+      //     if (this.pos.y > boundValue) {
+      //       engine.go(destinationName, previousSceneData);
+      //     }
+      //   });
+      // },
+
       setEvents(this: Player) {
         this.onFall(() => {
           this.play("fall");
@@ -121,6 +134,24 @@ export function createPlayer(engine: Engine): Player {
           this.play("fall");
         });
 
+        this.on("heal", () => {
+          state.set("playerHp", this.hp());
+          // healthBar.trigger("update");
+        });
+
+        this.on("hurt", () => {
+          createBlink(engine, this);
+          if (this.hp() > 0) {
+            state.set("playerHp", this.hp());
+            // healthBar.trigger("update");
+            return;
+          }
+
+          state.set("playerHp", state.current().maxPlayerHp);
+          engine.play("boom");
+          this.play("explode");
+        });
+
         this.onAnimEnd((anim) => {
           if (anim === "explode") {
             engine.go("room1");
@@ -128,7 +159,9 @@ export function createPlayer(engine: Engine): Player {
         });
       },
 
-      enableDoubleJump() {},
+      enableDoubleJump(this: Player) {
+        this.numJumps = 2;
+      },
     },
   ]);
 }

@@ -1,5 +1,8 @@
+import { state } from "../../core/state";
+import { createBoss } from "../../entities/boss";
 import { createDrone } from "../../entities/drone";
 import { createPlayer } from "../../entities/player";
+import { type Boss } from "../../types/boss";
 import type { Enemy } from "../../types/enemy";
 import type { Engine } from "../../types/engine";
 import type { Map } from "../../types/map";
@@ -60,6 +63,14 @@ export function room001(engine: Engine, tiledMap: TiledMap) {
       );
       drone.setBehavior();
       drone.setEvents();
+    }
+
+    if (position.name === "boss" && !state.current().isBossDefeated) {
+      const boss = map.add<Boss>(
+        createBoss(engine, engine.vec2(position.x, position.y))
+      );
+      boss.setBehavior();
+      boss.setEvents();
     }
   }
 }

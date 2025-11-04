@@ -8,5 +8,6 @@ export interface Player extends PlayerEngineGameObj {
   setControls(): void;
   setEvents(): void;
   enablePassthrough(): void;
+  enableDoubleJump(): void;
   cleanupControls?(): void;
 }
