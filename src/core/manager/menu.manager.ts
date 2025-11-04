@@ -1,5 +1,5 @@
-import type { Engine } from "../../types/engine";
-import type { FocusableButton } from "../../types/focusable-button";
+import type { Engine } from "../../types/engine.interface";
+import type { FocusableButton } from "../../types/focusable-button.interface";
 import { createFocusableButton } from "../../utils/create-focusable-button";
 import { setBackgroundColor } from "../../utils/set-background-color";
 

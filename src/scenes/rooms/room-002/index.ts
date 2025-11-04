@@ -1,14 +1,14 @@
-import type { Engine, EngineGameObj } from "../../../types/engine";
-import type { Player } from "../../../types/player";
-import type { TiledMap } from "../../../types/tiled-map";
-import type { Map } from "../../../types/map";
+import type { Engine, EngineGameObj } from "../../../types/engine.interface";
+import type { Player } from "../../../types/player.interface";
+import type { TiledMap } from "../../../types/tiled-map.interface";
+import type { Map } from "../../../types/map.interface";
 
-import { CartridgeManager } from "../../../core/manager/cartridge";
-import { CameraManager } from "../../../core/manager/camera";
-import { ExitManager } from "../../../core/manager/exit";
+import { CartridgeManager } from "../../../core/manager/cartridge.manager";
+import { CameraManager } from "../../../core/manager/camera.manager";
+import { ExitManager } from "../../../core/manager/exit.manager";
 import { MapManager } from "../../../core/manager/map";
-import { PlayerManager } from "../../../core/manager/player";
-import { UIManager } from "../../../core/manager/ui";
+import { PlayerManager } from "../../../core/manager/player.manager";
+import { UIManager } from "../../../core/manager/ui.manager";
 import { setBackgroundColor } from "../../../utils/set-background-color";
 
 type Room002Params = {

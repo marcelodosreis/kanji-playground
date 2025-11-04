@@ -1,6 +1,6 @@
 import { state } from "../state";
-import type { Engine } from "../../types/engine";
-import type { Player } from "../../types/player";
+import type { Engine } from "../../types/engine.interface";
+import type { Player } from "../../types/player.interface";
 import { createBlink } from "../../utils/create-blink";
 
 export function PlayerEntity(engine: Engine): Player {

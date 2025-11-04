@@ -1,4 +1,4 @@
-import type { Engine, EngineGameObj } from "../../types/engine";
+import type { Engine, EngineGameObj } from "../../types/engine.interface";
 import { state } from "../state";
 
 type SetupHealthBarParams = {

@@ -1,4 +1,4 @@
-import type { BossEngineGameObj } from "./engine";
+import type { BossEngineGameObj } from "./engine.interface";
 
 export interface Boss extends BossEngineGameObj {
   pursuitSpeed: number;

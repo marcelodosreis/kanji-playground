@@ -1,5 +1,5 @@
 import type { GameObj } from "kaplay";
-import type { Engine } from "../types/engine";
+import type { Engine } from "../types/engine.interface";
 
 export async function createBlink(
   engine: Engine,

@@ -1,4 +1,4 @@
-import type { Engine } from "../../../types/engine";
+import type { Engine } from "../../../types/engine.interface";
 import { createNotificationBox } from "../../../utils/create-notification-box";
 import { setBackgroundColor } from "../../../utils/set-background-color";
 

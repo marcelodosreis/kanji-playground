@@ -1,4 +1,4 @@
-import type { EnemyEngineGameObj } from "./engine";
+import type { EnemyEngineGameObj } from "./engine.interface";
 
 export interface Enemy extends EnemyEngineGameObj {
   speed: number;

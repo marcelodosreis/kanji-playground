@@ -1,4 +1,4 @@
-import type { Position } from "./position";
+import type { Position } from "./position.interface";
 
 export interface TiledMap {
   compressionlevel: number;

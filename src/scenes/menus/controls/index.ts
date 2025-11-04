@@ -1,5 +1,5 @@
-import type { Engine } from "../../../types/engine";
-import { MenuManager } from "../../../core/manager/menu";
+import type { Engine } from "../../../types/engine.interface";
+import { MenuManager } from "../../../core/manager/menu.manager";
 import { setBackgroundColor } from "../../../utils/set-background-color";
 
 const CONFIG = {

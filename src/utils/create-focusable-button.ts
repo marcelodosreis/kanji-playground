@@ -1,5 +1,5 @@
-import type { Engine } from "../types/engine";
-import type { FocusableButton } from "../types/focusable-button";
+import type { Engine } from "../types/engine.interface";
+import type { FocusableButton } from "../types/focusable-button.interface";
 
 interface FocusableButtonOptions {
   label: string;

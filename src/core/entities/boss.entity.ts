@@ -1,8 +1,8 @@
 import { state } from "../state";
-import type { Boss } from "../../types/boss";
-import type { Engine } from "../../types/engine";
-import type { Position } from "../../types/position";
-import type { Player } from "../../types/player";
+import type { Boss } from "../../types/boss.interface";
+import type { Engine } from "../../types/engine.interface";
+import type { Position } from "../../types/position.interface";
+import type { Player } from "../../types/player.interface";
 import { createBlink } from "../../utils/create-blink";
 import { createNotificationBox } from "../../utils/create-notification-box";
 

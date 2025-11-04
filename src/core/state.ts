@@ -1,4 +1,4 @@
-import type { State } from "../types/state";
+import type { State } from "../types/state.interface";
 
 type StateProperty = keyof State;
 

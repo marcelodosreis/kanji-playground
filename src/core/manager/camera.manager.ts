@@ -1,7 +1,7 @@
-import type { Engine } from "../../types/engine";
-import type { Map } from "../../types/map";
-import type { Player } from "../../types/player";
-import type { TiledMap, TiledObject } from "../../types/tiled-map";
+import type { Engine } from "../../types/engine.interface";
+import type { Map } from "../../types/map.interface";
+import type { Player } from "../../types/player.interface";
+import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { state } from "../state";
 
 type CameraSetupParams = {

@@ -1,10 +1,10 @@
-import { DroneEntity } from "../entities/drone";
-import { BossEntity } from "../entities/boss";
-import type { Engine } from "../../types/engine";
-import type { Map } from "../../types/map";
-import type { TiledMap, TiledObject } from "../../types/tiled-map";
-import type { Enemy } from "../../types/enemy";
-import type { Boss } from "../../types/boss";
+import { DroneEntity } from "../entities/drone.entity";
+import { BossEntity } from "../entities/boss.entity";
+import type { Engine } from "../../types/engine.interface";
+import type { Map } from "../../types/map.interface";
+import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
+import type { Enemy } from "../../types/enemy.interface";
+import type { Boss } from "../../types/boss.interface";
 
 type SpawnAllParams = {
   engine: Engine;

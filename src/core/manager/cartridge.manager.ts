@@ -1,7 +1,7 @@
-import { CartridgeEntity } from "../entities/cartridge";
-import type { Engine } from "../../types/engine";
-import type { Map } from "../../types/map";
-import type { TiledMap, TiledObject } from "../../types/tiled-map";
+import { CartridgeEntity } from "../entities/cartridge.entity";
+import type { Engine } from "../../types/engine.interface";
+import type { Map } from "../../types/map.interface";
+import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 
 type SpawnParams = {
   engine: Engine;
