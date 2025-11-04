@@ -6,7 +6,7 @@ import type { Map } from "../../../types/map";
 import { CartridgeManager } from "../../../core/manager/cartridge";
 import { CameraManager } from "../../../core/manager/camera";
 import { ExitManager } from "../../../core/manager/exit";
-import { MapManager } from "../../../core/manager/map";
+import { MapManager } from "../../../core/manager/map/map";
 import { PlayerManager } from "../../../core/manager/player";
 import { UIManager } from "../../../core/manager/ui";
 import { setBackgroundColor } from "../../../utils/set-background-color";
@@ -57,14 +57,11 @@ export class Room002Scene {
     MapManager.setup({
       engine: this.engine,
       tiledMap: this.tiledMap,
-      config: {
-        backgroundColor: CONFIG.BACKGROUND_COLOR,
-        cameraScale: CONFIG.CAMERA_SCALE,
-        initialCameraPos: CONFIG.INITIAL_CAMERA_POS,
-        gravity: CONFIG.GRAVITY,
-        mapSpriteName: CONFIG.MAP_SPRITE_NAME,
-        collidersLayerIndex: CONFIG.COLLIDERS_LAYER_INDEX,
-      },
+      cameraScale: CONFIG.CAMERA_SCALE,
+      collidersLayerIndex: CONFIG.COLLIDERS_LAYER_INDEX,
+      gravity: CONFIG.GRAVITY,
+      initialCameraPos: CONFIG.INITIAL_CAMERA_POS,
+      mapSpriteName: CONFIG.MAP_SPRITE_NAME,
       setMap: (map: Map) => (this.map = map),
     });
 
