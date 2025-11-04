@@ -1,103 +1,110 @@
-import { state } from "../../core/state";
-import { createBoss } from "../../entities/boss";
-import { createDrone } from "../../entities/drone";
-import { createCartridge } from "../../entities/cartridge";
-import { createPlayer } from "../../entities/player";
-import { type Boss } from "../../types/boss";
-import type { Enemy } from "../../types/enemy";
-import type { Engine } from "../../types/engine";
-import { type Player } from "../../types/player";
-import type { TiledMap, TiledObject } from "../../types/tiled-map";
+import { CameraManager } from "../../core/manager/camera";
+import { CartridgeManager } from "../../core/manager/cartridge";
+import { EnemyManager } from "../../core/manager/enemy";
+import { ExitManager } from "../../core/manager/exit";
+import { MapManager } from "../../core/manager/map";
+import { PlayerManager } from "../../core/manager/player";
+import { UIManager } from "../../core/manager/ui";
+import type { Engine, EngineGameObj } from "../../types/engine";
+import type { Map } from "../../types/map";
+import type { Player } from "../../types/player";
+import type { TiledMap } from "../../types/tiled-map";
 
-import { setBackgroundColor } from "../../utils/set-background-color";
-import { setCameraControl } from "../../utils/set-camera-control";
-import { setCameraZones } from "../../utils/set-camera-zones";
-import { setMapCollider } from "../../utils/set-map-collider";
-import { healthBar } from "../../utils/create-health-bar";
-import type { GameObj } from "kaplay";
-import { setExitZones } from "../../utils/set-exit-zones";
+type Room001Params = {
+  engine: Engine;
+  tiledMap: TiledMap;
+  previousSceneData: EngineGameObj;
+};
 
-export function room001(
-  engine: Engine,
-  tiledMap: TiledMap,
-  prevSceneData: GameObj
-) {
-  setBackgroundColor(engine, "#a2aed5");
+const CONFIG = {
+  BACKGROUND_COLOR: "#a2aed5",
+  CAMERA_SCALE: 2,
+  INITIAL_CAMERA_POS: { x: 170, y: 100 },
+  GRAVITY: 1000,
+  MAP_SPRITE_NAME: "room001",
+  COLLIDERS_LAYER_INDEX: 4,
+  PLAYER_START_NAMES: ["player", "entrance-1", "entrance-2"],
+  ENTRANCE_EXIT_MAPPING: {
+    "entrance-1": "exit-1",
+    "entrance-2": "exit-2",
+  },
+  CAMERA_ZONES_LAYER_INDEX: 6,
+  EXITS_LAYER_INDEX: 7,
+  EXIT_ROOM_NAME: "room002",
+};
 
-  engine.camScale(2);
-  engine.camPos(170, 100);
-  engine.setGravity(1000);
+export class Room001 {
+  private engine: Engine;
+  private tiledMap: TiledMap;
+  private previousSceneData: EngineGameObj;
+  private map!: Map;
+  private player!: Player;
 
-  const roomLayers = tiledMap.layers;
+  constructor(params: Room001Params) {
+    this.engine = params.engine;
+    this.tiledMap = params.tiledMap;
+    this.previousSceneData = params.previousSceneData;
 
-  const map = engine.add([engine.pos(0, 0), engine.sprite("room001")]);
-  const colliders = roomLayers[4].objects as TiledObject[];
-
-  setMapCollider(engine, map, colliders);
-
-  const player = map.add<Player>(createPlayer(engine));
-
-  setCameraControl(engine, map, player, tiledMap);
-
-  const positions = roomLayers[5].objects as TiledObject[];
-  for (const position of positions) {
-    if (position.name === "player" && !prevSceneData.exitName) {
-      player.setPosition(position.x, position.y);
-      player.setControls();
-      player.enablePassthrough();
-      player.setEvents();
-      player.respawnIfOutOfBounds(1000, "room001");
-      continue;
-    }
-
-    if (position.name === "entrance-1" && prevSceneData.exitName === "exit-1") {
-      player.setPosition(position.x, position.y);
-      player.setControls();
-      player.enablePassthrough();
-      player.setEvents();
-      player.respawnIfOutOfBounds(1000, "room001");
-      engine.camPos(player.pos);
-      continue;
-    }
-
-    if (position.name === "entrance-2" && prevSceneData.exitName === "exit-2") {
-      player.setPosition(position.x, position.y);
-      player.setControls();
-      player.enablePassthrough();
-      player.setEvents();
-      player.respawnIfOutOfBounds(1000, "room001");
-      engine.camPos(player.pos);
-      continue;
-    }
-
-    if (position.type === "drone") {
-      const drone = map.add<Enemy>(
-        createDrone(engine, engine.vec2(position.x, position.y))
-      );
-      drone.setBehavior();
-      drone.setEvents();
-      continue;
-    }
-
-    if (position.name === "boss" && !state.current().isBossDefeated) {
-      const boss = map.add<Boss>(createBoss(engine, engine.vec2(position.x, position.y)));
-      boss.setBehavior();
-      boss.setEvents();
-    }
-
-    if (position.type === "cartridge") {
-      map.add(createCartridge(engine, engine.vec2(position.x, position.y)));
-    }
+    this.initialize();
   }
 
-  const cameras = roomLayers[6].objects as TiledObject[];
+  public initialize(): void {
+    MapManager.setup({
+      engine: this.engine,
+      tiledMap: this.tiledMap,
+      config: {
+        backgroundColor: CONFIG.BACKGROUND_COLOR,
+        cameraScale: CONFIG.CAMERA_SCALE,
+        initialCameraPos: CONFIG.INITIAL_CAMERA_POS,
+        gravity: CONFIG.GRAVITY,
+        mapSpriteName: CONFIG.MAP_SPRITE_NAME,
+        collidersLayerIndex: CONFIG.COLLIDERS_LAYER_INDEX,
+      },
+      setMap: (map: Map) => (this.map = map),
+    });
 
-  setCameraZones(engine, map, cameras);
+    this.player = PlayerManager.setup({
+      engine: this.engine,
+      map: this.map,
+      tiledMap: this.tiledMap,
+      previousSceneData: this.previousSceneData,
+      playerStartNames: CONFIG.PLAYER_START_NAMES,
+      entranceExitMapping: CONFIG.ENTRANCE_EXIT_MAPPING,
+    });
 
-  const exits = roomLayers[7].objects as TiledObject[];
-  setExitZones(engine, map, exits, "room002");
+    EnemyManager.spawnAll({
+      engine: this.engine,
+      map: this.map,
+      tiledMap: this.tiledMap,
+      isBossDefeated: false,
+    });
 
-  healthBar.setEvents();
-  healthBar.trigger("update");
-  engine.add(healthBar);
+    CartridgeManager.spawnAll({
+      engine: this.engine,
+      map: this.map,
+      tiledMap: this.tiledMap,
+    });
+
+    CameraManager.setup({
+      engine: this.engine,
+      map: this.map,
+      player: this.player,
+      tiledMap: this.tiledMap,
+      initialCameraPos: CONFIG.INITIAL_CAMERA_POS,
+      cameraZonesLayerIndex: CONFIG.CAMERA_ZONES_LAYER_INDEX,
+      previousSceneExitName: this.previousSceneData.exitName,
+    });
+
+    UIManager.setupHealthBar({
+      engine: this.engine,
+    });
+
+    ExitManager.setup({
+      engine: this.engine,
+      map: this.map,
+      tiledMap: this.tiledMap,
+      exitsLayerIndex: CONFIG.EXITS_LAYER_INDEX,
+      exitRoomName: CONFIG.EXIT_ROOM_NAME,
+    });
+  }
 }

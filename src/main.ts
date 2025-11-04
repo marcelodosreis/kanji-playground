@@ -1,11 +1,13 @@
 import { engine } from "./core/engine";
-import { room001 } from "./scenes/room-001";
-import { room002 } from "./scenes/room-002";
-import { setBackgroundColor } from "./utils/set-background-color";
-import { createNotificationBox } from "./utils/create-notification-box";
+
 import { menu } from "./scenes/menu";
 import { menuControls } from "./scenes/menu-controls";
+import { Room001 } from "./scenes/room-001";
+import { Room002 } from "./scenes/room-002";
+
+import { createNotificationBox } from "./utils/create-notification-box";
 import { loadTiledMap } from "./utils/load-tiles-map";
+import { setBackgroundColor } from "./utils/set-background-color";
 
 async function registerScenes() {
   const room001TiledMap = await loadTiledMap(
@@ -24,11 +26,11 @@ async function registerScenes() {
   });
 
   engine.scene("room001", (previousSceneData) => {
-    room001(engine, room001TiledMap, previousSceneData);
+    new Room001({ engine, tiledMap: room001TiledMap, previousSceneData });
   });
 
   engine.scene("room002", (previousSceneData) => {
-    room002(engine, room002TiledMap, previousSceneData);
+    new Room002({ engine, tiledMap: room002TiledMap, previousSceneData });
   });
 
   engine.scene("final-exit", () => {
