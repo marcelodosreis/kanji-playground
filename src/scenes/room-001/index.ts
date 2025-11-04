@@ -1,4 +1,6 @@
+import { createDrone } from "../../entities/drone";
 import { createPlayer } from "../../entities/player";
+import type { Enemy } from "../../types/enemy";
 import type { Engine } from "../../types/engine";
 import type { Map } from "../../types/map";
 import { type Player } from "../../types/player";
@@ -49,6 +51,15 @@ export function room001(engine: Engine, tiledMap: TiledMap) {
       player.setControls();
       player.setEvents();
       player.enablePassthrough();
+      continue;
+    }
+
+    if (position.type === "drone") {
+      const drone = map.add<Enemy>(
+        createDrone(engine, engine.vec2(position.x, position.y))
+      );
+      drone.setBehavior();
+      drone.setEvents();
     }
   }
 }

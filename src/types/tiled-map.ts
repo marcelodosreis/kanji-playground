@@ -1,3 +1,5 @@
+import type { Position } from "./position";
+
 export interface TiledMap {
   compressionlevel: number;
   height: number;
@@ -41,12 +43,7 @@ export interface TiledObject {
   visible: boolean;
   x: number;
   y: number;
-  polygon?: [
-    {
-      x: number;
-      y: number;
-    }
-  ];
+  polygon?: [Position];
   properties: [{ value: number }];
 }
 

@@ -10,6 +10,8 @@ import type {
   OpacityComp,
   HealthComp,
   KEventController,
+  OffScreenComp,
+  StateComp,
 } from "kaplay";
 
 export type Engine = KAPLAYCtx;
@@ -25,6 +27,17 @@ export type PlayerEngineGameObj = GameObj<
   | HealthComp
 >;
 
-export type MapEngineGameObj = GameObj<PosComp | SpriteComp>
+export type EnemyEngineGameObj = GameObj<
+  | PosComp
+  | SpriteComp
+  | AreaComp
+  | AnchorComp
+  | BodyComp
+  | OffScreenComp
+  | StateComp
+  | HealthComp
+>;
+
+export type MapEngineGameObj = GameObj<PosComp | SpriteComp>;
 
 export type EngineEventCtrl = KEventController;
