@@ -2,7 +2,7 @@ import type { Engine, EngineGameObj } from "../../types/engine";
 import type { Map } from "../../types/map";
 import type { Player } from "../../types/player";
 import type { TiledMap, TiledObject } from "../../types/tiled-map";
-import { createPlayer } from "../../entities/player";
+import { PlayerEntity } from "../../entities/player";
 
 type SetupParams = {
   engine: Engine;
@@ -34,7 +34,7 @@ export class PlayerManager {
   }
 
   private static createPlayer(params: SetupParams): Player {
-    return params.map.add<Player>(createPlayer(params.engine));
+    return params.map.add<Player>(PlayerEntity(params.engine));
   }
 
   private static findStartPosition(

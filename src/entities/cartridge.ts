@@ -2,7 +2,7 @@ import { state } from "../core/state.js";
 import type { Engine } from "../types/engine.js";
 import type { Position } from "../types/position.js";
 
-export function createCartridge(engine: Engine, pos: Position) {
+export function CartridgeEntity(engine: Engine, pos: Position) {
   const cartridge = engine.make([
     engine.sprite("cartridge", { anim: "default" }),
     engine.area(),

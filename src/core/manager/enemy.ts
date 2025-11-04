@@ -1,5 +1,5 @@
-import { createDrone } from "../../entities/drone";
-import { createBoss } from "../../entities/boss";
+import { DroneEntity } from "../../entities/drone";
+import { BossEntity } from "../../entities/boss";
 import type { Engine } from "../../types/engine";
 import type { Map } from "../../types/map";
 import type { TiledMap, TiledObject } from "../../types/tiled-map";
@@ -38,7 +38,7 @@ export class EnemyManager {
 
   private static spawnDrone(engine: Engine, map: Map, pos: TiledObject): void {
     const drone = map.add<Enemy>(
-      createDrone(engine, engine.vec2(pos.x, pos.y))
+      DroneEntity(engine, engine.vec2(pos.x, pos.y))
     );
     drone.setBehavior();
     drone.setEvents();
@@ -55,7 +55,7 @@ export class EnemyManager {
     if (!bossPosition) return;
 
     const boss = map.add<Boss>(
-      createBoss(engine, engine.vec2(bossPosition.x, bossPosition.y))
+      BossEntity(engine, engine.vec2(bossPosition.x, bossPosition.y))
     );
     boss.setBehavior();
     boss.setEvents();

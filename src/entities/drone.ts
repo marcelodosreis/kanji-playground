@@ -3,7 +3,7 @@ import type { Engine } from "../types/engine";
 import type { Player } from "../types/player";
 import type { Position } from "../types/position";
 
-export function createDrone(engine: Engine, initialPos: Position): Enemy {
+export function DroneEntity(engine: Engine, initialPos: Position): Enemy {
   return engine.make([
     "drone",
     engine.pos(initialPos),

@@ -6,7 +6,7 @@ import type { Player } from "../types/player";
 import { createBlink } from "../utils/create-blink";
 import { createNotificationBox } from "../utils/create-notification-box";
 
-export function createBoss(engine: Engine, initialPos: Position): Boss {
+export function BossEntity(engine: Engine, initialPos: Position): Boss {
   return engine.make([
     engine.pos(initialPos),
     engine.sprite("burner", { anim: "idle" }),

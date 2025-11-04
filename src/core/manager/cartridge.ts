@@ -1,4 +1,4 @@
-import { createCartridge } from "../../entities/cartridge";
+import { CartridgeEntity } from "../../entities/cartridge";
 import type { Engine } from "../../types/engine";
 import type { Map } from "../../types/map";
 import type { TiledMap, TiledObject } from "../../types/tiled-map";
@@ -18,7 +18,7 @@ export class CartridgeManager {
     positions
       .filter((pos) => pos.type === "cartridge")
       .forEach((pos) => {
-        map.add(createCartridge(engine, engine.vec2(pos.x, pos.y)));
+        map.add(CartridgeEntity(engine, engine.vec2(pos.x, pos.y)));
       });
   }
 }
