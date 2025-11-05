@@ -20,6 +20,7 @@ function initStateManager(): StateManager {
     isDoubleJumpUnlocked: false,
     isPlayerInBossFight: false,
     isBossDefeated: false,
+    isPaused: false,
   };
 
   const listeners = new Map<StateProperty, Set<Listener<any>>>();

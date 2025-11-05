@@ -4,4 +4,5 @@ export type State = {
   isDoubleJumpUnlocked: boolean;
   isPlayerInBossFight: boolean;
   isBossDefeated: boolean;
+  isPaused: boolean;
 }

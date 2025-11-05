@@ -9,26 +9,21 @@ type Params = {
 export function PlayerAttackSystem({ engine, player }: Params) {
   player.controlHandlers = player.controlHandlers || [];
 
-  function handleKeyPress(key: string) {
+  const handleKeyPress = async (key: string) => {
     if (key !== "z") return;
     if (player.curAnim() === "attack") return;
 
     player.isAttacking = true;
     createSwordHitbox();
     player.play("attack");
-
     player.onAnimEnd(onAttackAnimationEnd);
-  }
+  };
 
-  function createSwordHitbox(followPlayer: boolean = true) {
+  function createSwordHitbox(followPlayer = true) {
     const hitboxWidth = 8;
     const hitboxHeight = 10;
-
     const offsetX = player.flipX ? -20 : 5;
     const offsetY = 10;
-
-    const hitboxX = player.pos.x + offsetX;
-    const hitboxY = player.pos.y + offsetY;
 
     const hitboxShape = new engine.Rect(
       engine.vec2(0),
@@ -43,6 +38,8 @@ export function PlayerAttackSystem({ engine, player }: Params) {
         "sword-hitbox",
       ]);
     } else {
+      const hitboxX = player.pos.x + offsetX;
+      const hitboxY = player.pos.y + offsetY;
       engine.add([
         engine.pos(hitboxX, hitboxY),
         engine.area({ shape: hitboxShape }),

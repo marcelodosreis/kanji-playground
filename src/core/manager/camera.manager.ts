@@ -7,7 +7,6 @@ import { state } from "../state";
 type CameraSetupParams = {
   engine: Engine;
   map: Map;
-  player: Player;
   tiledMap: TiledMap;
   cameraZonesLayerIndex: number;
   initialCameraPos: { x: number; y: number };
@@ -23,13 +22,13 @@ export class CameraManager {
 
   private static setInitialCameraPosition({
     engine,
-    player,
     initialCameraPos,
     previousSceneExitName,
   }: CameraSetupParams): void {
     if (!previousSceneExitName) {
       this.setCameraPosition(engine, initialCameraPos.x, initialCameraPos.y);
     } else {
+      const player = engine.get("player", { recursive: true })[0] as Player;
       this.setCameraPosition(engine, player.pos.x, player.pos.y);
     }
   }
@@ -41,10 +40,10 @@ export class CameraManager {
   private static setupCameraFollow({
     engine,
     map,
-    player,
     tiledMap,
   }: CameraSetupParams): void {
     engine.onUpdate(() => {
+      const player = engine.get("player", { recursive: true })[0] as Player;
       if (state.current().isPlayerInBossFight) return;
 
       const targetX = this.calculateCameraX(map, player, tiledMap);

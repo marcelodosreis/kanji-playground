@@ -10,14 +10,14 @@ type Params = {
 export function DroneBehaviorSystem({ engine, drone }: Params) {
   const player = engine.get("player", { recursive: true })[0] as Player;
 
-  async function patrolRightEnter() {
+  const patrolRightEnter = async () => {
     await engine.wait(3);
     if (drone.state === "patrol-right" && drone.hp() > 0) {
       drone.enterState("patrol-left");
     }
-  }
+  };
 
-  function patrolRightUpdate() {
+  const patrolRightUpdate = () => {
     if (drone.hp() <= 0) return;
 
     if (isPlayerInRange()) {
@@ -26,16 +26,16 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
     }
     drone.flipX = false;
     drone.move(drone.speed, 0);
-  }
+  };
 
-  async function patrolLeftEnter() {
+  const patrolLeftEnter = async () => {
     await engine.wait(3);
     if (drone.state === "patrol-left" && drone.hp() > 0) {
       drone.enterState("patrol-right");
     }
-  }
+  };
 
-  function patrolLeftUpdate() {
+  const patrolLeftUpdate = () => {
     if (drone.hp() <= 0) return;
 
     if (isPlayerInRange()) {
@@ -44,9 +44,9 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
     }
     drone.flipX = true;
     drone.move(-drone.speed, 0);
-  }
+  };
 
-  async function alertEnter() {
+  const alertEnter = async () => {
     await engine.wait(1);
     if (drone.hp() <= 0) return;
 
@@ -55,9 +55,9 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
       return;
     }
     drone.enterState("patrol-right");
-  }
+  };
 
-  function attackUpdate() {
+  const attackUpdate = () => {
     if (drone.hp() <= 0) return;
 
     if (!isPlayerInRange()) {
@@ -69,7 +69,7 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
       engine.vec2(player.pos.x, player.pos.y + 12),
       drone.pursuitSpeed
     );
-  }
+  };
 
   function isPlayerInRange(): boolean {
     return drone.pos.dist(player.pos) < drone.range;

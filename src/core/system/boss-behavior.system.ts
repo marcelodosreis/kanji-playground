@@ -11,17 +11,17 @@ type Params = {
 export function BossBehaviorSystem({ engine, boss }: Params) {
   const player = engine.get("player", { recursive: true })[0] as Player;
 
-  function idleUpdate() {
+  const idleUpdate = () => {
     if (state.current().isPlayerInBossFight) {
       boss.enterState("follow");
     }
-  }
+  };
 
-  function followEnter() {
+  const followEnter = () => {
     boss.play("run");
-  }
+  };
 
-  function followUpdate() {
+  const followUpdate = () => {
     boss.flipX = player.pos.x <= boss.pos.x;
     boss.moveTo(
       engine.vec2(player.pos.x, player.pos.y + 12),
@@ -31,13 +31,13 @@ export function BossBehaviorSystem({ engine, boss }: Params) {
     if (boss.pos.dist(player.pos) < boss.fireRange) {
       boss.enterState("open-fire");
     }
-  }
+  };
 
-  function openFireEnter() {
+  const openFireEnter = () => {
     boss.play("open-fire");
-  }
+  };
 
-  function fireEnter() {
+  const fireEnter = () => {
     const fireHitbox = boss.add([
       engine.area({ shape: new engine.Rect(engine.vec2(0), 70, 10) }),
       engine.pos(boss.flipX ? -70 : 0, 5),
@@ -54,24 +54,24 @@ export function BossBehaviorSystem({ engine, boss }: Params) {
     engine.wait(boss.fireDuration, () => {
       boss.enterState("shut-fire");
     });
-  }
+  };
 
-  function fireEnd() {
+  const fireEnd = () => {
     const fireHitbox = engine.get("fire-hitbox", { recursive: true })[0];
     if (fireHitbox) {
       engine.destroy(fireHitbox);
     }
-  }
+  };
 
-  function fireUpdate() {
+  const fireUpdate = () => {
     if (boss.curAnim() !== "fire") {
       boss.play("fire");
     }
-  }
+  };
 
-  function shutFireEnter() {
+  const shutFireEnter = () => {
     boss.play("shut-fire");
-  }
+  };
 
   boss.onStateUpdate("idle", idleUpdate);
   boss.onStateEnter("follow", followEnter);

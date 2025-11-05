@@ -9,7 +9,6 @@ import { UIManager } from "../../../core/manager/ui.manager";
 import { state } from "../../../core/state";
 import type { Engine, EngineGameObj } from "../../../types/engine.interface";
 import type { Map } from "../../../types/map.interface";
-import type { Player } from "../../../types/player.interface";
 import type { TiledMap } from "../../../types/tiled-map.interface";
 import { setBackgroundColor } from "../../../utils/set-background-color";
 
@@ -41,7 +40,6 @@ export class Room001Scene {
   private tiledMap: TiledMap;
   private previousSceneData: EngineGameObj;
   private map!: Map;
-  private player!: Player;
   private config = CONFIG;
 
   constructor(params: Room001Params) {
@@ -66,7 +64,7 @@ export class Room001Scene {
       setMap: (map: Map) => (this.map = map),
     });
 
-    this.player = PlayerManager.setup({
+    PlayerManager.setup({
       engine: this.engine,
       map: this.map,
       tiledMap: this.tiledMap,
@@ -101,15 +99,10 @@ export class Room001Scene {
     CameraManager.setup({
       engine: this.engine,
       map: this.map,
-      player: this.player,
       tiledMap: this.tiledMap,
       initialCameraPos: this.config.INITIAL_CAMERA_POS,
       cameraZonesLayerIndex: this.config.CAMERA_ZONES_LAYER_INDEX,
       previousSceneExitName: this.previousSceneData.exitName,
-    });
-
-    UIManager.setup({
-      engine: this.engine,
     });
 
     ExitManager.setup({
@@ -118,6 +111,10 @@ export class Room001Scene {
       tiledMap: this.tiledMap,
       exitsLayerIndex: this.config.EXITS_LAYER_INDEX,
       exitRoomName: this.config.EXIT_ROOM_NAME,
+    });
+
+    UIManager.setup({
+      engine: this.engine,
     });
   }
 }

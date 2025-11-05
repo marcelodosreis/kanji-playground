@@ -28,7 +28,11 @@ type SetupParams = {
 };
 
 export class MenuManager {
-  static setup({ engine, items, config }: SetupParams): void {
+  private static buttons: FocusableButton[] = [];
+  private static currentIndex = 0;
+  private static keyHandlerCancel?: () => void;
+
+  public static setup({ engine, items, config }: SetupParams): void {
     this.setBackground(engine, config.bgColor);
     this.setupCamera(engine, config.centerX);
     this.addTitle(engine, config.title, config.titleSize, config.centerX);
@@ -38,8 +42,8 @@ export class MenuManager {
       config.subtitleSize,
       config.centerX
     );
-    const buttons = this.createButtons(engine, items, config);
-    this.setupInput(engine, buttons);
+    this.buttons = this.createButtons(engine, items, config);
+    this.setupInput(engine);
   }
 
   private static setBackground(engine: Engine, bgColor: string): void {
@@ -95,51 +99,68 @@ export class MenuManager {
       const y = config.startY + i * (config.buttonHeight + config.buttonGap);
       btn.pos = engine.vec2(config.centerX, y);
       btn.anchor = "center";
+      this.setupButtonHoverEvents(btn, i);
       return btn;
     });
   }
 
-  private static setupInput(engine: Engine, buttons: FocusableButton[]): void {
-    let index = 0;
-
-    function updateFocus() {
-      buttons.forEach((btn, i) => {
-        if (i === index) btn.focus();
-        else btn.blur();
-      });
-    }
-
-    buttons.forEach((btn, i) => {
-      btn.on("hoverenter", () => {
-        index = i;
-        updateFocus();
-      });
-      btn.on("hoverleave", () => {
-        index = i;
-        updateFocus();
-      });
+  private static setupButtonHoverEvents(
+    button: FocusableButton,
+    index: number
+  ): void {
+    button.on("hoverenter", () => {
+      this.currentIndex = index;
+      this.updateFocus();
     });
-
-    updateFocus();
-
-    const keyHandler = engine.onKeyPress((key) => {
-      if (key === "up") {
-        index = (index - 1 + buttons.length) % buttons.length;
-        updateFocus();
-        return;
-      }
-      if (key === "down") {
-        index = (index + 1) % buttons.length;
-        updateFocus();
-        return;
-      }
-      if (key === "enter") {
-        buttons[index].select();
-      }
+    button.on("hoverleave", () => {
+      this.updateFocus();
     });
+  }
+
+  private static setupInput(engine: Engine): void {
+    this.updateFocus();
+
+    this.keyHandlerCancel = engine.onKeyPress((key) => {
+      switch (key) {
+        case "up":
+          this.moveFocusUp();
+          break;
+        case "down":
+          this.moveFocusDown();
+          break;
+        case "enter":
+          this.selectCurrentButton();
+          break;
+      }
+    }).cancel;
 
     engine.onSceneLeave(() => {
-      keyHandler.cancel();
+      if (this.keyHandlerCancel) {
+        this.keyHandlerCancel();
+        this.keyHandlerCancel = undefined;
+      }
     });
+  }
+
+  private static updateFocus(): void {
+    this.buttons.forEach((btn, i) => {
+      if (i === this.currentIndex) btn.focus();
+      else btn.blur();
+    });
+  }
+
+  private static moveFocusUp(): void {
+    this.currentIndex =
+      (this.currentIndex - 1 + this.buttons.length) % this.buttons.length;
+    this.updateFocus();
+  }
+
+  private static moveFocusDown(): void {
+    this.currentIndex = (this.currentIndex + 1) % this.buttons.length;
+    this.updateFocus();
+  }
+
+  private static selectCurrentButton(): void {
+    this.buttons[this.currentIndex].select();
   }
 }

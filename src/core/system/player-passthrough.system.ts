@@ -1,3 +1,4 @@
+import type { Collision } from "kaplay";
 import type { Player } from "../../types/player.interface";
 
 type Params = {
@@ -5,7 +6,7 @@ type Params = {
 };
 
 export function PlayerPassthroughSystem({ player }: Params) {
-  function handleBeforePhysicsResolve(collision: any) {
+  function handleBeforePhysicsResolve(collision: Collision) {
     if (isPassthroughCollision(collision) && player.isJumping()) {
       collision.preventResolution();
     }
