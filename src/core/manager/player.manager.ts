@@ -3,6 +3,10 @@ import type { Map } from "../../types/map.interface";
 import type { Player } from "../../types/player.interface";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { PlayerEntity } from "../entities/player.entity";
+import { PlayerDoubleJumpSystem } from "../system/player-double-jump.system";
+import { PlayerEventSystem } from "../system/player-event.system";
+import { PlayerInputSystem } from "../system/player-input.system";
+import { PlayerRespawnSystem } from "../system/player-respawn.system";
 
 type SetupParams = {
   engine: Engine;
@@ -24,11 +28,33 @@ export class PlayerManager {
     const player = this.createPlayer(params);
     const startPosition = this.findStartPosition(params);
 
+    this.initPlayerSystems(
+      params.engine,
+      player,
+      params.respawnConfig?.roomName || ""
+    );
     if (startPosition) {
       this.setPlayerPosition(player, startPosition, params.positionOffset);
     }
 
     return player;
+  }
+
+  private static initPlayerSystems(
+    engine: Engine,
+    player: Player,
+    destinationName: string
+  ) {
+    PlayerInputSystem({ engine: engine, player: player });
+    PlayerRespawnSystem({
+      engine: engine,
+      player: player,
+      boundValue: 1000,
+      destinationName: destinationName,
+      previousSceneData: { exitName: null },
+    });
+    PlayerEventSystem({ engine: engine, player: player });
+    PlayerDoubleJumpSystem({ player: player });
   }
 
   private static createPlayer(params: SetupParams): Player {

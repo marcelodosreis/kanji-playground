@@ -10,10 +10,6 @@ import { MapManager } from "../../../core/manager/map";
 import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
 import { setBackgroundColor } from "../../../utils/set-background-color";
-import { PlayerInputSystem } from "../../../core/system/player-input.system";
-import { PlayerRespawnSystem } from "../../../core/system/player-respawn.system";
-import { PlayerEventSystem } from "../../../core/system/player.event";
-import { PlayerDoubleJumpSystem } from "../../../core/system/player-double-jump.system";
 
 type Room002Params = {
   engine: Engine;
@@ -84,17 +80,7 @@ export class Room002Scene {
         exitName: "exit-2",
       },
     });
-    PlayerInputSystem({ engine: this.engine, player: this.player });
-    PlayerRespawnSystem({
-      engine: this.engine,
-      player: this.player,
-      boundValue: 1000,
-      destinationName: this.config.MAP_SPRITE_NAME,
-      previousSceneData: { exitName: null },
-    });
-    PlayerEventSystem({ engine: this.engine, player: this.player });
-    PlayerDoubleJumpSystem({ player: this.player });
-
+    
     CartridgeManager.setup({
       engine: this.engine,
       map: this.map,

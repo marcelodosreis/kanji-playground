@@ -5,6 +5,8 @@ import type { Map } from "../../types/map.interface";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import type { Enemy } from "../../types/enemy.interface";
 import type { Boss } from "../../types/boss.interface";
+import { DroneBehaviorSystem } from "../system/drone-behavior.system";
+import { DroneEventSystem } from "../system/drone-event.system";
 
 type SpawnAllParams = {
   engine: Engine;
@@ -20,6 +22,11 @@ export class EnemyManager {
 
     this.spawnDrones(params, positions);
     this.spawnBoss(params, positions);
+  }
+
+  private static initDroneSystems(engine: Engine, drone: Enemy) {
+    DroneBehaviorSystem(engine, drone);
+    DroneEventSystem(engine, drone);
   }
 
   private static getSpawnPositions(tiledMap: TiledMap): TiledObject[] {
@@ -40,8 +47,7 @@ export class EnemyManager {
     const drone = map.add<Enemy>(
       DroneEntity(engine, engine.vec2(pos.x, pos.y))
     );
-    drone.setBehavior();
-    drone.setEvents();
+    this.initDroneSystems(engine, drone);
   }
 
   private static spawnBoss(

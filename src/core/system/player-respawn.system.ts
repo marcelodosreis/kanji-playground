@@ -6,7 +6,7 @@ type Params = {
   player: Player;
   boundValue: number;
   destinationName: string;
-  previousSceneData: { exitName: null };
+  previousSceneData?: { exitName: string | null };
 };
 
 export function PlayerRespawnSystem({

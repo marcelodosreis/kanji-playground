@@ -1,10 +1,9 @@
 import type { EnemyEngineGameObj } from "./engine.interface";
+import type { Position } from "./position.interface";
 
 export interface Enemy extends EnemyEngineGameObj {
   speed: number;
   range: number;
   pursuitSpeed: number;
-  enterState(state: string): void;
-  setEvents(): void;
-  setBehavior(): void;
+  initialPos: Position;
 }
