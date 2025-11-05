@@ -6,6 +6,10 @@ import { MapManager } from "../../../core/manager/map";
 import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
 import { state } from "../../../core/state";
+import { PlayerDoubleJumpSystem } from "../../../core/system/player-double-jump.system";
+import { PlayerInputSystem } from "../../../core/system/player-input.system";
+import { PlayerRespawnSystem } from "../../../core/system/player-respawn.system";
+import { PlayerEventSystem } from "../../../core/system/player.event";
 import type { Engine, EngineGameObj } from "../../../types/engine.interface";
 import type { Map } from "../../../types/map.interface";
 import type { Player } from "../../../types/player.interface";
@@ -77,6 +81,16 @@ export class Room001Scene {
         roomName: this.config.MAP_SPRITE_NAME,
       },
     });
+    PlayerInputSystem({ engine: this.engine, player: this.player });
+    PlayerRespawnSystem({
+      engine: this.engine,
+      player: this.player,
+      boundValue: 1000,
+      destinationName: this.config.MAP_SPRITE_NAME,
+      previousSceneData: { exitName: null },
+    });
+    PlayerEventSystem({ engine: this.engine, player: this.player });
+    PlayerDoubleJumpSystem({ player: this.player });
 
     EnemyManager.setup({
       engine: this.engine,

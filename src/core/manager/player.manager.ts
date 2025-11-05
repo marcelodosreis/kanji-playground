@@ -28,8 +28,6 @@ export class PlayerManager {
       this.setPlayerPosition(player, startPosition, params.positionOffset);
     }
 
-    this.configurePlayer(player, params.respawnConfig);
-
     return player;
   }
 
@@ -77,22 +75,7 @@ export class PlayerManager {
   ): void {
     const offsetX = offset?.x ?? 0;
     const offsetY = offset?.y ?? 0;
-    player.setPosition(position.x + offsetX, position.y + offsetY);
-  }
-
-  private static configurePlayer(
-    player: Player,
-    respawnConfig?: SetupParams["respawnConfig"]
-  ): void {
-    player.setControls();
-    player.enablePassthrough();
-    player.setEvents();
-
-    if (respawnConfig) {
-      const { bounds, roomName, exitName } = respawnConfig;
-      player.respawnIfOutOfBounds(bounds, roomName, {
-        exitName: exitName || null,
-      });
-    }
+    player.pos.x = position.x + offsetX;
+    player.pos.y = position.y + offsetY;
   }
 }

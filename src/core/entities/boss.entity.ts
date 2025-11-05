@@ -55,7 +55,7 @@ export function BossEntity(engine: Engine, initialPos: Position): Boss {
         });
 
         this.onStateEnter("fire", () => {
-        //   const flamethrowerSound = engine.play("flamethrower");
+          //   const flamethrowerSound = engine.play("flamethrower");
           const fireHitbox = this.add([
             engine.area({ shape: new engine.Rect(engine.vec2(0), 70, 10) }),
             engine.pos(this.flipX ? -70 : 0, 5),
@@ -64,8 +64,7 @@ export function BossEntity(engine: Engine, initialPos: Position): Boss {
 
           fireHitbox.onCollide("player", () => {
             player.hurt(1);
-            if (player.hp() === 0)
-              state.set("isPlayerInBossFight", false);
+            if (player.hp() === 0) state.set("isPlayerInBossFight", false);
           });
 
           engine.wait(this.fireDuration, () => {
@@ -88,10 +87,8 @@ export function BossEntity(engine: Engine, initialPos: Position): Boss {
         });
       },
       setEvents(this: Boss) {
-        const player = engine.get("player", { recursive: true })[0] as Player;
-
         this.onCollide("sword-hitbox", () => {
-        //   engine.play("boom");
+          //   engine.play("boom");
           this.hurt(1);
         });
 
@@ -114,12 +111,11 @@ export function BossEntity(engine: Engine, initialPos: Position): Boss {
           this.enterState("explode");
           this.collisionIgnore = ["player"];
           this.unuse("body");
-        //   engine.play("boom");
+          //   engine.play("boom");
           this.play("explode");
           state.set("isBossDefeated", true);
           state.set("isDoubleJumpUnlocked", true);
-          player.enableDoubleJump();
-        //   engine.play("notify");
+          //   engine.play("notify");
 
           const notification = engine.add(
             createNotificationBox(

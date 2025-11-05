@@ -111,10 +111,6 @@ export class BossBarrierManager {
     }
 
     if (currentState.isPlayerInBossFight) return;
-
-    player.disableControls();
-    player.play("idle");
-    player.setControls();
   }
 
   private static handlePlayerCollideEnd(
