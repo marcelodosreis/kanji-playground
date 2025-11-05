@@ -12,12 +12,14 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
 
   async function patrolRightEnter() {
     await engine.wait(3);
-    if (drone.state === "patrol-right") {
+    if (drone.state === "patrol-right" && drone.hp() > 0) {
       drone.enterState("patrol-left");
     }
   }
 
   function patrolRightUpdate() {
+    if (drone.hp() <= 0) return;
+
     if (isPlayerInRange()) {
       drone.enterState("alert");
       return;
@@ -28,12 +30,14 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
 
   async function patrolLeftEnter() {
     await engine.wait(3);
-    if (drone.state === "patrol-left") {
+    if (drone.state === "patrol-left" && drone.hp() > 0) {
       drone.enterState("patrol-right");
     }
   }
 
   function patrolLeftUpdate() {
+    if (drone.hp() <= 0) return;
+
     if (isPlayerInRange()) {
       drone.enterState("alert");
       return;
@@ -44,6 +48,8 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
 
   async function alertEnter() {
     await engine.wait(1);
+    if (drone.hp() <= 0) return;
+
     if (isPlayerInRange()) {
       drone.enterState("attack");
       return;
@@ -52,6 +58,8 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
   }
 
   function attackUpdate() {
+    if (drone.hp() <= 0) return;
+
     if (!isPlayerInRange()) {
       drone.enterState("alert");
       return;

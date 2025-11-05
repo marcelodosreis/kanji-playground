@@ -20,12 +20,23 @@ export function PlayerAttackSystem({ engine, player }: Params) {
     player.onAnimEnd(onAttackAnimationEnd);
   }
 
-  function createSwordHitbox() {
-    player.add([
-      engine.pos(player.flipX ? -25 : 0, 10),
-      engine.area({ shape: new engine.Rect(engine.vec2(0), 25, 10) }),
-      "sword-hitbox",
-    ]);
+  function createSwordHitbox(followPlayer: boolean = true) {
+    if (followPlayer) {
+      player.add([
+        engine.pos(player.flipX ? -25 : 0, 10),
+        engine.area({ shape: new engine.Rect(engine.vec2(0), 15, 10) }),
+        "sword-hitbox",
+      ]);
+    } else {
+      const hitboxX = player.pos.x + (player.flipX ? -25 : 0);
+      const hitboxY = player.pos.y + 10;
+
+      engine.add([
+        engine.pos(hitboxX, hitboxY),
+        engine.area({ shape: new engine.Rect(engine.vec2(0), 15, 10) }),
+        "sword-hitbox",
+      ]);
+    }
   }
 
   function onAttackAnimationEnd(anim: string) {
