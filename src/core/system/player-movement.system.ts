@@ -27,7 +27,7 @@ export function PlayerMovementSystem({ engine, player }: Params) {
   }
 
   function moveLeft() {
-    if (player.isAttacking || !player.isGrounded()) {
+    if (player.isAttacking) {
       player.move(-player.speed, 0);
       return;
     }
@@ -44,7 +44,7 @@ export function PlayerMovementSystem({ engine, player }: Params) {
   }
 
   function moveRight() {
-    if (player.isAttacking || !player.isGrounded()) {
+    if (player.isAttacking) {
       player.move(player.speed, 0);
       return;
     }

@@ -21,19 +21,31 @@ export function PlayerAttackSystem({ engine, player }: Params) {
   }
 
   function createSwordHitbox(followPlayer: boolean = true) {
+    const hitboxWidth = 8;
+    const hitboxHeight = 10;
+
+    const offsetX = player.flipX ? -20 : 5;
+    const offsetY = 10;
+
+    const hitboxX = player.pos.x + offsetX;
+    const hitboxY = player.pos.y + offsetY;
+
+    const hitboxShape = new engine.Rect(
+      engine.vec2(0),
+      hitboxWidth,
+      hitboxHeight
+    );
+
     if (followPlayer) {
       player.add([
-        engine.pos(player.flipX ? -25 : 0, 10),
-        engine.area({ shape: new engine.Rect(engine.vec2(0), 15, 10) }),
+        engine.pos(offsetX, offsetY),
+        engine.area({ shape: hitboxShape }),
         "sword-hitbox",
       ]);
     } else {
-      const hitboxX = player.pos.x + (player.flipX ? -25 : 0);
-      const hitboxY = player.pos.y + 10;
-
       engine.add([
         engine.pos(hitboxX, hitboxY),
-        engine.area({ shape: new engine.Rect(engine.vec2(0), 15, 10) }),
+        engine.area({ shape: hitboxShape }),
         "sword-hitbox",
       ]);
     }
