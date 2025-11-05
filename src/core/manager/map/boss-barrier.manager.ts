@@ -4,17 +4,13 @@ import type { TiledObject } from "../../../types/tiled-map.interface";
 import { state } from "../../state";
 
 export class BossBarrierManager {
-  public static isBossBarrier(collider: TiledObject): boolean {
-    return collider.name === "boss-barrier";
-  }
-
-  public static addBossBarrier(
-    engine: Engine,
-    map: Map,
-    collider: TiledObject
-  ): void {
+  public static setup(engine: Engine, map: Map, collider: TiledObject): void {
     const bossBarrier = this.createBossBarrierEntity(engine, map, collider);
     this.setupCollisionHandlers(engine, bossBarrier);
+  }
+
+  public static isBossBarrier(collider: TiledObject): boolean {
+    return collider.name === "boss-barrier";
   }
 
   private static createBossBarrierEntity(

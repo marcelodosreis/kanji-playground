@@ -32,7 +32,7 @@ export class MapManager {
       params.collidersLayerIndex
     );
 
-    this.processColliders(params.engine, map, colliders);
+    ColliderManager.setup(params.engine, map, colliders);
     this.processBossBarriers(params.engine, map, colliders);
   }
 
@@ -58,14 +58,6 @@ export class MapManager {
     return tiledMap.layers[layerIndex].objects as TiledObject[];
   }
 
-  private static processColliders(
-    engine: Engine,
-    map: Map,
-    colliders: TiledObject[]
-  ): void {
-    ColliderManager.processColliders(engine, map, colliders);
-  }
-
   private static processBossBarriers(
     engine: Engine,
     map: Map,
@@ -74,7 +66,7 @@ export class MapManager {
     colliders
       .filter(BossBarrierManager.isBossBarrier)
       .forEach((collider) =>
-        BossBarrierManager.addBossBarrier(engine, map, collider)
+        BossBarrierManager.setup(engine, map, collider)
       );
   }
 }

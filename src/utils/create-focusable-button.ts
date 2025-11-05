@@ -40,7 +40,7 @@ export function createFocusableButton(
   function applyFocus(f: boolean) {
     bg.color = f ? bgFocused : bgNormal;
     text.color = f ? focusColor : baseColor;
-    text.scale = f ? engine.vec2(1.05, 1.05) : engine.vec2(1, 1);
+    text.scale = f ? engine.vec2(1.2, 1.2) : engine.vec2(1, 1);
   }
 
   function focus() {

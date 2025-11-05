@@ -4,7 +4,7 @@ import type { TiledObject } from "../../../types/tiled-map.interface";
 import type { Vec2 } from "kaplay";
 
 export class ColliderManager {
-  public static processColliders(
+  public static setup(
     engine: Engine,
     map: Map,
     colliders: TiledObject[]
