@@ -41,7 +41,12 @@ export class BossBarrierManager {
   }
 
   private static createActivate(engine: Engine, collider: TiledObject) {
+    const currentState = state.current();
+
     return function activate(this: BossBarrier) {
+      if (currentState.isPlayerInBossFight || currentState.isBossDefeated)
+        return;
+
       engine.tween(
         this.opacity,
         0.3,
@@ -60,7 +65,12 @@ export class BossBarrierManager {
   }
 
   private static createDeactivate(engine: Engine) {
+    const currentState = state.current();
+
     return async function deactivate(this: BossBarrier, playerPosX: number) {
+      if (currentState.isPlayerInBossFight || currentState.isBossDefeated)
+        return;
+
       engine.tween(
         this.opacity,
         0,
