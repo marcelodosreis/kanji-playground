@@ -6,6 +6,7 @@ import { PlayerEntity } from "../entities/player.entity";
 import { PlayerDoubleJumpSystem } from "../system/player-double-jump.system";
 import { PlayerEventSystem } from "../system/player-event.system";
 import { PlayerInputSystem } from "../system/player-input.system";
+import { PlayerPassthroughSystem } from "../system/player-passthrough.system";
 import { PlayerRespawnSystem } from "../system/player-respawn.system";
 
 type SetupParams = {
@@ -16,7 +17,7 @@ type SetupParams = {
   playerStartNames: string[];
   entranceExitMapping: Record<string, string>;
   positionOffset?: { x: number; y: number };
-  respawnConfig?: {
+  respawnConfig: {
     bounds: number;
     roomName: string;
     exitName?: string;
@@ -28,11 +29,7 @@ export class PlayerManager {
     const player = this.createPlayer(params);
     const startPosition = this.findStartPosition(params);
 
-    this.initPlayerSystems(
-      params.engine,
-      player,
-      params.respawnConfig?.roomName || ""
-    );
+    this.initSystems(params.engine, player, params.respawnConfig.roomName);
     if (startPosition) {
       this.setPlayerPosition(player, startPosition, params.positionOffset);
     }
@@ -40,7 +37,7 @@ export class PlayerManager {
     return player;
   }
 
-  private static initPlayerSystems(
+  private static initSystems(
     engine: Engine,
     player: Player,
     destinationName: string
@@ -55,6 +52,7 @@ export class PlayerManager {
     });
     PlayerEventSystem({ engine: engine, player: player });
     PlayerDoubleJumpSystem({ player: player });
+    PlayerPassthroughSystem({ player: player });
   }
 
   private static createPlayer(params: SetupParams): Player {

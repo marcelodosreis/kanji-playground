@@ -27,15 +27,15 @@ export class BossManager {
       )
     );
 
-    this.initBossSystems(params.engine, boss);
+    this.initSystems(params.engine, boss);
+  }
+
+  private static initSystems(engine: Engine, boss: Boss) {
+    BossBehaviorSystem(engine, boss);
+    BossEventSystem(engine, boss);
   }
 
   private static getBossPosition(tiledMap: TiledMap): TiledObject | undefined {
     return tiledMap.layers[5].objects?.find((pos) => pos.name === "boss");
-  }
-
-  private static initBossSystems(engine: Engine, boss: Boss) {
-    BossBehaviorSystem(engine, boss);
-    BossEventSystem(engine, boss);
   }
 }

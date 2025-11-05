@@ -18,6 +18,11 @@ export class EnemyManager {
     this.spawnDrones(params.engine, params.map, positions);
   }
 
+  private static initSystems(engine: Engine, drone: Enemy) {
+    DroneBehaviorSystem(engine, drone);
+    DroneEventSystem(engine, drone);
+  }
+
   private static getSpawnPositions(tiledMap: TiledMap): TiledObject[] {
     return tiledMap.layers[5].objects as TiledObject[];
   }
@@ -36,11 +41,6 @@ export class EnemyManager {
     const drone = map.add<Enemy>(
       DroneEntity(engine, engine.vec2(pos.x, pos.y))
     );
-    this.initDroneSystems(engine, drone);
-  }
-
-  private static initDroneSystems(engine: Engine, drone: Enemy) {
-    DroneBehaviorSystem(engine, drone);
-    DroneEventSystem(engine, drone);
+    this.initSystems(engine, drone);
   }
 }
