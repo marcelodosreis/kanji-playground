@@ -4,42 +4,48 @@ import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { BossBarrierManager } from "./boss-barrier.manager";
 import { ColliderManager } from "./collider.manager";
 
+type InitialCameraPos = {
+  x: number;
+  y: number;
+};
+
 type SetupParams = {
   engine: Engine;
   tiledMap: TiledMap;
   setMap: (map: Map) => void;
   cameraScale: number;
-  initialCameraPos: { x: number; y: number };
+  initialCameraPos: InitialCameraPos;
   gravity: number;
   mapSpriteName: string;
   collidersLayerIndex: number;
 };
 
 export class MapManager {
-  static setup(params: SetupParams): void {
-    this.configureEngine(
-      params.engine,
-      params.cameraScale,
-      params.initialCameraPos,
-      params.gravity
-    );
+  static setup({
+    engine,
+    tiledMap,
+    setMap,
+    cameraScale,
+    initialCameraPos,
+    gravity,
+    mapSpriteName,
+    collidersLayerIndex,
+  }: SetupParams): void {
+    this.configureEngine(engine, cameraScale, initialCameraPos, gravity);
 
-    const map = this.createMap(params.engine, params.mapSpriteName);
-    params.setMap(map);
+    const map = this.createMap(engine, mapSpriteName);
+    setMap(map);
 
-    const colliders = this.extractColliders(
-      params.tiledMap,
-      params.collidersLayerIndex
-    );
+    const colliders = this.extractColliders(tiledMap, collidersLayerIndex);
 
-    ColliderManager.setup(params.engine, map, colliders);
-    this.processBossBarriers(params.engine, map, colliders);
+    ColliderManager.setup(engine, map, colliders);
+    this.processBossBarriers(engine, map, colliders);
   }
 
   private static configureEngine(
     engine: Engine,
     cameraScale: number,
-    initialCameraPos: { x: number; y: number },
+    initialCameraPos: InitialCameraPos,
     gravity: number
   ): void {
     engine.camScale(cameraScale);
@@ -65,8 +71,6 @@ export class MapManager {
   ): void {
     colliders
       .filter(BossBarrierManager.isBossBarrier)
-      .forEach((collider) =>
-        BossBarrierManager.setup(engine, map, collider)
-      );
+      .forEach((collider) => BossBarrierManager.setup(engine, map, collider));
   }
 }

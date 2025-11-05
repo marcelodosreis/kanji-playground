@@ -4,6 +4,7 @@ import type { Position } from "../../types/position.interface";
 
 export function BossEntity(engine: Engine, initialPos: Position): Boss {
   return engine.make([
+    "boss",
     engine.pos(initialPos),
     engine.sprite("burner", { anim: "idle" }),
     engine.area({ shape: new engine.Rect(engine.vec2(0, 10), 12, 12) }),

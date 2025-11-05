@@ -6,19 +6,20 @@ type SetupHealthBarParams = {
 };
 
 export class UIManager {
-  public static setup(params: SetupHealthBarParams): void {
-    const healthBar = this.createHealthBar(params.engine);
-    this.initializeHealthBar(params.engine, healthBar);
+  public static setup({ engine }: SetupHealthBarParams): void {
+    const healthBar = this.createHealthBar(engine);
+    this.initializeHealthBar(engine, healthBar);
   }
 
   private static createHealthBar(engine: Engine): EngineGameObj {
-    return engine.make([
+    const healthBar = engine.make([
       engine.sprite("healthBar", { frame: 0 }),
       engine.fixed(),
       engine.pos(10, -10),
       engine.scale(3),
       this.createHealthBarBehavior(engine),
     ]);
+    return healthBar;
   }
 
   private static createHealthBarBehavior(engine: Engine) {

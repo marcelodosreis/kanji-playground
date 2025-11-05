@@ -11,9 +11,7 @@ type SpawnParams = {
 };
 
 export class CartridgeManager {
-  public static setup(params: SpawnParams): void {
-    const { engine, map, tiledMap } = params;
-
+  public static setup({ engine, map, tiledMap }: SpawnParams): void {
     const positions = tiledMap.layers[5].objects as TiledObject[];
 
     positions
@@ -27,7 +25,7 @@ export class CartridgeManager {
       });
   }
 
-  private static initSystems(engine: Engine, cartridge: EngineGameObj) {
+  private static initSystems(engine: Engine, cartridge: EngineGameObj): void {
     CartridgeCollisionSystem({ engine, cartridge });
   }
 }

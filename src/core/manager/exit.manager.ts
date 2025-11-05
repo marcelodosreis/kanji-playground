@@ -11,9 +11,17 @@ type SetupParams = {
 };
 
 export class ExitManager {
-  public static setup(params: SetupParams): void {
-    const exits = this.getExits(params.tiledMap, params.exitsLayerIndex);
-    exits.forEach((exit) => this.createExitZone(params, exit));
+  public static setup({
+    engine,
+    map,
+    tiledMap,
+    exitsLayerIndex,
+    exitRoomName,
+  }: SetupParams): void {
+    const exits = this.getExits(tiledMap, exitsLayerIndex);
+    exits.forEach((exit) =>
+      this.createExitZone({ engine, map, exitRoomName }, exit)
+    );
   }
 
   private static getExits(
@@ -23,7 +31,10 @@ export class ExitManager {
     return tiledMap.layers[layerIndex].objects as TiledObject[];
   }
 
-  private static createExitZone(params: SetupParams, exit: TiledObject): void {
+  private static createExitZone(
+    params: { engine: Engine; map: Map; exitRoomName: string },
+    exit: TiledObject
+  ): void {
     const { engine, map } = params;
     const exitZone = map.add([
       engine.pos(exit.x, exit.y),
@@ -39,7 +50,7 @@ export class ExitManager {
   }
 
   private static async handlePlayerExit(
-    params: SetupParams,
+    params: { engine: Engine; exitRoomName: string },
     exit: TiledObject
   ): Promise<void> {
     const { engine, exitRoomName } = params;

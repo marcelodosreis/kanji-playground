@@ -13,12 +13,12 @@ type EnemyManagerParams = {
 };
 
 export class EnemyManager {
-  public static setup(params: EnemyManagerParams): void {
-    const positions = this.getSpawnPositions(params.tiledMap);
-    this.spawnDrones(params.engine, params.map, positions);
+  public static setup({ engine, map, tiledMap }: EnemyManagerParams): void {
+    const positions = this.getSpawnPositions(tiledMap);
+    this.spawnDrones(engine, map, positions);
   }
 
-  private static initSystems(engine: Engine, drone: Enemy) {
+  private static initSystems(engine: Engine, drone: Enemy): void {
     DroneBehaviorSystem({ engine, drone });
     DroneEventSystem({ engine, drone });
   }

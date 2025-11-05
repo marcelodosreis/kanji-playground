@@ -10,6 +10,17 @@ import { PlayerMovementSystem } from "../system/player-movement.system";
 import { PlayerPassthroughSystem } from "../system/player-passthrough.system";
 import { PlayerRespawnSystem } from "../system/player-respawn.system";
 
+type RespawnConfig = {
+  bounds: number;
+  roomName: string;
+  exitName?: string;
+};
+
+type PositionOffset = {
+  x: number;
+  y: number;
+};
+
 type SetupParams = {
   engine: Engine;
   map: Map;
@@ -17,27 +28,25 @@ type SetupParams = {
   previousSceneData: EngineGameObj;
   playerStartNames: string[];
   entranceExitMapping: Record<string, string>;
-  positionOffset?: { x: number; y: number };
-  respawnConfig: {
-    bounds: number;
-    roomName: string;
-    exitName?: string;
-  };
+  positionOffset?: PositionOffset;
+  respawnConfig: RespawnConfig;
 };
 
 export class PlayerManager {
   public static setup(params: SetupParams): Player {
+    const { engine, respawnConfig, positionOffset } = params;
     const player = this.createPlayer(params);
     const startPosition = this.findStartPosition(params);
 
     this.initSystems(
-      params.engine,
+      engine,
       player,
-      params.respawnConfig.roomName,
-      params.respawnConfig.exitName
+      respawnConfig.roomName,
+      respawnConfig.exitName
     );
+
     if (startPosition) {
-      this.setPlayerPosition(player, startPosition, params.positionOffset);
+      this.setPlayerPosition(player, startPosition, positionOffset);
     }
 
     return player;
@@ -48,40 +57,48 @@ export class PlayerManager {
     player: Player,
     destinationName: string,
     exitName?: string
-  ) {
-    PlayerMovementSystem({ engine: engine, player: player });
-    PlayerAttackSystem({ engine: engine, player: player });
+  ): void {
+    PlayerMovementSystem({ engine, player });
+    PlayerAttackSystem({ engine, player });
     PlayerRespawnSystem({
-      engine: engine,
-      player: player,
+      engine,
+      player,
       boundValue: 1000,
-      destinationName: destinationName,
-      previousSceneData: { exitName: exitName },
+      destinationName,
+      previousSceneData: { exitName },
     });
-    PlayerEventSystem({ engine: engine, player: player });
-    PlayerDoubleJumpSystem({ player: player });
-    PlayerPassthroughSystem({ player: player });
+    PlayerEventSystem({ engine, player });
+    PlayerDoubleJumpSystem({ player });
+    PlayerPassthroughSystem({ player });
   }
 
-  private static createPlayer(params: SetupParams): Player {
-    return params.map.add<Player>(PlayerEntity(params.engine));
+  private static createPlayer({ map, engine }: SetupParams): Player {
+    return map.add<Player>(PlayerEntity(engine));
   }
 
-  private static findStartPosition(
-    params: SetupParams
-  ): TiledObject | undefined {
-    const positions = params.tiledMap.layers[5].objects as TiledObject[];
+  private static findStartPosition({
+    tiledMap,
+    previousSceneData,
+    playerStartNames,
+    entranceExitMapping,
+  }: SetupParams): TiledObject | undefined {
+    const positions = tiledMap.layers[5].objects as TiledObject[];
     return positions.find((position) =>
-      this.isValidStartPosition(position, params)
+      this.isValidStartPosition(
+        position,
+        previousSceneData,
+        playerStartNames,
+        entranceExitMapping
+      )
     );
   }
 
   private static isValidStartPosition(
     position: TiledObject,
-    params: SetupParams
+    previousSceneData: EngineGameObj,
+    playerStartNames: string[],
+    entranceExitMapping: Record<string, string>
   ): boolean {
-    const { previousSceneData, playerStartNames, entranceExitMapping } = params;
-
     if (
       position.name === "player" &&
       !previousSceneData.exitName &&
@@ -103,7 +120,7 @@ export class PlayerManager {
   private static setPlayerPosition(
     player: Player,
     position: TiledObject,
-    offset?: { x: number; y: number }
+    offset?: PositionOffset
   ): void {
     const offsetX = offset?.x ?? 0;
     const offsetY = offset?.y ?? 0;

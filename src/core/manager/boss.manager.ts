@@ -14,23 +14,25 @@ type BossManagerParams = {
 };
 
 export class BossManager {
-  public static setup(params: BossManagerParams): void {
-    if (params.isBossDefeated) return;
+  public static setup({
+    engine,
+    map,
+    tiledMap,
+    isBossDefeated,
+  }: BossManagerParams): void {
+    if (isBossDefeated) return;
 
-    const bossPosition = this.getBossPosition(params.tiledMap);
+    const bossPosition = this.getBossPosition(tiledMap);
     if (!bossPosition) return;
 
-    const boss = params.map.add<Boss>(
-      BossEntity(
-        params.engine,
-        params.engine.vec2(bossPosition.x, bossPosition.y)
-      )
+    const boss = map.add<Boss>(
+      BossEntity(engine, engine.vec2(bossPosition.x, bossPosition.y))
     );
 
-    this.initSystems(params.engine, boss);
+    this.initSystems(engine, boss);
   }
 
-  private static initSystems(engine: Engine, boss: Boss) {
+  private static initSystems(engine: Engine, boss: Boss): void {
     BossBehaviorSystem({ engine, boss });
     BossEventSystem({ engine, boss });
   }

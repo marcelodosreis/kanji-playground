@@ -21,8 +21,12 @@ export class CameraManager {
     this.setupCameraZones(params);
   }
 
-  private static setInitialCameraPosition(params: CameraSetupParams): void {
-    const { engine, player, initialCameraPos, previousSceneExitName } = params;
+  private static setInitialCameraPosition({
+    engine,
+    player,
+    initialCameraPos,
+    previousSceneExitName,
+  }: CameraSetupParams): void {
     if (!previousSceneExitName) {
       this.setCameraPosition(engine, initialCameraPos.x, initialCameraPos.y);
     } else {
@@ -34,9 +38,12 @@ export class CameraManager {
     engine.camPos(x, y);
   }
 
-  private static setupCameraFollow(params: CameraSetupParams): void {
-    const { engine, map, player, tiledMap } = params;
-
+  private static setupCameraFollow({
+    engine,
+    map,
+    player,
+    tiledMap,
+  }: CameraSetupParams): void {
     engine.onUpdate(() => {
       if (state.current().isPlayerInBossFight) return;
 
@@ -59,8 +66,12 @@ export class CameraManager {
     return playerX;
   }
 
-  private static setupCameraZones(params: CameraSetupParams): void {
-    const { engine, map, tiledMap, cameraZonesLayerIndex } = params;
+  private static setupCameraZones({
+    engine,
+    map,
+    tiledMap,
+    cameraZonesLayerIndex,
+  }: CameraSetupParams): void {
     const cameras = tiledMap.layers[cameraZonesLayerIndex]
       .objects as TiledObject[];
 

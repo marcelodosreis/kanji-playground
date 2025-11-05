@@ -8,45 +8,38 @@ type MenuItem = {
   action: () => void;
 };
 
+type Config = {
+  bgColor: string;
+  title: string;
+  subtitle: string;
+  titleSize: number;
+  subtitleSize: number;
+  buttonWidth: number;
+  buttonHeight: number;
+  buttonGap: number;
+  centerX: number;
+  startY: number;
+};
+
 type SetupParams = {
   engine: Engine;
   items: MenuItem[];
-  config: {
-    bgColor: string;
-    title: string;
-    subtitle: string;
-    titleSize: number;
-    subtitleSize: number;
-    buttonWidth: number;
-    buttonHeight: number;
-    buttonGap: number;
-    centerX: number;
-    startY: number;
-  };
+  config: Config;
 };
 
 export class MenuManager {
-  static setup(params: SetupParams): void {
-    this.setBackground(params.engine, params.config.bgColor);
-    this.setupCamera(params.engine, params.config.centerX);
-    this.addTitle(
-      params.engine,
-      params.config.title,
-      params.config.titleSize,
-      params.config.centerX
-    );
+  static setup({ engine, items, config }: SetupParams): void {
+    this.setBackground(engine, config.bgColor);
+    this.setupCamera(engine, config.centerX);
+    this.addTitle(engine, config.title, config.titleSize, config.centerX);
     this.addSubtitle(
-      params.engine,
-      params.config.subtitle,
-      params.config.subtitleSize,
-      params.config.centerX
+      engine,
+      config.subtitle,
+      config.subtitleSize,
+      config.centerX
     );
-    const buttons = this.createButtons(
-      params.engine,
-      params.items,
-      params.config
-    );
-    this.setupInput(params.engine, buttons);
+    const buttons = this.createButtons(engine, items, config);
+    this.setupInput(engine, buttons);
   }
 
   private static setBackground(engine: Engine, bgColor: string): void {
@@ -90,7 +83,7 @@ export class MenuManager {
   private static createButtons(
     engine: Engine,
     items: MenuItem[],
-    config: SetupParams["config"]
+    config: Config
   ): FocusableButton[] {
     return items.map((item, i) => {
       const btn = createFocusableButton(engine, {
@@ -142,7 +135,6 @@ export class MenuManager {
       }
       if (key === "enter") {
         buttons[index].select();
-        return;
       }
     });
 
