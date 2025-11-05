@@ -9,7 +9,7 @@ import { Room002Scene } from "./scenes/rooms/room-002";
 import { FinalExitScene } from "./scenes/menus/final";
 
 import { loadTiledMap } from "./utils/load-tiles-map";
-import { LEVEL_SCENES } from "./types/scenes.enum";
+import { LEVEL_SCENES, MENU_SCENES } from "./types/scenes.enum";
 
 async function registerScenes() {
   const room001TiledMap = await loadTiledMap(
@@ -19,11 +19,11 @@ async function registerScenes() {
     "./assets/maps/room-002/config.json"
   );
 
-  engine.scene("menu", () => {
+  engine.scene(MENU_SCENES.HOME, () => {
     new HomeMenuScene({ engine });
   });
 
-  engine.scene("menu-controls", () => {
+  engine.scene(MENU_SCENES.CONTROLS, () => {
     new ControlsMenuScene({ engine });
   });
 
@@ -31,11 +31,11 @@ async function registerScenes() {
     new Room001Scene({ engine, tiledMap: room001TiledMap, previousSceneData });
   });
 
-  engine.scene("room002", (previousSceneData) => {
+  engine.scene(LEVEL_SCENES.ROOM_002, (previousSceneData) => {
     new Room002Scene({ engine, tiledMap: room002TiledMap, previousSceneData });
   });
 
-  engine.scene("final-exit", () => {
+  engine.scene(MENU_SCENES.FINAL, () => {
     new FinalExitScene({ engine });
   });
 }
