@@ -9,40 +9,39 @@ type Params = {
 };
 
 export function PlayerEventSystem({ engine, player }: Params) {
-  player.onFall(() => {
+  function onFall() {
     player.play("fall");
-  });
+  }
 
-  player.onFallOff(() => {
+  function onFallOff() {
     player.play("fall");
-  });
+  }
 
-  player.onGround(() => {
+  function onGround() {
     player.play("idle");
-  });
+  }
 
-  player.onHeadbutt(() => {
+  function onHeadbutt() {
     player.play("fall");
-  });
+  }
 
-  player.on("heal", () => {
+  function onHeal() {
     state.set("playerHp", player.hp());
-  });
+  }
 
-  player.on("hurt", () => {
+  function onHurt() {
     createBlink(engine, player);
     if (player.hp() > 0) {
       state.set("playerHp", player.hp());
       return;
     }
-
-    state.set("playerHp", state.current().maxPlayerHp);
     player.play("explode");
-  });
+  }
 
-  player.onAnimEnd((anim) => {
-    if (anim === "explode") {
-      engine.go("room001", { exitName: null });
-    }
-  });
+  player.onFall(onFall);
+  player.onFallOff(onFallOff);
+  player.onGround(onGround);
+  player.onHeadbutt(onHeadbutt);
+  player.on("heal", onHeal);
+  player.on("hurt", onHurt);
 }

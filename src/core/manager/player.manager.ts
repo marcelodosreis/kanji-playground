@@ -3,9 +3,10 @@ import type { Map } from "../../types/map.interface";
 import type { Player } from "../../types/player.interface";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { PlayerEntity } from "../entities/player.entity";
+import { PlayerAttackSystem } from "../system/player-attack.system";
 import { PlayerDoubleJumpSystem } from "../system/player-double-jump.system";
 import { PlayerEventSystem } from "../system/player-event.system";
-import { PlayerInputSystem } from "../system/player-input.system";
+import { PlayerMovementSystem } from "../system/player-movement.system";
 import { PlayerPassthroughSystem } from "../system/player-passthrough.system";
 import { PlayerRespawnSystem } from "../system/player-respawn.system";
 
@@ -48,7 +49,8 @@ export class PlayerManager {
     destinationName: string,
     exitName?: string
   ) {
-    PlayerInputSystem({ engine: engine, player: player });
+    PlayerMovementSystem({ engine: engine, player: player });
+    PlayerAttackSystem({ engine: engine, player: player });
     PlayerRespawnSystem({
       engine: engine,
       player: player,

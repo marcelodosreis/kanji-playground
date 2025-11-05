@@ -4,13 +4,18 @@ import { createBlink } from "../../utils/create-blink";
 import { createNotificationBox } from "../../utils/create-notification-box";
 import { state } from "../state";
 
-export function BossEventSystem(engine: Engine, boss: Boss) {
-  boss.onCollide("sword-hitbox", () => {
-    // engine.play("boom");
-    boss.hurt(1);
-  });
+type Params = {
+  engine: Engine;
+  boss: Boss;
+};
 
-  boss.onAnimEnd((anim) => {
+export function BossEventSystem({ engine, boss }: Params) {
+
+  function onSwordHitboxCollision() {
+    boss.hurt(1);
+  }
+
+  function onAnimationEnd(anim: string) {
     switch (anim) {
       case "open-fire":
         boss.enterState("fire");
@@ -21,19 +26,16 @@ export function BossEventSystem(engine: Engine, boss: Boss) {
       case "explode":
         engine.destroy(boss);
         break;
-      default:
     }
-  });
+  }
 
-  boss.on("explode", () => {
+  function onExplode() {
     boss.enterState("explode");
     boss.collisionIgnore = ["player"];
     boss.unuse("body");
-    // engine.play("boom");
     boss.play("explode");
     state.set("isBossDefeated", true);
     state.set("isDoubleJumpUnlocked", true);
-    // engine.play("notify");
 
     const notification = engine.add(
       createNotificationBox(
@@ -42,11 +44,16 @@ export function BossEventSystem(engine: Engine, boss: Boss) {
       )
     );
     engine.wait(3, () => notification.close());
-  });
+  }
 
-  boss.on("hurt", () => {
+  function onHurt() {
     createBlink(engine, boss);
     if (boss.hp() > 0) return;
     boss.trigger("explode");
-  });
+  }
+
+  boss.onCollide("sword-hitbox", onSwordHitboxCollision);
+  boss.onAnimEnd(onAnimationEnd);
+  boss.on("explode", onExplode);
+  boss.on("hurt", onHurt);
 }

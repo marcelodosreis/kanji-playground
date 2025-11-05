@@ -4,9 +4,13 @@ import { state } from "../state";
 type Params = {
   player: Player;
 };
-export function PlayerDoubleJumpSystem(params: Params) {
-  params.player.numJumps = state.current().isDoubleJumpUnlocked ? 2 : 1;
-  state.subscribe("isDoubleJumpUnlocked", (unlocked: boolean) => {
-    params.player.numJumps = unlocked ? 2 : 1;
-  });
+
+export function PlayerDoubleJumpSystem({ player }: Params) {
+  function updateNumJumps(unlocked: boolean) {
+    player.numJumps = unlocked ? 2 : 1;
+  }
+
+  updateNumJumps(state.current().isDoubleJumpUnlocked);
+
+  state.subscribe("isDoubleJumpUnlocked", updateNumJumps);
 }

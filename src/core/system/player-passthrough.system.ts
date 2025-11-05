@@ -1,9 +1,19 @@
 import type { Player } from "../../types/player.interface";
 
-export function PlayerPassthroughSystem(params: { player: Player }) {
-  params.player.onBeforePhysicsResolve((collision) => {
-    if (collision.target.is("passthrough") && params.player.isJumping()) {
+type Params = {
+  player: Player;
+};
+
+export function PlayerPassthroughSystem({ player }: Params) {
+  function handleBeforePhysicsResolve(collision: any) {
+    if (isPassthroughCollision(collision) && player.isJumping()) {
       collision.preventResolution();
     }
-  });
+  }
+
+  function isPassthroughCollision(collision: any): boolean {
+    return collision.target.is("passthrough");
+  }
+
+  player.onBeforePhysicsResolve(handleBeforePhysicsResolve);
 }

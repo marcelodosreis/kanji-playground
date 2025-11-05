@@ -19,8 +19,8 @@ export class EnemyManager {
   }
 
   private static initSystems(engine: Engine, drone: Enemy) {
-    DroneBehaviorSystem(engine, drone);
-    DroneEventSystem(engine, drone);
+    DroneBehaviorSystem({ engine, drone });
+    DroneEventSystem({ engine, drone });
   }
 
   private static getSpawnPositions(tiledMap: TiledMap): TiledObject[] {

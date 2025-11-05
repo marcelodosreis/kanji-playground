@@ -28,6 +28,6 @@ export class CartridgeManager {
   }
 
   private static initSystems(engine: Engine, cartridge: EngineGameObj) {
-    CartridgeCollisionSystem(engine, cartridge);
+    CartridgeCollisionSystem({ engine, cartridge });
   }
 }

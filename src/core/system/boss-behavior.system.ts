@@ -3,18 +3,25 @@ import type { Boss } from "../../types/boss.interface";
 import type { Player } from "../../types/player.interface";
 import { state } from "../state";
 
-export function BossBehaviorSystem(engine: Engine, boss: Boss) {
+type Params = {
+  engine: Engine;
+  boss: Boss;
+};
+
+export function BossBehaviorSystem({ engine, boss }: Params) {
   const player = engine.get("player", { recursive: true })[0] as Player;
 
-  boss.onStateUpdate("idle", () => {
+  function idleUpdate() {
     if (state.current().isPlayerInBossFight) {
       boss.enterState("follow");
     }
-  });
+  }
 
-  boss.onStateEnter("follow", () => boss.play("run"));
+  function followEnter() {
+    boss.play("run");
+  }
 
-  boss.onStateUpdate("follow", () => {
+  function followUpdate() {
     boss.flipX = player.pos.x <= boss.pos.x;
     boss.moveTo(
       engine.vec2(player.pos.x, player.pos.y + 12),
@@ -24,14 +31,13 @@ export function BossBehaviorSystem(engine: Engine, boss: Boss) {
     if (boss.pos.dist(player.pos) < boss.fireRange) {
       boss.enterState("open-fire");
     }
-  });
+  }
 
-  boss.onStateEnter("open-fire", () => {
+  function openFireEnter() {
     boss.play("open-fire");
-  });
+  }
 
-  boss.onStateEnter("fire", () => {
-    // const flamethrowerSound = engine.play("flamethrower");
+  function fireEnter() {
     const fireHitbox = boss.add([
       engine.area({ shape: new engine.Rect(engine.vec2(0), 70, 10) }),
       engine.pos(boss.flipX ? -70 : 0, 5),
@@ -40,25 +46,39 @@ export function BossBehaviorSystem(engine: Engine, boss: Boss) {
 
     fireHitbox.onCollide("player", () => {
       player.hurt(1);
-      if (player.hp() === 0) state.set("isPlayerInBossFight", false);
+      if (player.hp() === 0) {
+        state.set("isPlayerInBossFight", false);
+      }
     });
 
     engine.wait(boss.fireDuration, () => {
-      // flamethrowerSound.stop();
       boss.enterState("shut-fire");
     });
-  });
+  }
 
-  boss.onStateEnd("fire", () => {
+  function fireEnd() {
     const fireHitbox = engine.get("fire-hitbox", { recursive: true })[0];
-    if (fireHitbox) engine.destroy(fireHitbox);
-  });
+    if (fireHitbox) {
+      engine.destroy(fireHitbox);
+    }
+  }
 
-  boss.onStateUpdate("fire", () => {
-    if (boss.curAnim() !== "fire") boss.play("fire");
-  });
+  function fireUpdate() {
+    if (boss.curAnim() !== "fire") {
+      boss.play("fire");
+    }
+  }
 
-  boss.onStateEnter("shut-fire", () => {
+  function shutFireEnter() {
     boss.play("shut-fire");
-  });
+  }
+
+  boss.onStateUpdate("idle", idleUpdate);
+  boss.onStateEnter("follow", followEnter);
+  boss.onStateUpdate("follow", followUpdate);
+  boss.onStateEnter("open-fire", openFireEnter);
+  boss.onStateEnter("fire", fireEnter);
+  boss.onStateEnd("fire", fireEnd);
+  boss.onStateUpdate("fire", fireUpdate);
+  boss.onStateEnter("shut-fire", shutFireEnter);
 }

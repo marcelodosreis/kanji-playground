@@ -31,8 +31,8 @@ export class BossManager {
   }
 
   private static initSystems(engine: Engine, boss: Boss) {
-    BossBehaviorSystem(engine, boss);
-    BossEventSystem(engine, boss);
+    BossBehaviorSystem({ engine, boss });
+    BossEventSystem({ engine, boss });
   }
 
   private static getBossPosition(tiledMap: TiledMap): TiledObject | undefined {
