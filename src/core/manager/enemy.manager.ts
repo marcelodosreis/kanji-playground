@@ -1,39 +1,21 @@
 import { DroneEntity } from "../entities/drone.entity";
-import { BossEntity } from "../entities/boss.entity";
 import type { Engine } from "../../types/engine.interface";
 import type { Map } from "../../types/map.interface";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import type { Enemy } from "../../types/enemy.interface";
-import type { Boss } from "../../types/boss.interface";
 import { DroneBehaviorSystem } from "../system/drone-behavior.system";
 import { DroneEventSystem } from "../system/drone-event.system";
-import { BossBehaviorSystem } from "../system/boss-behavior.system";
-import { BossEventSystem } from "../system/boss-event.system";
 
-type SpawnAllParams = {
+type EnemyManagerParams = {
   engine: Engine;
   map: Map;
   tiledMap: TiledMap;
-  isBossDefeated: boolean;
 };
 
 export class EnemyManager {
-  public static setup(params: SpawnAllParams): void {
-    const { tiledMap } = params;
-    const positions = this.getSpawnPositions(tiledMap);
-
-    this.spawnDrones(params, positions);
-    this.spawnBoss(params, positions);
-  }
-
-  private static initDroneSystems(engine: Engine, drone: Enemy) {
-    DroneBehaviorSystem(engine, drone);
-    DroneEventSystem(engine, drone);
-  }
-
-  private static initBossSystems(engine: Engine, boss: Boss) {
-    BossBehaviorSystem(engine, boss);
-    BossEventSystem(engine, boss);
+  public static setup(params: EnemyManagerParams): void {
+    const positions = this.getSpawnPositions(params.tiledMap);
+    this.spawnDrones(params.engine, params.map, positions);
   }
 
   private static getSpawnPositions(tiledMap: TiledMap): TiledObject[] {
@@ -41,10 +23,10 @@ export class EnemyManager {
   }
 
   private static spawnDrones(
-    params: SpawnAllParams,
+    engine: Engine,
+    map: Map,
     positions: TiledObject[]
   ): void {
-    const { engine, map } = params;
     positions
       .filter((pos) => pos.type === "drone")
       .forEach((pos) => this.spawnDrone(engine, map, pos));
@@ -57,20 +39,8 @@ export class EnemyManager {
     this.initDroneSystems(engine, drone);
   }
 
-  private static spawnBoss(
-    params: SpawnAllParams,
-    positions: TiledObject[]
-  ): void {
-    const { engine, map, isBossDefeated } = params;
-    if (isBossDefeated) return;
-
-    const bossPosition = positions.find((pos) => pos.name === "boss");
-    if (!bossPosition) return;
-
-    const boss = map.add<Boss>(
-      BossEntity(engine, engine.vec2(bossPosition.x, bossPosition.y))
-    );
-
-    this.initBossSystems(engine, boss);
+  private static initDroneSystems(engine: Engine, drone: Enemy) {
+    DroneBehaviorSystem(engine, drone);
+    DroneEventSystem(engine, drone);
   }
 }

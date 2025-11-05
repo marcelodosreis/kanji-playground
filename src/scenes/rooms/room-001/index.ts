@@ -1,3 +1,4 @@
+import { BossManager } from "../../../core/manager/boss.manager";
 import { CameraManager } from "../../../core/manager/camera.manager";
 import { CartridgeManager } from "../../../core/manager/cartridge.manager";
 import { EnemyManager } from "../../../core/manager/enemy.manager";
@@ -82,9 +83,14 @@ export class Room001Scene {
       engine: this.engine,
       map: this.map,
       tiledMap: this.tiledMap,
-      isBossDefeated: state.current().isBossDefeated,
     });
 
+    BossManager.setup({
+      engine: this.engine,
+      map: this.map,
+      tiledMap: this.tiledMap,
+      isBossDefeated: state.current().isBossDefeated,
+    });
 
     CartridgeManager.setup({
       engine: this.engine,
