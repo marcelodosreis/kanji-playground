@@ -2,7 +2,7 @@ import { CameraManager } from "../../../core/manager/camera.manager";
 import { CartridgeManager } from "../../../core/manager/cartridge.manager";
 import { EnemyManager } from "../../../core/manager/enemy.manager";
 import { ExitManager } from "../../../core/manager/exit.manager";
-import { MapManager } from "../../../core/manager/map";
+import { MapManager } from "../../../core/manager/map.manager";
 import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
 import { state } from "../../../core/state";

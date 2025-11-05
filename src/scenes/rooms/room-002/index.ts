@@ -6,7 +6,7 @@ import type { Map } from "../../../types/map.interface";
 import { CartridgeManager } from "../../../core/manager/cartridge.manager";
 import { CameraManager } from "../../../core/manager/camera.manager";
 import { ExitManager } from "../../../core/manager/exit.manager";
-import { MapManager } from "../../../core/manager/map";
+import { MapManager } from "../../../core/manager/map.manager";
 import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
 import { setBackgroundColor } from "../../../utils/set-background-color";

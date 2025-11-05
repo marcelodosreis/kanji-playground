@@ -1,6 +1,6 @@
-import type { Engine } from "../../../types/engine.interface";
-import type { Map } from "../../../types/map.interface";
-import type { TiledMap, TiledObject } from "../../../types/tiled-map.interface";
+import type { Engine } from "../../types/engine.interface";
+import type { Map } from "../../types/map.interface";
+import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { BossBarrierManager } from "./boss-barrier.manager";
 import { ColliderManager } from "./collider.manager";
 

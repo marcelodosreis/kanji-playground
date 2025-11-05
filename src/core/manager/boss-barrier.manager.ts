@@ -1,7 +1,7 @@
-import type { Engine, EngineGameObj } from "../../../types/engine.interface";
-import type { Map, BossBarrier } from "../../../types/map.interface";
-import type { TiledObject } from "../../../types/tiled-map.interface";
-import { state } from "../../state";
+import type { Engine, EngineGameObj } from "../../types/engine.interface";
+import type { Map, BossBarrier } from "../../types/map.interface";
+import type { TiledObject } from "../../types/tiled-map.interface";
+import { state } from "../state";
 
 export class BossBarrierManager {
   public static setup(engine: Engine, map: Map, collider: TiledObject): void {

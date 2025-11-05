@@ -1,4 +1,6 @@
 import { engine } from "./core/engine";
+import { sprites } from "./core/sprites";
+import { audios } from "./core/audio";
 
 import { HomeMenuScene } from "./scenes/menus/home";
 import { ControlsMenuScene } from "./scenes/menus/controls";
@@ -7,7 +9,7 @@ import { Room002Scene } from "./scenes/rooms/room-002";
 import { FinalExitScene } from "./scenes/menus/final";
 
 import { loadTiledMap } from "./utils/load-tiles-map";
-import { loadAssets } from "./core/loadAssets";
+
 
 async function registerScenes() {
   const room001TiledMap = await loadTiledMap(
@@ -40,7 +42,8 @@ async function registerScenes() {
 
 async function main() {
   await registerScenes();
-  await loadAssets();
+  await sprites();
+  await audios();
   engine.go("menu");
 }
 

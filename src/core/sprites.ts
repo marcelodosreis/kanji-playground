@@ -1,6 +1,6 @@
 import { engine } from "./engine";
 
-export function loadAssets(): void {
+export function sprites(): void {
   engine.loadFont("glyphmesss", "./fonts/glyphmesss.ttf");
 
   engine.loadSprite("player", "./assets/sprites/player.png", {
@@ -71,12 +71,6 @@ export function loadAssets(): void {
     sliceX: 13,
     sliceY: 25,
   });
-
-  // Uncomment and load sounds when needed
-  // engine.loadSound("notify", "./assets/sounds/notify.mp3");
-  // engine.loadSound("boom", "./assets/sounds/boom.wav");
-  // engine.loadSound("health", "./assets/sounds/health.wav");
-  // engine.loadSound("flamethrower", "./assets/sounds/flamethrower.mp3");
 
   engine.loadSprite("room001", "./assets/maps/room-001/image.png");
   engine.loadSprite("room002", "./assets/maps/room-002/image.png");
