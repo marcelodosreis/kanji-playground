@@ -155,7 +155,7 @@ export function PlayerEntity(engine: Engine): Player {
 
         this.onAnimEnd((anim) => {
           if (anim === "explode") {
-            engine.go("room001");
+            engine.go("room001", { exitName: null });
           }
         });
       },

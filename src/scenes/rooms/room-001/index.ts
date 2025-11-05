@@ -5,6 +5,7 @@ import { ExitManager } from "../../../core/manager/exit.manager";
 import { MapManager } from "../../../core/manager/map";
 import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
+import { state } from "../../../core/state";
 import type { Engine, EngineGameObj } from "../../../types/engine.interface";
 import type { Map } from "../../../types/map.interface";
 import type { Player } from "../../../types/player.interface";
@@ -81,7 +82,7 @@ export class Room001Scene {
       engine: this.engine,
       map: this.map,
       tiledMap: this.tiledMap,
-      isBossDefeated: false,
+      isBossDefeated: state.current().isBossDefeated,
     });
 
     CartridgeManager.setup({
