@@ -1,9 +1,10 @@
+import { COLORS } from "../types/colors.enum";
 import type { Engine } from "../types/engine.interface";
 
 export function createNotificationBox(engine: Engine, content: string) {
   const container = engine.make([
     engine.rect(480, 100),
-    engine.color(engine.Color.fromHex("#20214a")),
+    engine.color(engine.Color.fromHex(COLORS.BACKGROUND_PRIMARY)),
     engine.fixed(),
     engine.pos(engine.center()),
     engine.area(),

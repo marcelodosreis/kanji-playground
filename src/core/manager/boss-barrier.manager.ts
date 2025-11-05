@@ -1,5 +1,6 @@
 import type { Engine, EngineGameObj } from "../../types/engine.interface";
 import type { Map, BossBarrier } from "../../types/map.interface";
+import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledObject } from "../../types/tiled-map.interface";
 import { state } from "../state";
 
@@ -10,7 +11,7 @@ export class BossBarrierManager {
   }
 
   public static isBossBarrier(collider: TiledObject): boolean {
-    return collider.name === "boss-barrier";
+    return collider.name === MAP_TAGS.BOSS_BARRIER;
   }
 
   private static createBossBarrierEntity(
@@ -22,9 +23,9 @@ export class BossBarrierManager {
       engine.rect(collider.width, collider.height),
       engine.color(engine.Color.fromHex("#eacfba")),
       engine.pos(collider.x, collider.y),
-      engine.area({ collisionIgnore: ["collider"] }),
+      engine.area({ collisionIgnore: [MAP_TAGS.COLLIDER] }),
       engine.opacity(0),
-      "boss-barrier",
+      MAP_TAGS.BOSS_BARRIER,
       this.createActions(engine, collider),
     ]);
   }
@@ -89,11 +90,11 @@ export class BossBarrierManager {
     engine: Engine,
     bossBarrier: BossBarrier
   ): void {
-    bossBarrier.onCollide("player", (player: EngineGameObj) =>
+    bossBarrier.onCollide(TAGS.PLAYER, (player: EngineGameObj) =>
       this.handlePlayerCollide(bossBarrier, player)
     );
 
-    bossBarrier.onCollideEnd("player", () =>
+    bossBarrier.onCollideEnd(TAGS.PLAYER, () =>
       this.handlePlayerCollideEnd(engine, bossBarrier)
     );
   }

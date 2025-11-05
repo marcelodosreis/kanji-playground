@@ -1,6 +1,8 @@
 import type { Engine } from "../../types/engine.interface";
 import type { Enemy } from "../../types/enemy.interface";
 import type { Player } from "../../types/player.interface";
+import { TAGS } from "../../types/tags.enum";
+import { DRONE_EVENTS } from "../../types/events.enum";
 
 type Params = {
   engine: Engine;
@@ -8,12 +10,12 @@ type Params = {
 };
 
 export function DroneBehaviorSystem({ engine, drone }: Params) {
-  const player = engine.get("player", { recursive: true })[0] as Player;
+  const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
 
   const patrolRightEnter = async () => {
     await engine.wait(3);
-    if (drone.state === "patrol-right" && drone.hp() > 0) {
-      drone.enterState("patrol-left");
+    if (drone.state === DRONE_EVENTS.PATROL_RIGHT && drone.hp() > 0) {
+      drone.enterState(DRONE_EVENTS.PATROL_LEFT);
     }
   };
 
@@ -21,7 +23,7 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
     if (drone.hp() <= 0) return;
 
     if (isPlayerInRange()) {
-      drone.enterState("alert");
+      drone.enterState(DRONE_EVENTS.ALERT);
       return;
     }
     drone.flipX = false;
@@ -30,8 +32,8 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
 
   const patrolLeftEnter = async () => {
     await engine.wait(3);
-    if (drone.state === "patrol-left" && drone.hp() > 0) {
-      drone.enterState("patrol-right");
+    if (drone.state === DRONE_EVENTS.PATROL_LEFT && drone.hp() > 0) {
+      drone.enterState(DRONE_EVENTS.PATROL_RIGHT);
     }
   };
 
@@ -39,7 +41,7 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
     if (drone.hp() <= 0) return;
 
     if (isPlayerInRange()) {
-      drone.enterState("alert");
+      drone.enterState(DRONE_EVENTS.ALERT);
       return;
     }
     drone.flipX = true;
@@ -51,17 +53,17 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
     if (drone.hp() <= 0) return;
 
     if (isPlayerInRange()) {
-      drone.enterState("attack");
+      drone.enterState(DRONE_EVENTS.ATTACK);
       return;
     }
-    drone.enterState("patrol-right");
+    drone.enterState(DRONE_EVENTS.PATROL_RIGHT);
   };
 
   const attackUpdate = () => {
     if (drone.hp() <= 0) return;
 
     if (!isPlayerInRange()) {
-      drone.enterState("alert");
+      drone.enterState(DRONE_EVENTS.ALERT);
       return;
     }
     drone.flipX = player.pos.x <= drone.pos.x;
@@ -75,10 +77,10 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
     return drone.pos.dist(player.pos) < drone.range;
   }
 
-  drone.onStateEnter("patrol-right", patrolRightEnter);
-  drone.onStateUpdate("patrol-right", patrolRightUpdate);
-  drone.onStateEnter("patrol-left", patrolLeftEnter);
-  drone.onStateUpdate("patrol-left", patrolLeftUpdate);
-  drone.onStateEnter("alert", alertEnter);
-  drone.onStateUpdate("attack", attackUpdate);
+  drone.onStateUpdate(DRONE_EVENTS.ATTACK, attackUpdate);
+  drone.onStateEnter(DRONE_EVENTS.ALERT, alertEnter);
+  drone.onStateEnter(DRONE_EVENTS.PATROL_RIGHT, patrolRightEnter);
+  drone.onStateUpdate(DRONE_EVENTS.PATROL_RIGHT, patrolRightUpdate);
+  drone.onStateEnter(DRONE_EVENTS.PATROL_LEFT, patrolLeftEnter);
+  drone.onStateUpdate(DRONE_EVENTS.PATROL_LEFT, patrolLeftUpdate);
 }

@@ -1,6 +1,7 @@
 import type { Engine } from "../../../types/engine.interface";
 import { MenuManager } from "../../../core/manager/menu.manager";
 import { setBackgroundColor } from "../../../utils/set-background-color";
+import { MENU_SCENES } from "../../../types/scenes.enum";
 
 const CONFIG = {
   bgColor: "#20214a",
@@ -34,7 +35,7 @@ export class ControlsMenuScene {
     const items = [
       { label: "Remap Keys", action: () => {} },
       { label: "Reset To Default", action: () => {} },
-      { label: "Back", action: () => this.engine.go("menu") },
+      { label: "Back", action: () => this.engine.go(MENU_SCENES.HOME) },
     ];
 
     MenuManager.setup({

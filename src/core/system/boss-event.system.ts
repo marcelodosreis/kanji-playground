@@ -5,6 +5,7 @@ import { createNotificationBox } from "../../utils/create-notification-box";
 import { state } from "../state";
 import { BURNER_ANIMATIONS } from "../../types/animations.enum";
 import { BOSS_EVENTS } from "../../types/events.enum";
+import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
 
 type Params = {
   engine: Engine;
@@ -32,7 +33,7 @@ export function BossEventSystem({ engine, boss }: Params) {
 
   function onExplode() {
     boss.enterState(BOSS_EVENTS.EXPLODE);
-    boss.collisionIgnore = ["player"];
+    boss.collisionIgnore = [TAGS.PLAYER];
     boss.unuse("body");
     boss.play(BURNER_ANIMATIONS.EXPLODE);
     state.set("isBossDefeated", true);
@@ -53,7 +54,7 @@ export function BossEventSystem({ engine, boss }: Params) {
     boss.trigger(BOSS_EVENTS.EXPLODE);
   }
 
-  boss.onCollide("sword-hitbox", onSwordHitboxCollision);
+  boss.onCollide(HITBOX_TAGS.PLAYER_SWORD, onSwordHitboxCollision);
   boss.onAnimEnd(onAnimationEnd);
   boss.on(BOSS_EVENTS.EXPLODE, onExplode);
   boss.on("hurt", onHurt);

@@ -1,6 +1,7 @@
 import type { Engine } from "../../types/engine.interface";
 import type { Map } from "../../types/map.interface";
 import type { Player } from "../../types/player.interface";
+import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { state } from "../state";
 
@@ -28,7 +29,7 @@ export class CameraManager {
     if (!previousSceneExitName) {
       this.setCameraPosition(engine, initialCameraPos.x, initialCameraPos.y);
     } else {
-      const player = engine.get("player", { recursive: true })[0] as Player;
+      const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
       this.setCameraPosition(engine, player.pos.x, player.pos.y);
     }
   }
@@ -43,7 +44,7 @@ export class CameraManager {
     tiledMap,
   }: CameraSetupParams): void {
     engine.onUpdate(() => {
-      const player = engine.get("player", { recursive: true })[0] as Player;
+      const player = engine.get(TAGS.PLAYER, { recursive: true })[0] as Player;
       if (state.current().isPlayerInBossFight) return;
 
       const targetX = this.calculateCameraX(map, player, tiledMap);
@@ -88,7 +89,7 @@ export class CameraManager {
     return map.add([
       engine.area({
         shape: new engine.Rect(engine.vec2(0), camera.width, camera.height),
-        collisionIgnore: ["collider"],
+        collisionIgnore: [MAP_TAGS.COLLIDER],
       }),
       engine.pos(camera.x, camera.y),
     ]);
@@ -99,7 +100,7 @@ export class CameraManager {
     cameraZone: any,
     camera: TiledObject
   ): void {
-    cameraZone.onCollide("player", () => {
+    cameraZone.onCollide(TAGS.PLAYER, () => {
       this.handleCameraZoneCollision(engine, camera);
     });
   }

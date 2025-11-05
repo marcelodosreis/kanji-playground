@@ -1,6 +1,7 @@
 import type { Engine, EngineGameObj } from "../../types/engine.interface";
 import type { Map } from "../../types/map.interface";
 import type { Player } from "../../types/player.interface";
+import { TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { PlayerEntity } from "../entities/player.entity";
 import { PlayerAttackSystem } from "../system/player-attack.system";
@@ -101,9 +102,9 @@ export class PlayerManager {
 
   private isDefaultStartPosition(position: TiledObject): boolean {
     return (
-      position.name === "player" &&
+      position.name === TAGS.PLAYER &&
       !this.previousSceneData.exitName &&
-      this.playerStartNames.includes("player")
+      this.playerStartNames.includes(TAGS.PLAYER)
     );
   }
 

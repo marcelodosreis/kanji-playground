@@ -1,3 +1,4 @@
+import { COLORS } from "../../../types/colors.enum";
 import type { Engine } from "../../../types/engine.interface";
 import { createNotificationBox } from "../../../utils/create-notification-box";
 import { setBackgroundColor } from "../../../utils/set-background-color";
@@ -15,7 +16,7 @@ export class FinalExitScene {
   }
 
   private initialize(): void {
-    setBackgroundColor(this.engine, "#20214a");
+    setBackgroundColor(this.engine, COLORS.BACKGROUND_PRIMARY);
     this.engine.add(
       createNotificationBox(
         this.engine,

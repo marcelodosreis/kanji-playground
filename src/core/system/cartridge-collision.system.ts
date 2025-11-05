@@ -1,6 +1,7 @@
 import { state } from "../state";
 import type { Engine, EngineGameObj } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
+import { TAGS } from "../../types/tags.enum";
 
 type Params = {
   engine: Engine;
@@ -15,5 +16,5 @@ export function CartridgeCollisionSystem({ engine, cartridge }: Params) {
     engine.destroy(cartridge);
   }
 
-  cartridge.onCollide("player", onPlayerCollision);
+  cartridge.onCollide(TAGS.PLAYER, onPlayerCollision);
 }

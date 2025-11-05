@@ -5,6 +5,7 @@ import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import type { Enemy } from "../../types/enemy.interface";
 import { DroneBehaviorSystem } from "../system/drone-behavior.system";
 import { DroneEventSystem } from "../system/drone-event.system";
+import { TAGS } from "../../types/tags.enum";
 
 type EnemyManagerParams = {
   engine: Engine;
@@ -33,7 +34,7 @@ export class EnemyManager {
     positions: TiledObject[]
   ): void {
     positions
-      .filter((pos) => pos.type === "drone")
+      .filter((pos) => pos.type === TAGS.DRONE)
       .forEach((pos) => this.spawnDrone(engine, map, pos));
   }
 

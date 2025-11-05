@@ -1,6 +1,7 @@
 import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import type { Engine } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
+import { HITBOX_TAGS } from "../../types/tags.enum";
 
 type Params = {
   engine: Engine;
@@ -35,7 +36,7 @@ export function PlayerAttackSystem({ engine, player }: Params) {
       player.add([
         engine.pos(offsetX, offsetY),
         engine.area({ shape: hitboxShape }),
-        "sword-hitbox",
+        HITBOX_TAGS.PLAYER_SWORD,
       ]);
     } else {
       const hitboxX = player.pos.x + offsetX;
@@ -43,7 +44,7 @@ export function PlayerAttackSystem({ engine, player }: Params) {
       engine.add([
         engine.pos(hitboxX, hitboxY),
         engine.area({ shape: hitboxShape }),
-        "sword-hitbox",
+        HITBOX_TAGS.PLAYER_SWORD,
       ]);
     }
   }
@@ -51,7 +52,9 @@ export function PlayerAttackSystem({ engine, player }: Params) {
   function onAttackAnimationEnd(anim: string) {
     if (anim !== PLAYER_ANIMATIONS.ATTACK) return;
 
-    const swordHitbox = engine.get("sword-hitbox", { recursive: true })[0];
+    const [swordHitbox] = engine.get(HITBOX_TAGS.PLAYER_SWORD, {
+      recursive: true,
+    });
     if (swordHitbox) {
       engine.destroy(swordHitbox);
     }

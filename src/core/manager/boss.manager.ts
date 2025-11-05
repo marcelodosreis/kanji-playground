@@ -5,6 +5,7 @@ import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import type { Boss } from "../../types/boss.interface";
 import { BossBehaviorSystem } from "../system/boss-behavior.system";
 import { BossEventSystem } from "../system/boss-event.system";
+import { TAGS } from "../../types/tags.enum";
 
 type BossManagerParams = {
   engine: Engine;
@@ -38,6 +39,6 @@ export class BossManager {
   }
 
   private static getBossPosition(tiledMap: TiledMap): TiledObject | undefined {
-    return tiledMap.layers[5].objects?.find((pos) => pos.name === "boss");
+    return tiledMap.layers[5].objects?.find((pos) => pos.name === TAGS.BOSS);
   }
 }

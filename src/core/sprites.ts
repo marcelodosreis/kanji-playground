@@ -2,13 +2,14 @@ import {
   BURNER_ANIMATIONS,
   DRONE_ANIMATIONS,
   PLAYER_ANIMATIONS,
+  SPRITES,
 } from "../types/animations.enum";
 import { engine } from "./engine";
 
 export function sprites(): void {
   engine.loadFont("glyphmesss", "./fonts/glyphmesss.ttf");
 
-  engine.loadSprite("player", "./assets/sprites/player.png", {
+  engine.loadSprite(SPRITES.PLAYER, "./assets/sprites/player.png", {
     sliceX: 8,
     sliceY: 9,
     anims: {
@@ -21,7 +22,7 @@ export function sprites(): void {
     },
   });
 
-  engine.loadSprite("drone", "./assets/sprites/drone.png", {
+  engine.loadSprite(SPRITES.DRONE, "./assets/sprites/drone.png", {
     sliceX: 6,
     sliceY: 3,
     anims: {
@@ -31,7 +32,7 @@ export function sprites(): void {
     },
   });
 
-  engine.loadSprite("burner", "./assets/sprites/burner.png", {
+  engine.loadSprite(SPRITES.BURNER, "./assets/sprites/burner.png", {
     sliceX: 5,
     sliceY: 6,
     anims: {
@@ -55,7 +56,7 @@ export function sprites(): void {
   });
 
   engine.loadSpriteAtlas("./assets/animations.png", {
-    cartridge: {
+    [SPRITES.CARTRIDGE]: {
       x: 125,
       y: 145,
       width: 134,

@@ -1,10 +1,11 @@
 import type { Engine } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
+import { TAGS } from "../../types/tags.enum";
 import { state } from "../state";
 
 export function PlayerEntity(engine: Engine): Player {
   return engine.make([
-    "player",
+    TAGS.PLAYER,
     engine.pos(),
     engine.sprite("player"),
     engine.area({ shape: new engine.Rect(engine.vec2(0, 18), 12, 12) }),

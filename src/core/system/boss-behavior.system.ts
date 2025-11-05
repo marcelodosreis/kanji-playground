@@ -4,6 +4,7 @@ import type { Player } from "../../types/player.interface";
 import { state } from "../state";
 import { BURNER_ANIMATIONS } from "../../types/animations.enum";
 import { BOSS_EVENTS } from "../../types/events.enum";
+import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
 
 type Params = {
   engine: Engine;
@@ -11,7 +12,7 @@ type Params = {
 };
 
 export function BossBehaviorSystem({ engine, boss }: Params) {
-  const player = engine.get("player", { recursive: true })[0] as Player;
+  const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
 
   const idleUpdate = () => {
     if (state.current().isPlayerInBossFight) {
@@ -43,10 +44,10 @@ export function BossBehaviorSystem({ engine, boss }: Params) {
     const fireHitbox = boss.add([
       engine.area({ shape: new engine.Rect(engine.vec2(0), 70, 10) }),
       engine.pos(boss.flipX ? -70 : 0, 5),
-      "fire-hitbox",
+      HITBOX_TAGS.BOSS_FIRE_HITBOX,
     ]);
 
-    fireHitbox.onCollide("player", () => {
+    fireHitbox.onCollide(TAGS.PLAYER, () => {
       player.hurt(1);
       if (player.hp() === 0) {
         state.set("isPlayerInBossFight", false);
@@ -59,7 +60,9 @@ export function BossBehaviorSystem({ engine, boss }: Params) {
   };
 
   const fireEnd = () => {
-    const fireHitbox = engine.get("fire-hitbox", { recursive: true })[0];
+    const [fireHitbox] = engine.get(HITBOX_TAGS.BOSS_FIRE_HITBOX, {
+      recursive: true,
+    });
     if (fireHitbox) {
       engine.destroy(fireHitbox);
     }

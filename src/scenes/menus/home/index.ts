@@ -1,9 +1,11 @@
 import type { Engine } from "../../../types/engine.interface";
 import { MenuManager } from "../../../core/manager/menu.manager";
 import { setBackgroundColor } from "../../../utils/set-background-color";
+import { LEVEL_SCENES, MENU_SCENES } from "../../../types/scenes.enum";
+import { COLORS } from "../../../types/colors.enum";
 
 const CONFIG = {
-  bgColor: "#20214a",
+  bgColor: COLORS.BACKGROUND_PRIMARY,
   title: "KANJI - PLAYGROUND",
   subtitle: "Arrow keys to navigate • Enter to select • Click to choose",
   titleSize: 24,
@@ -34,9 +36,9 @@ export class HomeMenuScene {
     const items = [
       {
         label: "Start Game",
-        action: () => this.engine.go("room001", { exitName: null }),
+        action: () => this.engine.go(LEVEL_SCENES.ROOM_001, { exitName: null }),
       },
-      { label: "Controls", action: () => this.engine.go("menu-controls") },
+      { label: "Controls", action: () => this.engine.go(MENU_SCENES.CONTROLS) },
       { label: "Quit", action: () => {} },
     ];
 

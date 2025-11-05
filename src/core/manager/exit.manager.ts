@@ -1,5 +1,8 @@
+import { COLORS } from "../../types/colors.enum";
 import type { Engine } from "../../types/engine.interface";
 import type { Map } from "../../types/map.interface";
+import { MENU_SCENES } from "../../types/scenes.enum";
+import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 
 type SetupParams = {
@@ -40,13 +43,13 @@ export class ExitManager {
       engine.pos(exit.x, exit.y),
       engine.area({
         shape: new engine.Rect(engine.vec2(0), exit.width, exit.height),
-        collisionIgnore: ["collider"],
+        collisionIgnore: [MAP_TAGS.COLLIDER],
       }),
       engine.body({ isStatic: true }),
       exit.name,
     ]);
 
-    exitZone.onCollide("player", () => this.handlePlayerExit(params, exit));
+    exitZone.onCollide(TAGS.PLAYER, () => this.handlePlayerExit(params, exit));
   }
 
   private static async handlePlayerExit(
@@ -59,8 +62,8 @@ export class ExitManager {
     const background = this.createBackground(engine, camPos);
     await this.tweenBackgroundToZero(engine, background);
 
-    if (exit.name === "final-exit") {
-      engine.go("final-exit");
+    if (exit.name === MENU_SCENES.FINAL) {
+      engine.go(MENU_SCENES.FINAL);
       return;
     }
 
@@ -74,7 +77,7 @@ export class ExitManager {
     return engine.add([
       engine.pos(camPos.x - engine.width(), camPos.y - engine.height() / 2),
       engine.rect(engine.width(), engine.height()),
-      engine.color("#20214a"),
+      engine.color(COLORS.BACKGROUND_PRIMARY),
     ]);
   }
 

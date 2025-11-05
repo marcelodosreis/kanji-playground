@@ -1,3 +1,10 @@
+export enum SPRITES {
+  PLAYER = 'player',
+  DRONE = 'drone',
+  BURNER = 'burner',
+  CARTRIDGE = 'cartridge',
+}
+
 export enum PLAYER_ANIMATIONS {
   IDLE = "idle",
   RUN = "run",

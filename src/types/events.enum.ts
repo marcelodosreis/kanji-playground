@@ -1,4 +1,4 @@
-import { BURNER_ANIMATIONS } from "./animations.enum";
+import { BURNER_ANIMATIONS, DRONE_ANIMATIONS } from "./animations.enum";
 
 export enum BOSS_EVENTS {
   IDLE = BURNER_ANIMATIONS.IDLE,
@@ -7,4 +7,13 @@ export enum BOSS_EVENTS {
   OPEN_FIRE = BURNER_ANIMATIONS.OPEN_FIRE,
   SHUT_FIRE = BURNER_ANIMATIONS.SHUT_FIRE,
   EXPLODE = BURNER_ANIMATIONS.EXPLODE,
+}
+
+export enum DRONE_EVENTS {
+  ATTACK = DRONE_ANIMATIONS.ATTACK,
+  ALERT = "alert",
+  RETREAT = "retreat",
+  PATROL_RIGHT = "patrol-right",
+  PATROL_LEFT = "patrol-left",
+  EXPLODE = "explode",
 }

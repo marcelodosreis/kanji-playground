@@ -1,5 +1,7 @@
+import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import type { Engine } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
+import { LEVEL_SCENES } from "../../types/scenes.enum";
 import { state } from "../state";
 
 type Params = {
@@ -32,14 +34,14 @@ export function PlayerRespawnSystem({
   }
 
   function onExplodeAnimationEnd(anim: string) {
-    if (anim === "explode") {
+    if (anim === PLAYER_ANIMATIONS.EXPLODE) {
       respawnPlayerFullLife(state.current().maxPlayerHp);
     }
   }
 
   function respawnPlayerFullLife(maxHp: number) {
     state.set("playerHp", maxHp);
-    engine.go("room001", { exitName: null });
+    engine.go(LEVEL_SCENES.ROOM_001, { exitName: null });
   }
 
   engine.onUpdate(checkOutOfBounds);

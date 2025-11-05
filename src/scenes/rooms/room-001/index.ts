@@ -7,8 +7,10 @@ import { MapManager } from "../../../core/manager/map.manager";
 import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
 import { state } from "../../../core/state";
+import { COLORS } from "../../../types/colors.enum";
 import type { Engine, EngineGameObj } from "../../../types/engine.interface";
 import type { Map } from "../../../types/map.interface";
+import { LEVEL_SCENES } from "../../../types/scenes.enum";
 import type { TiledMap } from "../../../types/tiled-map.interface";
 import { setBackgroundColor } from "../../../utils/set-background-color";
 
@@ -19,11 +21,11 @@ type Room001Params = {
 };
 
 const CONFIG = {
-  BACKGROUND_COLOR: "#a2aed5",
+  BACKGROUND_COLOR: COLORS.BACKGROUND_SECONDARY,
   CAMERA_SCALE: 2,
   INITIAL_CAMERA_POS: { x: 170, y: 100 },
   GRAVITY: 1000,
-  MAP_SPRITE_NAME: "room001",
+  MAP_SPRITE_NAME: LEVEL_SCENES.ROOM_001,
   COLLIDERS_LAYER_INDEX: 4,
   PLAYER_START_NAMES: ["player", "entrance-1", "entrance-2"],
   ENTRANCE_EXIT_MAPPING: {
@@ -32,7 +34,7 @@ const CONFIG = {
   },
   CAMERA_ZONES_LAYER_INDEX: 6,
   EXITS_LAYER_INDEX: 7,
-  EXIT_ROOM_NAME: "room002",
+  EXIT_ROOM_NAME: LEVEL_SCENES.ROOM_002,
 };
 
 export class Room001Scene {

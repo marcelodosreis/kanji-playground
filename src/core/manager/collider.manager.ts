@@ -1,5 +1,6 @@
 import type { Engine } from "../../types/engine.interface";
 import type { Map } from "../../types/map.interface";
+import { MAP_TAGS } from "../../types/tags.enum";
 import type { TiledObject } from "../../types/tiled-map.interface";
 import type { Vec2 } from "kaplay";
 
@@ -36,7 +37,7 @@ export class ColliderManager {
   }
 
   static isBossBarrier(collider: TiledObject): boolean {
-    return collider.name === "boss-barrier";
+    return collider.name === MAP_TAGS.BOSS_BARRIER;
   }
 
   private static addPolygonCollider(
@@ -69,7 +70,7 @@ export class ColliderManager {
   private static createPolygonArea(engine: Engine, coordinates: Vec2[]) {
     return engine.area({
       shape: new engine.Polygon(coordinates),
-      collisionIgnore: ["collider"],
+      collisionIgnore: [MAP_TAGS.COLLIDER],
     });
   }
 
@@ -97,7 +98,7 @@ export class ColliderManager {
   private static createRectArea(engine: Engine, collider: TiledObject) {
     return engine.area({
       shape: new engine.Rect(engine.vec2(0), collider.width, collider.height),
-      collisionIgnore: ["collider"],
+      collisionIgnore: [MAP_TAGS.COLLIDER],
     });
   }
 
@@ -108,6 +109,6 @@ export class ColliderManager {
     body: ReturnType<Engine["body"]>,
     type?: string
   ): void {
-    map.add([position, area, body, "collider", type]);
+    map.add([position, area, body, MAP_TAGS.COLLIDER, type]);
   }
 }

@@ -2,6 +2,8 @@ import type { Engine } from "../../types/engine.interface";
 import type { Enemy } from "../../types/enemy.interface";
 import type { Player } from "../../types/player.interface";
 import { DRONE_ANIMATIONS } from "../../types/animations.enum";
+import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
+import { DRONE_EVENTS } from "../../types/events.enum";
 
 type Params = {
   engine: Engine;
@@ -9,7 +11,7 @@ type Params = {
 };
 
 export function DroneEventSystem({ engine, drone }: Params) {
-  const player = engine.get("player", { recursive: true })[0] as Player;
+  const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
 
   function onPlayerCollision() {
     if (player.isAttacking) return;
@@ -24,7 +26,7 @@ export function DroneEventSystem({ engine, drone }: Params) {
   }
 
   function onExplode() {
-    drone.collisionIgnore = ["player"];
+    drone.collisionIgnore = [TAGS.PLAYER];
     drone.unuse("body");
     drone.play(DRONE_ANIMATIONS.EXPLODE);
   }
@@ -35,7 +37,7 @@ export function DroneEventSystem({ engine, drone }: Params) {
 
   function onHurt() {
     if (drone.hp() === 0) {
-      drone.trigger("explode");
+      drone.trigger(DRONE_EVENTS.EXPLODE);
     }
   }
 
@@ -45,10 +47,10 @@ export function DroneEventSystem({ engine, drone }: Params) {
     }
   }
 
-  drone.onCollide("player", onPlayerCollision);
+  drone.onCollide(TAGS.PLAYER, onPlayerCollision);
   drone.onAnimEnd(onAnimationEnd);
-  drone.on("explode", onExplode);
-  drone.onCollide("sword-hitbox", onSwordHitboxCollision);
+  drone.on(DRONE_EVENTS.EXPLODE, onExplode);
+  drone.onCollide(HITBOX_TAGS.PLAYER_SWORD, onSwordHitboxCollision);
   drone.on("hurt", onHurt);
   drone.onExitScreen(onExitScreen);
 }

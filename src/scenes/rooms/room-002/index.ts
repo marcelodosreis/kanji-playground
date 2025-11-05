@@ -1,5 +1,4 @@
 import type { Engine, EngineGameObj } from "../../../types/engine.interface";
-import type { Player } from "../../../types/player.interface";
 import type { TiledMap } from "../../../types/tiled-map.interface";
 import type { Map } from "../../../types/map.interface";
 
@@ -10,6 +9,8 @@ import { MapManager } from "../../../core/manager/map.manager";
 import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
 import { setBackgroundColor } from "../../../utils/set-background-color";
+import { LEVEL_SCENES } from "../../../types/scenes.enum";
+import { COLORS } from "../../../types/colors.enum";
 
 type Room002Params = {
   engine: Engine;
@@ -18,11 +19,11 @@ type Room002Params = {
 };
 
 const CONFIG = {
-  BACKGROUND_COLOR: "#a2aed5",
+  BACKGROUND_COLOR: COLORS.BACKGROUND_SECONDARY,
   CAMERA_SCALE: 2,
   INITIAL_CAMERA_POS: { x: 170, y: 100 },
   GRAVITY: 1000,
-  MAP_SPRITE_NAME: "room002",
+  MAP_SPRITE_NAME: LEVEL_SCENES.ROOM_002,
   COLLIDERS_LAYER_INDEX: 4,
   PLAYER_START_NAMES: ["entrance-1", "entrance-2"],
   ENTRANCE_EXIT_MAPPING: {
@@ -31,9 +32,9 @@ const CONFIG = {
   },
   CAMERA_ZONES_LAYER_INDEX: 6,
   EXITS_LAYER_INDEX: 7,
-  EXIT_ROOM_NAME: "room001",
+  EXIT_ROOM_NAME: LEVEL_SCENES.ROOM_001,
   RESPAWN_BOUNDS: 1000,
-  RESPAWN_ROOM_NAME: "room002",
+  RESPAWN_ROOM_NAME: LEVEL_SCENES.ROOM_002,
 };
 
 export class Room002Scene {
@@ -41,7 +42,6 @@ export class Room002Scene {
   private tiledMap: TiledMap;
   private previousSceneData: EngineGameObj;
   private map!: Map;
-  private player!: Player;
   private config = CONFIG;
 
   constructor(params: Room002Params) {
@@ -66,7 +66,7 @@ export class Room002Scene {
       setMap: (map: Map) => (this.map = map),
     });
 
-    this.player = PlayerManager.setup({
+    PlayerManager.setup({
       engine: this.engine,
       map: this.map,
       tiledMap: this.tiledMap,
@@ -90,7 +90,6 @@ export class Room002Scene {
     CameraManager.setup({
       engine: this.engine,
       map: this.map,
-      player: this.player,
       tiledMap: this.tiledMap,
       initialCameraPos: this.config.INITIAL_CAMERA_POS,
       cameraZonesLayerIndex: this.config.CAMERA_ZONES_LAYER_INDEX,

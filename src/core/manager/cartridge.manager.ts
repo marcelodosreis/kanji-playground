@@ -3,6 +3,7 @@ import type { Engine, EngineGameObj } from "../../types/engine.interface";
 import type { Map } from "../../types/map.interface";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { CartridgeCollisionSystem } from "../system/cartridge-collision.system";
+import { TAGS } from "../../types/tags.enum";
 
 type SpawnParams = {
   engine: Engine;
@@ -15,7 +16,7 @@ export class CartridgeManager {
     const positions = tiledMap.layers[5].objects as TiledObject[];
 
     positions
-      .filter((pos) => pos.type === "cartridge")
+      .filter((pos) => pos.type === TAGS.CARTRIDGE)
       .forEach((pos) => {
         const cartridge = map.add(
           CartridgeEntity(engine, engine.vec2(pos.x, pos.y))

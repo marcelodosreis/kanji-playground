@@ -9,6 +9,7 @@ import { Room002Scene } from "./scenes/rooms/room-002";
 import { FinalExitScene } from "./scenes/menus/final";
 
 import { loadTiledMap } from "./utils/load-tiles-map";
+import { LEVEL_SCENES } from "./types/scenes.enum";
 
 async function registerScenes() {
   const room001TiledMap = await loadTiledMap(
@@ -26,7 +27,7 @@ async function registerScenes() {
     new ControlsMenuScene({ engine });
   });
 
-  engine.scene("room001", (previousSceneData) => {
+  engine.scene(LEVEL_SCENES.ROOM_001, (previousSceneData) => {
     new Room001Scene({ engine, tiledMap: room001TiledMap, previousSceneData });
   });
 
