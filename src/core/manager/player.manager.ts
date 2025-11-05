@@ -29,7 +29,12 @@ export class PlayerManager {
     const player = this.createPlayer(params);
     const startPosition = this.findStartPosition(params);
 
-    this.initSystems(params.engine, player, params.respawnConfig.roomName);
+    this.initSystems(
+      params.engine,
+      player,
+      params.respawnConfig.roomName,
+      params.respawnConfig.exitName
+    );
     if (startPosition) {
       this.setPlayerPosition(player, startPosition, params.positionOffset);
     }
@@ -40,7 +45,8 @@ export class PlayerManager {
   private static initSystems(
     engine: Engine,
     player: Player,
-    destinationName: string
+    destinationName: string,
+    exitName?: string
   ) {
     PlayerInputSystem({ engine: engine, player: player });
     PlayerRespawnSystem({
@@ -48,7 +54,7 @@ export class PlayerManager {
       player: player,
       boundValue: 1000,
       destinationName: destinationName,
-      previousSceneData: { exitName: null },
+      previousSceneData: { exitName: exitName },
     });
     PlayerEventSystem({ engine: engine, player: player });
     PlayerDoubleJumpSystem({ player: player });
