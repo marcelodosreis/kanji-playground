@@ -18,16 +18,28 @@ export function PlayerRespawnSystem({
   previousSceneData,
 }: Params) {
   function checkOutOfBounds() {
-    if (player.pos.y > boundValue) {
+    if (player.pos.y <= boundValue) return;
+
+    const currentHp = state.current().playerHp;
+    const maxHp = state.current().maxPlayerHp;
+
+    if (currentHp <= 1) {
+      respawnPlayerFullLife(maxHp);
+    } else {
+      state.set("playerHp", currentHp - 1);
       engine.go(destinationName, previousSceneData);
     }
   }
 
   function onExplodeAnimationEnd(anim: string) {
     if (anim === "explode") {
-      state.set("playerHp", state.current().maxPlayerHp);
-      engine.go("room001", { exitName: null });
+      respawnPlayerFullLife(state.current().maxPlayerHp);
     }
+  }
+
+  function respawnPlayerFullLife(maxHp: number) {
+    state.set("playerHp", maxHp);
+    engine.go("room001", { exitName: null });
   }
 
   engine.onUpdate(checkOutOfBounds);
