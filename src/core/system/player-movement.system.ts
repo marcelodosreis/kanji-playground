@@ -11,7 +11,7 @@ export function PlayerMovementSystem({ engine, player }: Params) {
 
   function handleJumpKey(key: string) {
     if (key === "x") {
-      if (player.curAnim() !== "jump") {
+      if (player.curAnim() !== "jump" && !player.isAttacking) {
         player.play("jump");
       }
       player.doubleJump();
@@ -19,8 +19,6 @@ export function PlayerMovementSystem({ engine, player }: Params) {
   }
 
   function handleMovementKeyDown(key: string) {
-    if (player.isAttacking) return;
-
     if (key === "left") {
       moveLeft();
     } else if (key === "right") {
@@ -29,7 +27,11 @@ export function PlayerMovementSystem({ engine, player }: Params) {
   }
 
   function moveLeft() {
-    if (player.curAnim() !== "run" && player.isGrounded()) {
+    if (
+      !player.isAttacking &&
+      player.curAnim() !== "run" &&
+      player.isGrounded()
+    ) {
       player.play("run");
     }
     player.flipX = true;
@@ -37,7 +39,11 @@ export function PlayerMovementSystem({ engine, player }: Params) {
   }
 
   function moveRight() {
-    if (player.curAnim() !== "run" && player.isGrounded()) {
+    if (
+      !player.isAttacking &&
+      player.curAnim() !== "run" &&
+      player.isGrounded()
+    ) {
       player.play("run");
     }
     player.flipX = false;

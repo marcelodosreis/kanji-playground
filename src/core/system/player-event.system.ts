@@ -10,19 +10,27 @@ type Params = {
 
 export function PlayerEventSystem({ engine, player }: Params) {
   function onFall() {
-    player.play("fall");
+    if (!player.isAttacking) {
+      player.play("fall");
+    }
   }
 
   function onFallOff() {
-    player.play("fall");
+    if (!player.isAttacking) {
+      player.play("fall");
+    }
   }
 
   function onGround() {
-    player.play("idle");
+    if (!player.isAttacking) {
+      player.play("idle");
+    }
   }
 
   function onHeadbutt() {
-    player.play("fall");
+    if (!player.isAttacking) {
+      player.play("fall");
+    }
   }
 
   function onHeal() {

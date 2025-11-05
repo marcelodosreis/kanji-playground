@@ -11,7 +11,7 @@ export function PlayerAttackSystem({ engine, player }: Params) {
 
   function handleKeyPress(key: string) {
     if (key !== "z") return;
-    if (player.curAnim() === "attack" || !player.isGrounded()) return;
+    if (player.curAnim() === "attack") return;
 
     player.isAttacking = true;
     createSwordHitbox();
