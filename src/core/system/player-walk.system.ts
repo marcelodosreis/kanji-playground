@@ -1,3 +1,4 @@
+import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import type { Engine } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
 
@@ -15,10 +16,10 @@ export function PlayerWalkSystem({ engine, player }: Params) {
 
     if (
       !player.isAttacking &&
-      player.curAnim() !== "run" &&
+      player.curAnim() !== PLAYER_ANIMATIONS.RUN &&
       player.isGrounded()
     ) {
-      player.play("run");
+      player.play(PLAYER_ANIMATIONS.RUN);
     }
 
     player.flipX = direction === -1;

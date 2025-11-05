@@ -1,6 +1,7 @@
 import type { Engine } from "../../types/engine.interface";
 import type { Enemy } from "../../types/enemy.interface";
 import type { Player } from "../../types/player.interface";
+import { DRONE_ANIMATIONS } from "../../types/animations.enum";
 
 type Params = {
   engine: Engine;
@@ -17,7 +18,7 @@ export function DroneEventSystem({ engine, drone }: Params) {
   }
 
   function onAnimationEnd(anim: string) {
-    if (anim === "explode") {
+    if (anim === DRONE_ANIMATIONS.EXPLODE) {
       engine.destroy(drone);
     }
   }
@@ -25,7 +26,7 @@ export function DroneEventSystem({ engine, drone }: Params) {
   function onExplode() {
     drone.collisionIgnore = ["player"];
     drone.unuse("body");
-    drone.play("explode");
+    drone.play(DRONE_ANIMATIONS.EXPLODE);
   }
 
   function onSwordHitboxCollision() {

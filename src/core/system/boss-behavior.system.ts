@@ -2,6 +2,8 @@ import type { Engine } from "../../types/engine.interface";
 import type { Boss } from "../../types/boss.interface";
 import type { Player } from "../../types/player.interface";
 import { state } from "../state";
+import { BURNER_ANIMATIONS } from "../../types/animations.enum";
+import { BOSS_EVENTS } from "../../types/events.enum";
 
 type Params = {
   engine: Engine;
@@ -13,12 +15,12 @@ export function BossBehaviorSystem({ engine, boss }: Params) {
 
   const idleUpdate = () => {
     if (state.current().isPlayerInBossFight) {
-      boss.enterState("follow");
+      boss.enterState(BOSS_EVENTS.RUN);
     }
   };
 
   const followEnter = () => {
-    boss.play("run");
+    boss.play(BURNER_ANIMATIONS.RUN);
   };
 
   const followUpdate = () => {
@@ -29,12 +31,12 @@ export function BossBehaviorSystem({ engine, boss }: Params) {
     );
 
     if (boss.pos.dist(player.pos) < boss.fireRange) {
-      boss.enterState("open-fire");
+      boss.enterState(BOSS_EVENTS.OPEN_FIRE);
     }
   };
 
   const openFireEnter = () => {
-    boss.play("open-fire");
+    boss.play(BURNER_ANIMATIONS.OPEN_FIRE);
   };
 
   const fireEnter = () => {
@@ -52,7 +54,7 @@ export function BossBehaviorSystem({ engine, boss }: Params) {
     });
 
     engine.wait(boss.fireDuration, () => {
-      boss.enterState("shut-fire");
+      boss.enterState(BOSS_EVENTS.SHUT_FIRE);
     });
   };
 
@@ -64,21 +66,21 @@ export function BossBehaviorSystem({ engine, boss }: Params) {
   };
 
   const fireUpdate = () => {
-    if (boss.curAnim() !== "fire") {
-      boss.play("fire");
+    if (boss.curAnim() !== BURNER_ANIMATIONS.FIRE) {
+      boss.play(BURNER_ANIMATIONS.FIRE);
     }
   };
 
   const shutFireEnter = () => {
-    boss.play("shut-fire");
+    boss.play(BURNER_ANIMATIONS.SHUT_FIRE);
   };
 
-  boss.onStateUpdate("idle", idleUpdate);
-  boss.onStateEnter("follow", followEnter);
-  boss.onStateUpdate("follow", followUpdate);
-  boss.onStateEnter("open-fire", openFireEnter);
-  boss.onStateEnter("fire", fireEnter);
-  boss.onStateEnd("fire", fireEnd);
-  boss.onStateUpdate("fire", fireUpdate);
-  boss.onStateEnter("shut-fire", shutFireEnter);
+  boss.onStateUpdate(BOSS_EVENTS.IDLE, idleUpdate);
+  boss.onStateEnter(BOSS_EVENTS.RUN, followEnter);
+  boss.onStateUpdate(BOSS_EVENTS.RUN, followUpdate);
+  boss.onStateEnter(BOSS_EVENTS.FIRE, fireEnter);
+  boss.onStateEnd(BOSS_EVENTS.FIRE, fireEnd);
+  boss.onStateUpdate(BOSS_EVENTS.FIRE, fireUpdate);
+  boss.onStateEnter(BOSS_EVENTS.OPEN_FIRE, openFireEnter);
+  boss.onStateEnter(BOSS_EVENTS.SHUT_FIRE, shutFireEnter);
 }

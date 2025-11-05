@@ -1,3 +1,4 @@
+import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import type { Engine } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
 
@@ -10,12 +11,12 @@ export function PlayerIdleSystem({ engine, player }: Params) {
   function handleKeyRelease() {
     const anim = player.curAnim();
     if (
-      anim !== "idle" &&
-      anim !== "jump" &&
-      anim !== "fall" &&
-      anim !== "attack"
+      anim !== PLAYER_ANIMATIONS.IDLE &&
+      anim !== PLAYER_ANIMATIONS.JUMP &&
+      anim !== PLAYER_ANIMATIONS.FALL &&
+      anim !== PLAYER_ANIMATIONS.ATTACK
     ) {
-      player.play("idle");
+      player.play(PLAYER_ANIMATIONS.IDLE);
     }
   }
 

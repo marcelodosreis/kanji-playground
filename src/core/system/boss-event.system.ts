@@ -3,6 +3,8 @@ import type { Boss } from "../../types/boss.interface";
 import { createBlink } from "../../utils/create-blink";
 import { createNotificationBox } from "../../utils/create-notification-box";
 import { state } from "../state";
+import { BURNER_ANIMATIONS } from "../../types/animations.enum";
+import { BOSS_EVENTS } from "../../types/events.enum";
 
 type Params = {
   engine: Engine;
@@ -10,30 +12,29 @@ type Params = {
 };
 
 export function BossEventSystem({ engine, boss }: Params) {
-
   function onSwordHitboxCollision() {
     boss.hurt(1);
   }
 
   function onAnimationEnd(anim: string) {
     switch (anim) {
-      case "open-fire":
-        boss.enterState("fire");
+      case BURNER_ANIMATIONS.OPEN_FIRE:
+        boss.enterState(BOSS_EVENTS.FIRE);
         break;
-      case "shut-fire":
-        boss.enterState("follow");
+      case BURNER_ANIMATIONS.SHUT_FIRE:
+        boss.enterState(BOSS_EVENTS.RUN);
         break;
-      case "explode":
+      case BURNER_ANIMATIONS.EXPLODE:
         engine.destroy(boss);
         break;
     }
   }
 
   function onExplode() {
-    boss.enterState("explode");
+    boss.enterState(BOSS_EVENTS.EXPLODE);
     boss.collisionIgnore = ["player"];
     boss.unuse("body");
-    boss.play("explode");
+    boss.play(BURNER_ANIMATIONS.EXPLODE);
     state.set("isBossDefeated", true);
     state.set("isDoubleJumpUnlocked", true);
 
@@ -49,11 +50,11 @@ export function BossEventSystem({ engine, boss }: Params) {
   function onHurt() {
     createBlink(engine, boss);
     if (boss.hp() > 0) return;
-    boss.trigger("explode");
+    boss.trigger(BOSS_EVENTS.EXPLODE);
   }
 
   boss.onCollide("sword-hitbox", onSwordHitboxCollision);
   boss.onAnimEnd(onAnimationEnd);
-  boss.on("explode", onExplode);
+  boss.on(BOSS_EVENTS.EXPLODE, onExplode);
   boss.on("hurt", onHurt);
 }

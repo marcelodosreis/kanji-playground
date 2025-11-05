@@ -1,3 +1,4 @@
+import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import type { Engine } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
 
@@ -10,12 +11,11 @@ export function PlayerAttackSystem({ engine, player }: Params) {
   player.controlHandlers = player.controlHandlers || [];
 
   const handleKeyPress = async (key: string) => {
-    if (key !== "z") return;
-    if (player.curAnim() === "attack") return;
+    if (key !== "z" || player.curAnim() === PLAYER_ANIMATIONS.ATTACK) return;
 
     player.isAttacking = true;
     createSwordHitbox();
-    player.play("attack");
+    player.play(PLAYER_ANIMATIONS.ATTACK);
     player.onAnimEnd(onAttackAnimationEnd);
   };
 
@@ -49,14 +49,14 @@ export function PlayerAttackSystem({ engine, player }: Params) {
   }
 
   function onAttackAnimationEnd(anim: string) {
-    if (anim !== "attack") return;
+    if (anim !== PLAYER_ANIMATIONS.ATTACK) return;
 
     const swordHitbox = engine.get("sword-hitbox", { recursive: true })[0];
     if (swordHitbox) {
       engine.destroy(swordHitbox);
     }
     player.isAttacking = false;
-    player.play("idle");
+    player.play(PLAYER_ANIMATIONS.IDLE);
   }
 
   player.controlHandlers.push(engine.onKeyPress(handleKeyPress));

@@ -12,9 +12,9 @@ export function BossEntity(engine: Engine, initialPos: Position): Boss {
     engine.anchor("center"),
     engine.state("idle", [
       "idle",
-      "follow",
-      "open-fire",
+      "run",
       "fire",
+      "open-fire",
       "shut-fire",
       "explode",
     ]),

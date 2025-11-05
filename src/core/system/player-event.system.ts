@@ -1,3 +1,4 @@
+import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import type { Engine } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
 import { createBlink } from "../../utils/create-blink";
@@ -11,19 +12,19 @@ type Params = {
 export function PlayerEventSystem({ engine, player }: Params) {
   function handleFall() {
     if (!player.isAttacking) {
-      player.play("fall");
+      player.play(PLAYER_ANIMATIONS.FALL);
     }
   }
 
   function handleGround() {
     if (!player.isAttacking) {
-      player.play("idle");
+      player.play(PLAYER_ANIMATIONS.IDLE);
     }
   }
 
   function handleHeadbutt() {
     if (!player.isAttacking) {
-      player.play("fall");
+      player.play(PLAYER_ANIMATIONS.FALL);
     }
   }
 
@@ -37,7 +38,7 @@ export function PlayerEventSystem({ engine, player }: Params) {
       state.set("playerHp", player.hp());
       return;
     }
-    player.play("explode");
+    player.play(PLAYER_ANIMATIONS.EXPLODE);
   }
 
   player.onFall(handleFall);

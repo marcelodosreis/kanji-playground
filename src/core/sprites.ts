@@ -1,3 +1,8 @@
+import {
+  BURNER_ANIMATIONS,
+  DRONE_ANIMATIONS,
+  PLAYER_ANIMATIONS,
+} from "../types/animations.enum";
 import { engine } from "./engine";
 
 export function sprites(): void {
@@ -7,12 +12,12 @@ export function sprites(): void {
     sliceX: 8,
     sliceY: 9,
     anims: {
-      idle: { from: 0, to: 7, loop: true },
-      run: { from: 8, to: 13, loop: true },
-      jump: { from: 51, to: 51, loop: true },
-      fall: { from: 54, to: 54, loop: true },
-      explode: { from: 64, to: 69 },
-      attack: { from: 24, to: 28, speed: 16 },
+      [PLAYER_ANIMATIONS.IDLE]: { from: 0, to: 7, loop: true },
+      [PLAYER_ANIMATIONS.RUN]: { from: 8, to: 13, loop: true },
+      [PLAYER_ANIMATIONS.JUMP]: { from: 51, to: 51, loop: true },
+      [PLAYER_ANIMATIONS.FALL]: { from: 54, to: 54, loop: true },
+      [PLAYER_ANIMATIONS.EXPLODE]: { from: 64, to: 69 },
+      [PLAYER_ANIMATIONS.ATTACK]: { from: 24, to: 28, speed: 16 },
     },
   });
 
@@ -20,9 +25,9 @@ export function sprites(): void {
     sliceX: 6,
     sliceY: 3,
     anims: {
-      flying: { from: 0, to: 3, loop: true },
-      attack: { from: 6, to: 11, loop: true },
-      explode: { from: 12, to: 17 },
+      [DRONE_ANIMATIONS.FLYING]: { from: 0, to: 3, loop: true },
+      [DRONE_ANIMATIONS.ATTACK]: { from: 6, to: 11, loop: true },
+      [DRONE_ANIMATIONS.EXPLODE]: { from: 12, to: 17 },
     },
   });
 
@@ -30,12 +35,12 @@ export function sprites(): void {
     sliceX: 5,
     sliceY: 6,
     anims: {
-      idle: { from: 0, to: 3, loop: true },
-      run: { from: 6, to: 8, loop: true },
-      "open-fire": { from: 10, to: 14 },
-      fire: { from: 15, to: 18, loop: true },
-      "shut-fire": { from: 20, to: 23 },
-      explode: { from: 25, to: 29 },
+      [BURNER_ANIMATIONS.IDLE]: { from: 0, to: 3, loop: true },
+      [BURNER_ANIMATIONS.RUN]: { from: 6, to: 8, loop: true },
+      [BURNER_ANIMATIONS.OPEN_FIRE]: { from: 10, to: 14 },
+      [BURNER_ANIMATIONS.FIRE]: { from: 15, to: 18, loop: true },
+      [BURNER_ANIMATIONS.SHUT_FIRE]: { from: 20, to: 23 },
+      [BURNER_ANIMATIONS.EXPLODE]: { from: 25, to: 29 },
     },
   });
 
