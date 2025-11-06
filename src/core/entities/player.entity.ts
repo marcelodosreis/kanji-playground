@@ -8,7 +8,7 @@ export function PlayerEntity(engine: Engine): Player {
     TAGS.PLAYER,
     engine.pos(),
     engine.sprite(TAGS.PLAYER),
-    engine.area({ shape: new engine.Rect(engine.vec2(0, 16), 16, 16) }),
+    engine.area({ shape: new engine.Rect(engine.vec2(0, 16), 16, 12) }),
     engine.anchor("center"),
     engine.body({ mass: 100, jumpForce: 320 }),
     engine.doubleJump(0),
