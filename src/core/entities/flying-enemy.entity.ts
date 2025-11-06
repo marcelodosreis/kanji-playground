@@ -1,20 +1,20 @@
 import { BAT_ANIMATIONS, SPRITES } from "../../types/animations.enum";
 import type { Enemy } from "../../types/enemy.interface";
 import type { Engine } from "../../types/engine.interface";
-import { DRONE_EVENTS } from "../../types/events.enum";
+import { FLYING_ENEMY_EVENTS } from "../../types/events.enum";
 import type { Position } from "../../types/position.interface";
 import { TAGS } from "../../types/tags.enum";
 
-export function DroneEntity(engine: Engine, initialPos: Position): Enemy {
+export function FlyingEnemyEntity(engine: Engine, initialPos: Position): Enemy {
   return engine.make([
-    TAGS.DRONE,
+    TAGS.FLY_ENEMY,
     engine.pos(initialPos),
     engine.sprite(SPRITES.BAT, { anim: BAT_ANIMATIONS.FLYING }),
-    engine.area({ shape: new engine.Rect(engine.vec2(0), 12, 12) }),
+    engine.area({ shape: new engine.Rect(engine.vec2(0), 24, 16) }),
     engine.anchor("center"),
     engine.body({ gravityScale: 0 }),
     engine.offscreen({ distance: 400 }),
-    engine.state(DRONE_EVENTS.PATROL_RIGHT, [...Object.values(DRONE_EVENTS)]),
+    engine.state(FLYING_ENEMY_EVENTS.PATROL_RIGHT, [...Object.values(FLYING_ENEMY_EVENTS)]),
     engine.health(1),
     {
       speed: 100,

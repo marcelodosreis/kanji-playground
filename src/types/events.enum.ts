@@ -9,7 +9,7 @@ export enum BOSS_EVENTS {
   EXPLODE = BURNER_ANIMATIONS.EXPLODE,
 }
 
-export enum DRONE_EVENTS {
+export enum FLYING_ENEMY_EVENTS {
   ATTACK = "attack",
   ALERT = "alert",
   RETREAT = "retreat",

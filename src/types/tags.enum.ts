@@ -1,6 +1,6 @@
 export enum TAGS {
   PLAYER = "player",
-  DRONE = "drone",
+  FLY_ENEMY = "drone",
   BOSS = "boss",
   CARTRIDGE = "cartridge",
 }
