@@ -1,7 +1,7 @@
 import type { Engine } from "../../types/engine.interface";
 import type { Enemy } from "../../types/enemy.interface";
 import type { Player } from "../../types/player.interface";
-import { DRONE_ANIMATIONS } from "../../types/animations.enum";
+import { BAT_ANIMATIONS } from "../../types/animations.enum";
 import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
 import { DRONE_EVENTS, ENGINE_DEFAULT_EVENTS } from "../../types/events.enum";
 
@@ -16,7 +16,7 @@ export function DroneEventHandlerSystem({ engine, drone }: Params) {
   }
 
   function onAnimationEnd(anim: string) {
-    if (anim === DRONE_ANIMATIONS.EXPLODE) {
+    if (anim === BAT_ANIMATIONS.EXPLODE) {
       engine.destroy(drone);
     }
   }
@@ -24,7 +24,7 @@ export function DroneEventHandlerSystem({ engine, drone }: Params) {
   function onExplode() {
     drone.collisionIgnore = [TAGS.PLAYER];
     drone.unuse("body");
-    drone.play(DRONE_ANIMATIONS.EXPLODE);
+    drone.play(BAT_ANIMATIONS.EXPLODE);
   }
 
   function onSwordHitboxCollision() {

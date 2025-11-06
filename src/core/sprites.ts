@@ -1,6 +1,6 @@
 import {
   BURNER_ANIMATIONS,
-  DRONE_ANIMATIONS,
+  BAT_ANIMATIONS,
   PLAYER_ANIMATIONS,
   SPRITES,
 } from "../types/animations.enum";
@@ -15,12 +15,12 @@ export function sprites(): void {
     anims: {
       [PLAYER_ANIMATIONS.IDLE]: { from: 0, to: 7, loop: true },
       [PLAYER_ANIMATIONS.ATTACK]: { from: 8, to: 13, speed: 16 },
-      // [PLAYER_ANIMATIONS.ATTACK_BOTTOM]: { from: 16, to: 23, speed: 16 },
+      // [PLAYER_ANIMATIONS.ATTACK_BOTTOM]: { from: 16, to: 21, speed: 16 },
       // [PLAYER_ANIMATIONS.HURT]: { from: 32, to: 37, speed: 12 },
       // [PLAYER_ANIMATIONS.ACHIVE]: { from: 40, to: 45, speed: 10 },
       [PLAYER_ANIMATIONS.RUN]: { from: 48, to: 52, loop: true },
       // [PLAYER_ANIMATIONS.DASH]: { from: 56, to: 61, speed: 18 },
-      [PLAYER_ANIMATIONS.JUMP]: { from: 64, to: 68, speed: 32 },
+      [PLAYER_ANIMATIONS.JUMP]: { from: 64, to: 68, speed: 24 },
       // [PLAYER_ANIMATIONS.DEFENSE]: { from: 72, to: 75, speed: 8 },
       [PLAYER_ANIMATIONS.FALL]: { from: 80, to: 80, loop: true },
       // [PLAYER_ANIMATIONS.WALL]: { from: 88, to: 88, loop: true },
@@ -29,13 +29,13 @@ export function sprites(): void {
     },
   });
 
-  engine.loadSprite(SPRITES.DRONE, "./assets/sprites/drone.png", {
-    sliceX: 6,
+  engine.loadSprite(SPRITES.BAT, "./v2/assets/sprites/bat.png", {
+    sliceX: 5,
     sliceY: 3,
     anims: {
-      [DRONE_ANIMATIONS.FLYING]: { from: 0, to: 3, loop: true },
-      [DRONE_ANIMATIONS.ATTACK]: { from: 6, to: 11, loop: true },
-      [DRONE_ANIMATIONS.EXPLODE]: { from: 12, to: 17 },
+      [BAT_ANIMATIONS.EXPLODE]: { from: 0, to: 4, loop: true },
+      [BAT_ANIMATIONS.HURT]: { from: 5, to: 8 },
+      [BAT_ANIMATIONS.FLYING]: { from: 10, to: 14, loop: true },
     },
   });
 

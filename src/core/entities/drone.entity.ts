@@ -1,4 +1,4 @@
-import { DRONE_ANIMATIONS, SPRITES } from "../../types/animations.enum";
+import { BAT_ANIMATIONS, SPRITES } from "../../types/animations.enum";
 import type { Enemy } from "../../types/enemy.interface";
 import type { Engine } from "../../types/engine.interface";
 import { DRONE_EVENTS } from "../../types/events.enum";
@@ -9,7 +9,7 @@ export function DroneEntity(engine: Engine, initialPos: Position): Enemy {
   return engine.make([
     TAGS.DRONE,
     engine.pos(initialPos),
-    engine.sprite(SPRITES.DRONE, { anim: DRONE_ANIMATIONS.FLYING }),
+    engine.sprite(SPRITES.BAT, { anim: BAT_ANIMATIONS.FLYING }),
     engine.area({ shape: new engine.Rect(engine.vec2(0), 12, 12) }),
     engine.anchor("center"),
     engine.body({ gravityScale: 0 }),

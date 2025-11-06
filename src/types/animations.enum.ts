@@ -1,6 +1,6 @@
 export enum SPRITES {
   PLAYER = 'player',
-  DRONE = 'drone',
+  BAT = 'bat',
   BURNER = 'burner',
   CARTRIDGE = 'cartridge',
 }
@@ -14,9 +14,9 @@ export enum PLAYER_ANIMATIONS {
   ATTACK = "attack",
 }
 
-export enum DRONE_ANIMATIONS {
+export enum BAT_ANIMATIONS {
   FLYING = "flying",
-  ATTACK = "attack",
+  HURT = "hurt",
   EXPLODE = "explode",
 }
 
