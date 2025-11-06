@@ -5,15 +5,13 @@ import { DRONE_ANIMATIONS } from "../../types/animations.enum";
 import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
 import { DRONE_EVENTS } from "../../types/events.enum";
 
-type Params = {
-  engine: Engine;
-  drone: Enemy;
-};
+type Params = { engine: Engine; drone: Enemy };
 
-export function DroneEventSystem({ engine, drone }: Params) {
+export function DroneEventHandlerSystem({ engine, drone }: Params) {
   const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
 
   function onPlayerCollision() {
+    drone.hurt(1);
     player.hurt(1);
   }
 
@@ -39,16 +37,9 @@ export function DroneEventSystem({ engine, drone }: Params) {
     }
   }
 
-  function onExitScreen() {
-    if (drone.pos.dist(drone.initialPos) > 400) {
-      drone.pos = drone.initialPos;
-    }
-  }
-
   drone.onCollide(TAGS.PLAYER, onPlayerCollision);
-  drone.onAnimEnd(onAnimationEnd);
-  drone.on(DRONE_EVENTS.EXPLODE, onExplode);
   drone.onCollide(HITBOX_TAGS.PLAYER_SWORD, onSwordHitboxCollision);
+  drone.on(DRONE_EVENTS.EXPLODE, onExplode);
   drone.on("hurt", onHurt);
-  drone.onExitScreen(onExitScreen);
+  drone.onAnimEnd(onAnimationEnd);
 }

@@ -1,26 +1,22 @@
+// src/systems/drone/DroneAIStateSystem.ts
 import type { Engine } from "../../types/engine.interface";
 import type { Enemy } from "../../types/enemy.interface";
 import type { Player } from "../../types/player.interface";
-import { TAGS } from "../../types/tags.enum";
 import { DRONE_EVENTS } from "../../types/events.enum";
+import { TAGS } from "../../types/tags.enum";
 import {
   isPaused,
   wrapWithPauseCheck,
 } from "../../utils/wrap-with-pause-check";
 import { state } from "../state";
 
-type Params = {
-  engine: Engine;
-  drone: Enemy;
-};
+type Params = { engine: Engine; drone: Enemy };
 
-export function DroneBehaviorSystem({ engine, drone }: Params) {
+export function AIDroneSystem({ engine, drone }: Params) {
   const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
 
-  async function handleIsPausedChange(paused: boolean) {
-    if (!paused) {
-      // No special logic needed here; state callbacks handle pause internally
-    }
+  function isPlayerInRange(): boolean {
+    return drone.pos.dist(player.pos) < drone.range;
   }
 
   async function patrolRightEnter() {
@@ -36,7 +32,6 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
 
   function patrolRightUpdate() {
     if (drone.hp() <= 0) return;
-
     if (isPlayerInRange()) {
       drone.enterState(DRONE_EVENTS.ALERT);
       return;
@@ -58,7 +53,6 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
 
   function patrolLeftUpdate() {
     if (drone.hp() <= 0) return;
-
     if (isPlayerInRange()) {
       drone.enterState(DRONE_EVENTS.ALERT);
       return;
@@ -70,7 +64,6 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
   async function alertEnter() {
     await engine.wait(1);
     if (drone.hp() <= 0 || isPaused()) return;
-
     if (isPlayerInRange()) {
       drone.enterState(DRONE_EVENTS.ATTACK);
       return;
@@ -80,7 +73,6 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
 
   function attackUpdate() {
     if (drone.hp() <= 0) return;
-
     if (!isPlayerInRange()) {
       drone.enterState(DRONE_EVENTS.ALERT);
       return;
@@ -92,8 +84,10 @@ export function DroneBehaviorSystem({ engine, drone }: Params) {
     );
   }
 
-  function isPlayerInRange(): boolean {
-    return drone.pos.dist(player.pos) < drone.range;
+  function handleIsPausedChange(paused: boolean) {
+    if (!paused) {
+      drone.enterState(drone.state);
+    }
   }
 
   function start() {

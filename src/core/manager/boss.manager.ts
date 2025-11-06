@@ -3,9 +3,9 @@ import type { Engine } from "../../types/engine.interface";
 import type { Map } from "../../types/map.interface";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import type { Boss } from "../../types/boss.interface";
-import { BossBehaviorSystem } from "../system/boss-behavior.system";
-import { BossEventSystem } from "../system/boss-event.system";
 import { TAGS } from "../../types/tags.enum";
+import { AIBossSystem } from "../system/ai-boss.system";
+import { BossEventHandlerSystem } from "../system/boss-event-handler.system";
 
 type BossManagerParams = {
   engine: Engine;
@@ -34,8 +34,8 @@ export class BossManager {
   }
 
   private static initSystems(engine: Engine, boss: Boss): void {
-    BossBehaviorSystem({ engine, boss });
-    BossEventSystem({ engine, boss });
+    AIBossSystem({ engine, boss });
+    BossEventHandlerSystem({ engine, boss });
   }
 
   private static getBossPosition(tiledMap: TiledMap): TiledObject | undefined {

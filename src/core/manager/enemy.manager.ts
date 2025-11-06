@@ -3,9 +3,10 @@ import type { Engine } from "../../types/engine.interface";
 import type { Map } from "../../types/map.interface";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import type { Enemy } from "../../types/enemy.interface";
-import { DroneBehaviorSystem } from "../system/drone-behavior.system";
-import { DroneEventSystem } from "../system/drone-event.system";
+import { DroneEventHandlerSystem } from "../system/drone-event-handler.system";
+import { AIDroneSystem } from "../system/ai-drone.system";
 import { TAGS } from "../../types/tags.enum";
+import { DronePositionResetSystem } from "../system/drone-position-reset.system";
 
 type EnemyManagerParams = {
   engine: Engine;
@@ -20,8 +21,9 @@ export class EnemyManager {
   }
 
   private static initSystems(engine: Engine, drone: Enemy): void {
-    DroneBehaviorSystem({ engine, drone });
-    DroneEventSystem({ engine, drone });
+    DroneEventHandlerSystem({ engine, drone });
+    AIDroneSystem({ engine, drone });
+    DronePositionResetSystem({ drone });
   }
 
   private static getSpawnPositions(tiledMap: TiledMap): TiledObject[] {

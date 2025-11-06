@@ -1,19 +1,16 @@
 import type { Engine } from "../../types/engine.interface";
 import type { Boss } from "../../types/boss.interface";
-import { createBlink } from "../../utils/create-blink";
-import { createNotificationBox } from "../../utils/create-notification-box";
-import { state } from "../state";
+import type { Player } from "../../types/player.interface";
 import { BURNER_ANIMATIONS } from "../../types/animations.enum";
 import { BOSS_EVENTS } from "../../types/events.enum";
 import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
-import type { Player } from "../../types/player.interface";
+import { createBlink } from "../../utils/create-blink";
+import { state } from "../state";
+import { createNotificationBox } from "../../utils/create-notification-box";
 
-type Params = {
-  engine: Engine;
-  boss: Boss;
-};
+type Params = { engine: Engine; boss: Boss };
 
-export function BossEventSystem({ engine, boss }: Params) {
+export function BossEventHandlerSystem({ engine, boss }: Params) {
   const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
 
   function onSwordHitboxCollision() {
@@ -35,11 +32,20 @@ export function BossEventSystem({ engine, boss }: Params) {
     }
   }
 
+  function onHurt() {
+    createBlink(engine, boss);
+    if (boss.hp() <= 0) {
+      onExplode();
+    }
+  }
+
   function onExplode() {
+    boss.trigger(BOSS_EVENTS.EXPLODE);
     boss.enterState(BOSS_EVENTS.EXPLODE);
+    boss.play(BURNER_ANIMATIONS.EXPLODE);
     boss.collisionIgnore = [TAGS.PLAYER];
     boss.unuse("body");
-    boss.play(BURNER_ANIMATIONS.EXPLODE);
+
     state.set("isBossDefeated", true);
     state.set("isDoubleJumpUnlocked", true);
 
@@ -52,14 +58,8 @@ export function BossEventSystem({ engine, boss }: Params) {
     engine.wait(3, () => notification.close());
   }
 
-  function onHurt() {
-    createBlink(engine, boss);
-    if (boss.hp() > 0) return;
-    boss.trigger(BOSS_EVENTS.EXPLODE);
-  }
-
   boss.onCollide(HITBOX_TAGS.PLAYER_SWORD, onSwordHitboxCollision);
-  boss.onAnimEnd(onAnimationEnd);
-  boss.on(BOSS_EVENTS.EXPLODE, onExplode);
+
   boss.on("hurt", onHurt);
+  boss.onAnimEnd(onAnimationEnd);
 }

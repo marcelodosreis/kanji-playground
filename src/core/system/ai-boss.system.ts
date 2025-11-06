@@ -1,18 +1,15 @@
 import type { Engine } from "../../types/engine.interface";
 import type { Boss } from "../../types/boss.interface";
 import type { Player } from "../../types/player.interface";
-import { state } from "../state";
 import { BURNER_ANIMATIONS } from "../../types/animations.enum";
 import { BOSS_EVENTS } from "../../types/events.enum";
 import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
 import { isPaused } from "../../utils/wrap-with-pause-check";
+import { state } from "../state";
 
-type Params = {
-  engine: Engine;
-  boss: Boss;
-};
+type Params = { engine: Engine; boss: Boss };
 
-export function BossBehaviorSystem({ engine, boss }: Params) {
+export function AIBossSystem({ engine, boss }: Params) {
   const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
 
   async function handleIsPausedChange(paused: boolean) {
@@ -21,22 +18,22 @@ export function BossBehaviorSystem({ engine, boss }: Params) {
         await engine.wait(0.5);
         fireEnd();
       }
-      boss.enterState(BOSS_EVENTS.IDLE);
+      boss.enterState(boss.state);
     }
   }
 
-  const idleUpdate = () => {
+  function idleUpdate() {
     if (state.current().isPlayerInBossFight) {
       boss.enterState(BOSS_EVENTS.RUN);
     }
-  };
+  }
 
-  const followEnter = () => {
+  function followEnter() {
     if (isPaused()) return;
     boss.play(BURNER_ANIMATIONS.RUN);
-  };
+  }
 
-  const followUpdate = () => {
+  function followUpdate() {
     if (isPaused()) return;
     boss.flipX = player.pos.x <= boss.pos.x;
     boss.moveTo(
@@ -47,14 +44,16 @@ export function BossBehaviorSystem({ engine, boss }: Params) {
     if (boss.pos.dist(player.pos) < boss.fireRange) {
       boss.enterState(BOSS_EVENTS.OPEN_FIRE);
     }
-  };
+  }
 
-  const openFireEnter = () => {
+  function openFireEnter() {
     if (isPaused()) return;
     boss.play(BURNER_ANIMATIONS.OPEN_FIRE);
-  };
+  }
 
-  const fireEnter = () => {
+  function fireEnter() {
+    if (isPaused()) return;
+
     const fireHitbox = boss.add([
       engine.area({ shape: new engine.Rect(engine.vec2(0), 70, 10) }),
       engine.pos(boss.flipX ? -70 : 0, 5),
@@ -71,9 +70,16 @@ export function BossBehaviorSystem({ engine, boss }: Params) {
     engine.wait(boss.fireDuration, () => {
       boss.enterState(BOSS_EVENTS.SHUT_FIRE);
     });
-  };
+  }
 
-  const fireEnd = () => {
+  function fireUpdate() {
+    if (isPaused()) return;
+    if (boss.curAnim() !== BURNER_ANIMATIONS.FIRE) {
+      boss.play(BURNER_ANIMATIONS.FIRE);
+    }
+  }
+
+  function fireEnd() {
     if (isPaused()) return;
     const [fireHitbox] = engine.get(HITBOX_TAGS.BOSS_FIRE_HITBOX, {
       recursive: true,
@@ -81,33 +87,24 @@ export function BossBehaviorSystem({ engine, boss }: Params) {
     if (fireHitbox) {
       engine.destroy(fireHitbox);
     }
-  };
+  }
 
-  const fireUpdate = () => {
-    if (isPaused()) return;
-    if (boss.curAnim() !== BURNER_ANIMATIONS.FIRE) {
-      boss.play(BURNER_ANIMATIONS.FIRE);
-    }
-  };
-
-  const shutFireEnter = () => {
+  function shutFireEnter() {
     if (isPaused()) return;
     boss.play(BURNER_ANIMATIONS.SHUT_FIRE);
-  };
+  }
 
   function start() {
     state.subscribe("isPaused", handleIsPausedChange);
 
     boss.onStateEnter(BOSS_EVENTS.RUN, followEnter);
-    boss.onStateEnter(BOSS_EVENTS.FIRE, fireEnter);
-    boss.onStateEnter(BOSS_EVENTS.OPEN_FIRE, openFireEnter);
-    boss.onStateEnter(BOSS_EVENTS.SHUT_FIRE, shutFireEnter);
-
-    boss.onStateUpdate(BOSS_EVENTS.IDLE, idleUpdate);
     boss.onStateUpdate(BOSS_EVENTS.RUN, followUpdate);
+    boss.onStateEnter(BOSS_EVENTS.OPEN_FIRE, openFireEnter);
+    boss.onStateEnter(BOSS_EVENTS.FIRE, fireEnter);
     boss.onStateUpdate(BOSS_EVENTS.FIRE, fireUpdate);
-
     boss.onStateEnd(BOSS_EVENTS.FIRE, fireEnd);
+    boss.onStateEnter(BOSS_EVENTS.SHUT_FIRE, shutFireEnter);
+    boss.onStateUpdate(BOSS_EVENTS.IDLE, idleUpdate);
   }
 
   start();
