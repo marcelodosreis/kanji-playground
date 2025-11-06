@@ -3,6 +3,7 @@ import type { Map, BossBarrier } from "../../types/map.interface";
 import { GLOBAL_STATE } from "../../types/state.interface";
 import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledObject } from "../../types/tiled-map.interface";
+import { smoothTransition } from "../../utils/smooth-transition";
 import { state } from "../state";
 
 export class BossBarrierManager {
@@ -21,12 +22,12 @@ export class BossBarrierManager {
     collider: TiledObject
   ): BossBarrier {
     return map.add([
+      MAP_TAGS.BOSS_BARRIER,
       engine.rect(collider.width, collider.height),
       engine.color(engine.Color.fromHex("#eacfba")),
       engine.pos(collider.x, collider.y),
       engine.area({ collisionIgnore: [MAP_TAGS.COLLIDER] }),
       engine.opacity(0),
-      MAP_TAGS.BOSS_BARRIER,
       this.createActions(engine, collider),
     ]);
   }
@@ -45,20 +46,22 @@ export class BossBarrierManager {
       if (currentState.isPlayerInBossFight || currentState.isBossDefeated)
         return;
 
-      engine.tween(
-        this.opacity,
-        0.3,
-        1,
-        (val) => (this.opacity = val),
-        engine.easings.linear
-      );
-      engine.tween(
-        engine.camPos().x,
-        collider.properties[0].value,
-        1,
-        (val) => engine.camPos(val, engine.camPos().y),
-        engine.easings.linear
-      );
+      smoothTransition({
+        engine,
+        startValue: this.opacity,
+        endValue: 0.3,
+        durationSeconds: 1,
+        onUpdate: (val) => (this.opacity = val),
+        easingFunction: engine.easings.linear,
+      });
+      smoothTransition({
+        engine,
+        startValue: engine.camPos().x,
+        endValue: collider.properties[0].value,
+        durationSeconds: 1,
+        onUpdate: (val) => engine.camPos(val, engine.camPos().y),
+        easingFunction: engine.easings.linear,
+      });
     };
   }
 
@@ -69,20 +72,22 @@ export class BossBarrierManager {
       if (currentState.isPlayerInBossFight || currentState.isBossDefeated)
         return;
 
-      engine.tween(
-        this.opacity,
-        0,
-        1,
-        (val) => (this.opacity = val),
-        engine.easings.linear
-      );
-      await engine.tween(
-        engine.camPos().x,
-        playerPosX,
-        1,
-        (val) => engine.camPos(val, engine.camPos().y),
-        engine.easings.linear
-      );
+      smoothTransition({
+        engine,
+        startValue: this.opacity,
+        endValue: 0,
+        durationSeconds: 1,
+        onUpdate: (val) => (this.opacity = val),
+        easingFunction: engine.easings.linear,
+      });
+      await smoothTransition({
+        engine,
+        startValue: engine.camPos().x,
+        endValue: playerPosX,
+        durationSeconds: 1,
+        onUpdate: (val) => engine.camPos(val, engine.camPos().y),
+        easingFunction: engine.easings.linear,
+      });
       engine.destroy(this);
     };
   }

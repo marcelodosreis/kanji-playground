@@ -3,6 +3,7 @@ import type { Map } from "../../types/map.interface";
 import type { Player } from "../../types/player.interface";
 import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
+import { smoothTransition } from "../../utils/smooth-transition";
 import { state } from "../state";
 
 type CameraSetupParams = {
@@ -111,13 +112,14 @@ export class CameraManager {
   ) {
     const targetY = camera.properties[0].value;
     if (engine.camPos().y !== targetY) {
-      engine.tween(
-        engine.camPos().y,
-        targetY,
-        0.8,
-        (val) => engine.camPos(engine.camPos().x, val),
-        engine.easings.linear
-      );
+      smoothTransition({
+        engine,
+        startValue: engine.camPos().y,
+        endValue: targetY,
+        durationSeconds: 0.8,
+        onUpdate: (val) => engine.camPos(engine.camPos().x, val),
+        easingFunction: engine.easings.linear,
+      });
     }
   }
 }

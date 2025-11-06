@@ -4,6 +4,7 @@ import type { Map } from "../../types/map.interface";
 import { MENU_SCENES } from "../../types/scenes.enum";
 import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
+import { smoothTransition } from "../../utils/smooth-transition";
 
 type SetupParams = {
   engine: Engine;
@@ -86,13 +87,14 @@ export class ExitManager {
     background: any
   ): Promise<void> {
     return new Promise((resolve) => {
-      engine.tween(
-        background.pos.x,
-        0,
-        0.5,
-        (val) => (background.pos.x = val),
-        engine.easings.linear
-      );
+      smoothTransition({
+        engine,
+        startValue: background.pos.x,
+        endValue: 0,
+        durationSeconds: 0.5,
+        onUpdate: (val) => (background.pos.x = val),
+        easingFunction: engine.easings.linear,
+      });
       setTimeout(resolve, 500);
     });
   }
