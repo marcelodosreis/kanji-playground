@@ -14,8 +14,6 @@ export function DroneEventSystem({ engine, drone }: Params) {
   const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
 
   function onPlayerCollision() {
-    if (player.isAttacking) return;
-    drone.hurt(1);
     player.hurt(1);
   }
 

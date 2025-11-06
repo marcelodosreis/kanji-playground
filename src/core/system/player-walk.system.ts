@@ -1,6 +1,7 @@
 import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import type { Engine } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
+import { isPaused } from "../../utils/wrap-with-pause-check";
 
 type Params = {
   engine: Engine;
@@ -26,7 +27,9 @@ export function PlayerWalkSystem({ engine, player }: Params) {
     player.move(direction * player.speed, 0);
   }
 
-  const handleMovementKeyDown = async (key: string) => {
+  const handleMovementKeyDown = (key: string) => {
+    if (isPaused()) return;
+
     if (key === "left") {
       move(-1);
     } else if (key === "right") {

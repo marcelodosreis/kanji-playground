@@ -2,6 +2,7 @@ import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import type { Engine } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
 import { HITBOX_TAGS } from "../../types/tags.enum";
+import { isPaused } from "../../utils/wrap-with-pause-check";
 
 type Params = {
   engine: Engine;
@@ -12,6 +13,7 @@ export function PlayerAttackSystem({ engine, player }: Params) {
   player.controlHandlers = player.controlHandlers || [];
 
   const handleKeyPress = async (key: string) => {
+    if (isPaused()) return;
     if (key !== "z" || player.curAnim() === PLAYER_ANIMATIONS.ATTACK) return;
 
     player.isAttacking = true;

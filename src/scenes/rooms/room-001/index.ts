@@ -7,6 +7,7 @@ import { MapManager } from "../../../core/manager/map.manager";
 import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
 import { state } from "../../../core/state";
+import { PauseSystem } from "../../../core/system/pause.system";
 import { COLORS } from "../../../types/colors.enum";
 import type { Engine, EngineGameObj } from "../../../types/engine.interface";
 import type { Map } from "../../../types/map.interface";
@@ -55,6 +56,8 @@ export class Room001Scene {
   public initialize(): void {
     setBackgroundColor(this.engine, this.config.BACKGROUND_COLOR);
 
+    PauseSystem.setup({ engine: this.engine });
+    
     MapManager.setup({
       engine: this.engine,
       tiledMap: this.tiledMap,
