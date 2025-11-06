@@ -9,16 +9,23 @@ import { engine } from "./engine";
 export function sprites(): void {
   engine.loadFont("glyphmesss", "./fonts/glyphmesss.ttf");
 
-  engine.loadSprite(SPRITES.PLAYER, "./assets/sprites/player.png", {
+  engine.loadSprite(SPRITES.PLAYER, "./v2/assets/sprites/player.png", {
     sliceX: 8,
-    sliceY: 9,
+    sliceY: 14,
     anims: {
       [PLAYER_ANIMATIONS.IDLE]: { from: 0, to: 7, loop: true },
-      [PLAYER_ANIMATIONS.RUN]: { from: 8, to: 13, loop: true },
-      [PLAYER_ANIMATIONS.JUMP]: { from: 51, to: 51, loop: true },
-      [PLAYER_ANIMATIONS.FALL]: { from: 54, to: 54, loop: true },
-      [PLAYER_ANIMATIONS.EXPLODE]: { from: 64, to: 69 },
-      [PLAYER_ANIMATIONS.ATTACK]: { from: 24, to: 28, speed: 16 },
+      [PLAYER_ANIMATIONS.ATTACK]: { from: 8, to: 13, speed: 16 },
+      // [PLAYER_ANIMATIONS.ATTACK_BOTTOM]: { from: 16, to: 23, speed: 16 },
+      // [PLAYER_ANIMATIONS.HURT]: { from: 32, to: 37, speed: 12 },
+      // [PLAYER_ANIMATIONS.ACHIVE]: { from: 40, to: 45, speed: 10 },
+      [PLAYER_ANIMATIONS.RUN]: { from: 48, to: 52, loop: true },
+      // [PLAYER_ANIMATIONS.DASH]: { from: 56, to: 61, speed: 18 },
+      [PLAYER_ANIMATIONS.JUMP]: { from: 64, to: 68, speed: 32 },
+      // [PLAYER_ANIMATIONS.DEFENSE]: { from: 72, to: 75, speed: 8 },
+      [PLAYER_ANIMATIONS.FALL]: { from: 80, to: 80, loop: true },
+      // [PLAYER_ANIMATIONS.WALL]: { from: 88, to: 88, loop: true },
+      // [PLAYER_ANIMATIONS.SPELL]: { from: 96, to: 99 },
+      [PLAYER_ANIMATIONS.EXPLODE]: { from: 104, to: 109 },
     },
   });
 

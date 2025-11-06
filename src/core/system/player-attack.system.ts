@@ -25,7 +25,7 @@ export function PlayerAttackSystem({ engine, player }: Params) {
   function createSwordHitbox(followPlayer = true) {
     const hitboxWidth = 8;
     const hitboxHeight = 10;
-    const offsetX = player.flipX ? -20 : 5;
+    const offsetX = player.flipX ? -20 : 12;
     const offsetY = 10;
 
     const hitboxShape = new engine.Rect(

@@ -7,8 +7,8 @@ export function PlayerEntity(engine: Engine): Player {
   return engine.make([
     TAGS.PLAYER,
     engine.pos(),
-    engine.sprite("player"),
-    engine.area({ shape: new engine.Rect(engine.vec2(0, 18), 12, 12) }),
+    engine.sprite(TAGS.PLAYER),
+    engine.area({ shape: new engine.Rect(engine.vec2(0, 16), 16, 16) }),
     engine.anchor("center"),
     engine.body({ mass: 100, jumpForce: 320 }),
     engine.doubleJump(0),

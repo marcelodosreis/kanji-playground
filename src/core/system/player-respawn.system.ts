@@ -42,6 +42,7 @@ export function PlayerRespawnSystem({
 
   function respawnPlayerFullLife(maxHp: number) {
     state.set(GLOBAL_STATE.PLAYER_HP, maxHp);
+    state.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, false);
     engine.go(LEVEL_SCENES.ROOM_001, { exitName: null });
   }
 

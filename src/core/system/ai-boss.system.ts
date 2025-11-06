@@ -63,9 +63,6 @@ export function AIBossSystem({ engine, boss }: Params) {
 
     fireHitbox.onCollide(TAGS.PLAYER, () => {
       player.hurt(1);
-      if (player.hp() === 0) {
-        state.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, false);
-      }
     });
 
     engine.wait(boss.fireDuration, () => {

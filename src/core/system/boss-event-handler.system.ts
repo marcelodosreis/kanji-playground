@@ -1,6 +1,5 @@
 import type { Engine } from "../../types/engine.interface";
 import type { Boss } from "../../types/boss.interface";
-import type { Player } from "../../types/player.interface";
 import { BURNER_ANIMATIONS } from "../../types/animations.enum";
 import { BOSS_EVENTS, ENGINE_DEFAULT_EVENTS } from "../../types/events.enum";
 import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
@@ -12,11 +11,8 @@ import { GLOBAL_STATE } from "../../types/state.interface";
 type Params = { engine: Engine; boss: Boss };
 
 export function BossEventHandlerSystem({ engine, boss }: Params) {
-  const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
-
   function onSwordHitboxCollision() {
     boss.hurt(1);
-    if (player.isAttacking) return;
   }
 
   function onAnimationEnd(anim: string) {
