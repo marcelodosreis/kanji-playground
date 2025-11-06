@@ -2,11 +2,12 @@ import type { Engine } from "../../types/engine.interface";
 import type { Boss } from "../../types/boss.interface";
 import type { Player } from "../../types/player.interface";
 import { BURNER_ANIMATIONS } from "../../types/animations.enum";
-import { BOSS_EVENTS } from "../../types/events.enum";
+import { BOSS_EVENTS, ENGINE_DEFAULT_EVENTS } from "../../types/events.enum";
 import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
 import { createBlink } from "../../utils/create-blink";
 import { state } from "../state";
 import { createNotificationBox } from "../../utils/create-notification-box";
+import { GLOBAL_STATE } from "../../types/state.interface";
 
 type Params = { engine: Engine; boss: Boss };
 
@@ -46,8 +47,8 @@ export function BossEventHandlerSystem({ engine, boss }: Params) {
     boss.collisionIgnore = [TAGS.PLAYER];
     boss.unuse("body");
 
-    state.set("isBossDefeated", true);
-    state.set("isDoubleJumpUnlocked", true);
+    state.set(GLOBAL_STATE.IS_BOSS_DEFEATED, true);
+    state.set(GLOBAL_STATE.IS_DOUBLE_JUMB_UNLOCKED, true);
 
     const notification = engine.add(
       createNotificationBox(
@@ -60,6 +61,6 @@ export function BossEventHandlerSystem({ engine, boss }: Params) {
 
   boss.onCollide(HITBOX_TAGS.PLAYER_SWORD, onSwordHitboxCollision);
 
-  boss.on("hurt", onHurt);
+  boss.on(ENGINE_DEFAULT_EVENTS.HURT, onHurt);
   boss.onAnimEnd(onAnimationEnd);
 }

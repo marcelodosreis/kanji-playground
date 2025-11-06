@@ -9,6 +9,7 @@ import {
   wrapWithPauseCheck,
 } from "../../utils/wrap-with-pause-check";
 import { state } from "../state";
+import { GLOBAL_STATE } from "../../types/state.interface";
 
 type Params = { engine: Engine; drone: Enemy };
 
@@ -91,7 +92,7 @@ export function AIDroneSystem({ engine, drone }: Params) {
   }
 
   function start() {
-    state.subscribe("isPaused", handleIsPausedChange);
+    state.subscribe(GLOBAL_STATE.IS_PAUSED, handleIsPausedChange);
 
     drone.onStateEnter(
       DRONE_EVENTS.PATROL_RIGHT,

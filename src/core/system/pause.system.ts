@@ -1,4 +1,5 @@
 import type { Engine, EngineGameObj } from "../../types/engine.interface";
+import { GLOBAL_STATE } from "../../types/state.interface";
 import { createNotificationBox } from "../../utils/create-notification-box";
 import { state } from "../state";
 
@@ -18,7 +19,7 @@ export class PauseSystem {
   }
 
   private togglePause(): void {
-    state.set("isPaused", !state.current().isPaused);
+    state.set(GLOBAL_STATE.IS_PAUSED, !state.current().isPaused);
     if (state.current().isPaused) this.showPauseNotification();
     else this.hidePauseNotification();
   }

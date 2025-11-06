@@ -1,4 +1,5 @@
 import type { Player } from "../../types/player.interface";
+import { GLOBAL_STATE } from "../../types/state.interface";
 import { state } from "../state";
 
 type Params = {
@@ -12,5 +13,5 @@ export function PlayerDoubleJumpSystem({ player }: Params) {
 
   updateNumJumps(state.current().isDoubleJumpUnlocked);
 
-  state.subscribe("isDoubleJumpUnlocked", updateNumJumps);
+  state.subscribe(GLOBAL_STATE.IS_DOUBLE_JUMB_UNLOCKED, updateNumJumps);
 }

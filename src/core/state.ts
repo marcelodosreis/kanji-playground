@@ -1,54 +1,48 @@
-import type { State } from "../types/state.interface";
+import { GLOBAL_STATE, type GLOBAL_STATE_VALUES } from "../types/state.interface";
 
-type StateProperty = keyof State;
-
-type Listener<K extends StateProperty> = (value: State[K]) => void;
+type Listener<K extends GLOBAL_STATE> = (value: GLOBAL_STATE_VALUES[K]) => void;
 
 interface StateManager {
-  current(): State;
-  set<K extends StateProperty>(property: K, value: State[K]): void;
-  subscribe<K extends StateProperty>(
-    property: K,
-    listener: Listener<K>
-  ): () => void;
+  current(): GLOBAL_STATE_VALUES;
+  set<K extends GLOBAL_STATE>(property: K, value: GLOBAL_STATE_VALUES[K]): void;
+  subscribe<K extends GLOBAL_STATE>(property: K, listener: Listener<K>): () => void;
 }
 
 function initStateManager(): StateManager {
-  const state: State = {
-    playerHp: 3,
-    maxPlayerHp: 3,
-    isDoubleJumpUnlocked: false,
-    isPlayerInBossFight: false,
-    isBossDefeated: false,
-    isPaused: false,
+  const state: GLOBAL_STATE_VALUES = {
+    [GLOBAL_STATE.PLAYER_HP]: 3,
+    [GLOBAL_STATE.MAX_PLAYER_HP]: 3,
+    [GLOBAL_STATE.IS_DOUBLE_JUMB_UNLOCKED]: false,
+    [GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT]: false,
+    [GLOBAL_STATE.IS_BOSS_DEFEATED]: false,
+    [GLOBAL_STATE.IS_PAUSED]: false,
   };
 
-  const listeners = new Map<StateProperty, Set<Listener<any>>>();
+  const listeners = new Map<GLOBAL_STATE, Set<Listener<any>>>();
 
   return {
     current() {
       return { ...state };
     },
 
-    set<K extends StateProperty>(property: K, value: State[K]) {
+    set<K extends GLOBAL_STATE>(property: K, value: GLOBAL_STATE_VALUES[K]) {
       state[property] = value;
       const setListeners = listeners.get(property);
       if (setListeners) {
-        (setListeners as Set<Listener<K>>).forEach((listener) => {
-          listener(value);
-        });
+        (setListeners as Set<Listener<K>>).forEach((listener) =>
+          listener(value)
+        );
       }
     },
 
-    subscribe<K extends StateProperty>(property: K, listener: Listener<K>) {
+    subscribe<K extends GLOBAL_STATE>(property: K, listener: Listener<K>) {
       if (!listeners.has(property)) {
         listeners.set(property, new Set());
       }
-      const setListeners = listeners.get(property)!;
-      (setListeners as Set<Listener<K>>).add(listener);
+      (listeners.get(property) as Set<Listener<K>>).add(listener);
 
       return () => {
-        (setListeners as Set<Listener<K>>).delete(listener);
+        (listeners.get(property) as Set<Listener<K>>).delete(listener);
       };
     },
   };

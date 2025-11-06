@@ -1,5 +1,6 @@
 import type { Engine, EngineGameObj } from "../../types/engine.interface";
 import type { Map, BossBarrier } from "../../types/map.interface";
+import { GLOBAL_STATE } from "../../types/state.interface";
 import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledObject } from "../../types/tiled-map.interface";
 import { state } from "../state";
@@ -106,7 +107,7 @@ export class BossBarrierManager {
     const currentState = state.current();
 
     if (currentState.isBossDefeated) {
-      state.set("isPlayerInBossFight", false);
+      state.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, false);
       bossBarrier.deactivate(player.pos.x);
       return;
     }
@@ -122,7 +123,7 @@ export class BossBarrierManager {
 
     if (currentState.isPlayerInBossFight || currentState.isBossDefeated) return;
 
-    state.set("isPlayerInBossFight", true);
+    state.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, true);
     bossBarrier.activate();
     bossBarrier.use(engine.body({ isStatic: true }));
   }

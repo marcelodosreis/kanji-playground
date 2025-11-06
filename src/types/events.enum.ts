@@ -17,3 +17,8 @@ export enum DRONE_EVENTS {
   PATROL_LEFT = "patrol-left",
   EXPLODE = "explode",
 }
+
+export enum ENGINE_DEFAULT_EVENTS {
+  HEAL = "heal",
+  HURT = "hurt",
+}

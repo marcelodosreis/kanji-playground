@@ -3,7 +3,7 @@ import type { Enemy } from "../../types/enemy.interface";
 import type { Player } from "../../types/player.interface";
 import { DRONE_ANIMATIONS } from "../../types/animations.enum";
 import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
-import { DRONE_EVENTS } from "../../types/events.enum";
+import { DRONE_EVENTS, ENGINE_DEFAULT_EVENTS } from "../../types/events.enum";
 
 type Params = { engine: Engine; drone: Enemy };
 
@@ -40,6 +40,6 @@ export function DroneEventHandlerSystem({ engine, drone }: Params) {
   drone.onCollide(TAGS.PLAYER, onPlayerCollision);
   drone.onCollide(HITBOX_TAGS.PLAYER_SWORD, onSwordHitboxCollision);
   drone.on(DRONE_EVENTS.EXPLODE, onExplode);
-  drone.on("hurt", onHurt);
+  drone.on(ENGINE_DEFAULT_EVENTS.HURT, onHurt);
   drone.onAnimEnd(onAnimationEnd);
 }

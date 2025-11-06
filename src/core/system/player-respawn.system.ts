@@ -2,6 +2,7 @@ import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import type { Engine } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
 import { LEVEL_SCENES } from "../../types/scenes.enum";
+import { GLOBAL_STATE } from "../../types/state.interface";
 import { state } from "../state";
 
 type Params = {
@@ -28,7 +29,7 @@ export function PlayerRespawnSystem({
     if (currentHp <= 1) {
       respawnPlayerFullLife(maxHp);
     } else {
-      state.set("playerHp", currentHp - 1);
+      state.set(GLOBAL_STATE.PLAYER_HP, currentHp - 1);
       engine.go(destinationName, previousSceneData);
     }
   }
@@ -40,7 +41,7 @@ export function PlayerRespawnSystem({
   }
 
   function respawnPlayerFullLife(maxHp: number) {
-    state.set("playerHp", maxHp);
+    state.set(GLOBAL_STATE.PLAYER_HP, maxHp);
     engine.go(LEVEL_SCENES.ROOM_001, { exitName: null });
   }
 

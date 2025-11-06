@@ -6,6 +6,7 @@ import { BOSS_EVENTS } from "../../types/events.enum";
 import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
 import { isPaused } from "../../utils/wrap-with-pause-check";
 import { state } from "../state";
+import { GLOBAL_STATE } from "../../types/state.interface";
 
 type Params = { engine: Engine; boss: Boss };
 
@@ -63,7 +64,7 @@ export function AIBossSystem({ engine, boss }: Params) {
     fireHitbox.onCollide(TAGS.PLAYER, () => {
       player.hurt(1);
       if (player.hp() === 0) {
-        state.set("isPlayerInBossFight", false);
+        state.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, false);
       }
     });
 
@@ -95,7 +96,7 @@ export function AIBossSystem({ engine, boss }: Params) {
   }
 
   function start() {
-    state.subscribe("isPaused", handleIsPausedChange);
+    state.subscribe(GLOBAL_STATE.IS_PAUSED, handleIsPausedChange);
 
     boss.onStateEnter(BOSS_EVENTS.RUN, followEnter);
     boss.onStateUpdate(BOSS_EVENTS.RUN, followUpdate);

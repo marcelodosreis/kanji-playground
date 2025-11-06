@@ -1,6 +1,7 @@
 import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import type { Engine } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
+import { GLOBAL_STATE } from "../../types/state.interface";
 import { isPaused } from "../../utils/wrap-with-pause-check";
 import { state } from "../state";
 
@@ -36,7 +37,7 @@ export function PlayerJumpSystem({ engine, player }: Params) {
     }
   }
 
-  state.subscribe("isPaused", handlePauseChange);
+  state.subscribe(GLOBAL_STATE.IS_PAUSED, handlePauseChange);
 
   player.controlHandlers.push(engine.onKeyPress(handleJumpKey));
 }
