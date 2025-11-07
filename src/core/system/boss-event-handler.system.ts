@@ -7,10 +7,21 @@ import { createBlink } from "../../utils/create-blink";
 import { state } from "../state";
 import { createNotificationBox } from "../../utils/create-notification-box";
 import { GLOBAL_STATE } from "../../types/state.interface";
+import type { Player } from "../../types/player.interface";
 
 type Params = { engine: Engine; boss: Boss };
 
 export function BossEventHandlerSystem({ engine, boss }: Params) {
+  const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
+
+  function applyCollisionDamage(player: Player) {
+    player.hurt(1, boss);
+  }
+
+  async function onPlayerCollision() {
+    applyCollisionDamage(player);
+  }
+
   function onSwordHitboxCollision() {
     boss.hurt(1);
   }
@@ -56,6 +67,7 @@ export function BossEventHandlerSystem({ engine, boss }: Params) {
   }
 
   boss.onCollide(HITBOX_TAGS.PLAYER_SWORD, onSwordHitboxCollision);
+  boss.onCollide(TAGS.PLAYER, onPlayerCollision);
 
   boss.on(ENGINE_DEFAULT_EVENTS.HURT, onHurt);
   boss.onAnimEnd(onAnimationEnd);

@@ -9,6 +9,7 @@ import {
 } from "../../utils/wrap-with-pause-check";
 import { state } from "../state";
 import { GLOBAL_STATE } from "../../types/state.interface";
+import { BAT_ANIMATIONS } from "../../types/animations.enum";
 
 type Params = { engine: Engine; enemy: Enemy };
 
@@ -20,6 +21,7 @@ export function AIFlyingEnemySystem({ engine, enemy }: Params) {
   }
 
   async function patrolRightEnter() {
+    if (!enemy.curAnim()) enemy.play(BAT_ANIMATIONS.FLYING);
     await engine.wait(3);
     if (
       enemy.state === FLYING_ENEMY_EVENTS.PATROL_RIGHT &&
@@ -41,6 +43,7 @@ export function AIFlyingEnemySystem({ engine, enemy }: Params) {
   }
 
   async function patrolLeftEnter() {
+    if (!enemy.curAnim()) enemy.play(BAT_ANIMATIONS.FLYING);
     await engine.wait(3);
     if (
       enemy.state === FLYING_ENEMY_EVENTS.PATROL_LEFT &&
@@ -62,7 +65,8 @@ export function AIFlyingEnemySystem({ engine, enemy }: Params) {
   }
 
   async function alertEnter() {
-    await engine.wait(1);
+    if (!enemy.curAnim()) enemy.play(BAT_ANIMATIONS.FLYING);
+    await engine.wait(0.5);
     if (enemy.hp() <= 0 || isPaused()) return;
     if (isPlayerInRange()) {
       enemy.enterState(FLYING_ENEMY_EVENTS.ATTACK);
@@ -72,7 +76,8 @@ export function AIFlyingEnemySystem({ engine, enemy }: Params) {
   }
 
   function attackUpdate() {
-    if (enemy.hp() <= 0) return;
+    if (!enemy.curAnim()) enemy.play(BAT_ANIMATIONS.FLYING);
+    if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
     if (!isPlayerInRange()) {
       enemy.enterState(FLYING_ENEMY_EVENTS.ALERT);
       return;
@@ -109,8 +114,14 @@ export function AIFlyingEnemySystem({ engine, enemy }: Params) {
       FLYING_ENEMY_EVENTS.PATROL_LEFT,
       wrapWithPauseCheck(patrolLeftUpdate)
     );
-    enemy.onStateEnter(FLYING_ENEMY_EVENTS.ALERT, wrapWithPauseCheck(alertEnter));
-    enemy.onStateUpdate(FLYING_ENEMY_EVENTS.ATTACK, wrapWithPauseCheck(attackUpdate));
+    enemy.onStateEnter(
+      FLYING_ENEMY_EVENTS.ALERT,
+      wrapWithPauseCheck(alertEnter)
+    );
+    enemy.onStateUpdate(
+      FLYING_ENEMY_EVENTS.ATTACK,
+      wrapWithPauseCheck(attackUpdate)
+    );
   }
 
   start();

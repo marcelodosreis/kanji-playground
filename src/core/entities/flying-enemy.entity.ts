@@ -10,17 +10,20 @@ export function FlyingEnemyEntity(engine: Engine, initialPos: Position): Enemy {
     TAGS.FLY_ENEMY,
     engine.pos(initialPos),
     engine.sprite(SPRITES.BAT, { anim: BAT_ANIMATIONS.FLYING }),
-    engine.area({ shape: new engine.Rect(engine.vec2(0), 24, 16) }),
+    engine.area({ shape: new engine.Rect(engine.vec2(0, 0), 6, 6) }),
     engine.anchor("center"),
     engine.body({ gravityScale: 0 }),
     engine.offscreen({ distance: 400 }),
-    engine.state(FLYING_ENEMY_EVENTS.PATROL_RIGHT, [...Object.values(FLYING_ENEMY_EVENTS)]),
-    engine.health(1),
+    engine.state(FLYING_ENEMY_EVENTS.PATROL_RIGHT, [
+      ...Object.values(FLYING_ENEMY_EVENTS),
+    ]),
+    engine.health(3),
     {
-      speed: 100,
-      pursuitSpeed: 150,
-      range: 100,
+      speed: 90,
+      pursuitSpeed: 130,
+      range: 90,
       initialPos,
+      isKnockedBack: false,
     },
   ]);
 }

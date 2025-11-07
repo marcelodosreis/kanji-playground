@@ -6,4 +6,5 @@ export interface Enemy extends EnemyEngineGameObj {
   range: number;
   pursuitSpeed: number;
   initialPos: Position;
+  isKnockedBack: boolean;
 }

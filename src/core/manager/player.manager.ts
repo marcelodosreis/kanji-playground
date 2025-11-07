@@ -4,13 +4,13 @@ import type { Player } from "../../types/player.interface";
 import { TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { PlayerEntity } from "../entities/player.entity";
+import { PlayerAnimationSystem } from "../system/player-animation.system";
 import { PlayerAttackSystem } from "../system/player-attack.system";
 import { PlayerDoubleJumpSystem } from "../system/player-double-jump.system";
-import { PlayerEventSystem } from "../system/player-event.system";
-import { PlayerIdleSystem } from "../system/player-idle.system";
+import { PlayerHealthSystem } from "../system/player-health.system";
 import { PlayerJumpSystem } from "../system/player-jump.system";
 import { PlayerPassthroughSystem } from "../system/player-passthrough.system";
-import { PlayerRespawnSystem } from "../system/player-respawn.system";
+import { PlayerBoundarySystem } from "../system/player-boundary.system";
 import { PlayerWalkSystem } from "../system/player-walk.system";
 
 type PositionOffset = {
@@ -126,17 +126,20 @@ export class PlayerManager {
   private initializeSystems(player: Player): void {
     PlayerJumpSystem({ engine: this.engine, player });
     PlayerWalkSystem({ engine: this.engine, player });
-    PlayerIdleSystem({ engine: this.engine, player });
 
     PlayerAttackSystem({ engine: this.engine, player });
-    PlayerRespawnSystem({
+    PlayerBoundarySystem({
       engine: this.engine,
       player,
       boundValue: this.respawnConfig.bounds,
+    });
+    PlayerHealthSystem({
+      engine: this.engine,
+      player,
       destinationName: this.respawnConfig.roomName,
       previousSceneData: { exitName: this.respawnConfig.exitName },
     });
-    PlayerEventSystem({ engine: this.engine, player });
+    PlayerAnimationSystem({ engine: this.engine, player });
     PlayerDoubleJumpSystem({ player });
     PlayerPassthroughSystem({ player });
   }

@@ -10,7 +10,7 @@ export function BossEntity(engine: Engine, initialPos: Position): Boss {
     TAGS.BOSS,
     engine.pos(initialPos),
     engine.sprite(SPRITES.BURNER, { anim: BURNER_ANIMATIONS.IDLE }),
-    engine.area({ shape: new engine.Rect(engine.vec2(0, 8), 16, 16) }),
+    engine.area({ shape: new engine.Rect(engine.vec2(0, 8), 24, 16) }),
     engine.body({ mass: 100, jumpForce: 320 }),
     engine.anchor("center"),
     engine.state(BOSS_EVENTS.IDLE, [...Object.values(BOSS_EVENTS)]),

@@ -7,6 +7,7 @@ import {
   FLYING_ENEMY_EVENTS,
   ENGINE_DEFAULT_EVENTS,
 } from "../../types/events.enum";
+import { applyKnockback } from "../../utils/apply-knockback";
 
 type Params = { engine: Engine; enemy: Enemy };
 
@@ -14,12 +15,18 @@ export function FlyingEnemyEventHandlerSystem({ engine, enemy }: Params) {
   const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
 
   function applyCollisionDamage(player: Player) {
-    enemy.hurt(1);
-    player.hurt(1);
+    player.hurt(1, enemy);
   }
 
   async function onPlayerCollision() {
+    if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
     applyCollisionDamage(player);
+    await applyKnockback({
+      engine,
+      target: enemy,
+      source: player,
+      strength: 3,
+    });
   }
 
   function onAnimationEnd(anim: string) {
@@ -38,10 +45,18 @@ export function FlyingEnemyEventHandlerSystem({ engine, enemy }: Params) {
     enemy.hurt(1);
   }
 
-  function onHurt() {
+  async function onHurt() {
     if (enemy.hp() === 0) {
-      enemy.trigger(FLYING_ENEMY_EVENTS.EXPLODE);
+      return enemy.trigger(FLYING_ENEMY_EVENTS.EXPLODE);
     }
+
+    enemy.play(BAT_ANIMATIONS.HURT);
+    await applyKnockback({
+      engine,
+      target: enemy,
+      source: player,
+      strength: 2,
+    });
   }
 
   enemy.onCollide(TAGS.PLAYER, onPlayerCollision);

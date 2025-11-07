@@ -62,7 +62,7 @@ export function AIBossSystem({ engine, boss }: Params) {
     ]);
 
     fireHitbox.onCollide(TAGS.PLAYER, () => {
-      player.hurt(1);
+      player.hurt(1, boss);
     });
 
     engine.wait(boss.fireDuration, () => {
