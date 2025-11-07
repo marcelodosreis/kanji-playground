@@ -24,7 +24,7 @@ export class BossBarrierManager {
     return map.add([
       MAP_TAGS.BOSS_BARRIER,
       engine.rect(collider.width, collider.height),
-      engine.color(engine.Color.fromHex("#eacfba")),
+      engine.color(engine.Color.fromHex("#000000")),
       engine.pos(collider.x, collider.y),
       engine.area({ collisionIgnore: [MAP_TAGS.COLLIDER] }),
       engine.opacity(0),
@@ -45,19 +45,10 @@ export class BossBarrierManager {
     return function activate(this: BossBarrier) {
       if (currentState.isPlayerInBossFight || currentState.isBossDefeated)
         return;
-
-      smoothTransition({
-        engine,
-        startValue: this.opacity,
-        endValue: 0.3,
-        durationSeconds: 1,
-        onUpdate: (val) => (this.opacity = val),
-        easingFunction: engine.easings.linear,
-      });
       smoothTransition({
         engine,
         startValue: engine.camPos().x,
-        endValue: collider.properties[0].value,
+        endValue: Number(collider.properties[0].value),
         durationSeconds: 1,
         onUpdate: (val) => engine.camPos(val, engine.camPos().y),
         easingFunction: engine.easings.linear,

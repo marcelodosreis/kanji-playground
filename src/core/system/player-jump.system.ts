@@ -17,10 +17,21 @@ export function PlayerJumpSystem({ engine, player }: Params) {
   async function handleJumpKey(key: string) {
     if (isPaused()) return;
     if (key === "x") {
-      if (player.curAnim() !== PLAYER_ANIMATIONS.JUMP && !player.isAttacking) {
-        player.play(PLAYER_ANIMATIONS.JUMP);
+      if (state.current().isDoubleJumpUnlocked && player.numJumps !== 2) {
+        player.numJumps = 2;
       }
       player.doubleJump();
+
+      const cur = player.curAnim();
+
+      if (
+        cur !== PLAYER_ANIMATIONS.JUMP &&
+        cur !== PLAYER_ANIMATIONS.FALL &&
+        cur !== undefined &&
+        !player.isAttacking
+      ) {
+        player.play(PLAYER_ANIMATIONS.JUMP);
+      }
     }
   }
 

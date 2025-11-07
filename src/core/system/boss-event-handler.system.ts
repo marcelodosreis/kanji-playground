@@ -43,19 +43,20 @@ export function BossEventHandlerSystem({ engine, boss }: Params) {
   function onHurt() {
     createBlink(engine, boss);
     if (boss.hp() <= 0) {
-      onExplode();
+      explode();
     }
   }
 
-  function onExplode() {
+  function explode() {
+    state.set(GLOBAL_STATE.IS_BOSS_DEFEATED, true);
+    state.set(GLOBAL_STATE.IS_DOUBLE_JUMB_UNLOCKED, true);
+
     boss.trigger(BOSS_EVENTS.EXPLODE);
     boss.enterState(BOSS_EVENTS.EXPLODE);
     boss.play(BURNER_ANIMATIONS.EXPLODE);
+
     boss.collisionIgnore = [TAGS.PLAYER];
     boss.unuse("body");
-
-    state.set(GLOBAL_STATE.IS_BOSS_DEFEATED, true);
-    state.set(GLOBAL_STATE.IS_DOUBLE_JUMB_UNLOCKED, true);
 
     const notification = engine.add(
       createNotificationBox(

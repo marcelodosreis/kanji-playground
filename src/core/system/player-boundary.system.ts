@@ -9,7 +9,7 @@ type Params = {
 
 export function PlayerBoundarySystem({ engine, player, boundValue }: Params) {
   function checkOutOfBounds() {
-    if (player.pos.y > boundValue) player.trigger("outOfBounds")
+    // if (player.pos.y > boundValue) player.trigger("outOfBounds")
   }
 
   engine.onUpdate(checkOutOfBounds)

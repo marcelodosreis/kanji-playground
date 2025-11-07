@@ -6,7 +6,6 @@ import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { PlayerEntity } from "../entities/player.entity";
 import { PlayerAnimationSystem } from "../system/player-animation.system";
 import { PlayerAttackSystem } from "../system/player-attack.system";
-import { PlayerDoubleJumpSystem } from "../system/player-double-jump.system";
 import { PlayerHealthSystem } from "../system/player-health.system";
 import { PlayerJumpSystem } from "../system/player-jump.system";
 import { PlayerPassthroughSystem } from "../system/player-passthrough.system";
@@ -140,7 +139,6 @@ export class PlayerManager {
       previousSceneData: { exitName: this.respawnConfig.exitName },
     });
     PlayerAnimationSystem({ engine: this.engine, player });
-    PlayerDoubleJumpSystem({ player });
     PlayerPassthroughSystem({ player });
   }
 }

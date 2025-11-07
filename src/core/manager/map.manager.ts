@@ -71,6 +71,8 @@ export class MapManager {
   ): void {
     colliders
       .filter(BossBarrierManager.isBossBarrier)
-      .forEach((collider) => BossBarrierManager.setup(engine, map, collider));
+      .forEach((collider) => {
+        BossBarrierManager.setup(engine, map, collider)
+      });
   }
 }

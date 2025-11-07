@@ -24,7 +24,7 @@ type Room001Params = {
 const CONFIG = {
   BACKGROUND_COLOR: COLORS.BACKGROUND_SECONDARY,
   CAMERA_SCALE: 2,
-  INITIAL_CAMERA_POS: { x: 170, y: 100 },
+  INITIAL_CAMERA_POS: { x: 170, y: 270 },
   GRAVITY: 1000,
   MAP_SPRITE_NAME: LEVEL_SCENES.ROOM_001,
   COLLIDERS_LAYER_INDEX: 4,
@@ -57,7 +57,7 @@ export class Room001Scene {
     setBackgroundColor(this.engine, this.config.BACKGROUND_COLOR);
 
     PauseSystem.setup({ engine: this.engine });
-    
+
     MapManager.setup({
       engine: this.engine,
       tiledMap: this.tiledMap,

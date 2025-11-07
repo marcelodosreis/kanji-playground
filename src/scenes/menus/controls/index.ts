@@ -4,7 +4,7 @@ import { setBackgroundColor } from "../../../utils/set-background-color";
 import { MENU_SCENES } from "../../../types/scenes.enum";
 
 const CONFIG = {
-  bgColor: "#20214a",
+  bgColor: "#442b40",
   title: "CONTROLS",
   subtitle: "Remap and options",
   titleSize: 24,

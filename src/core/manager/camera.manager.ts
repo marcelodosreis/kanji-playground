@@ -110,7 +110,7 @@ export class CameraManager {
     engine: Engine,
     camera: TiledObject
   ) {
-    const targetY = camera.properties[0].value;
+    const targetY = Number(camera.properties[0].value);
     if (engine.camPos().y !== targetY) {
       smoothTransition({
         engine,
