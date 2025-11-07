@@ -4,7 +4,7 @@ import { GLOBAL_STATE } from "../../types/state.interface";
 import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledObject } from "../../types/tiled-map.interface";
 import { smoothTransition } from "../../utils/smooth-transition";
-import { state } from "../state";
+import { state } from "../global-state-controller";
 
 export class BossBarrierManager {
   public static setup(engine: Engine, map: Map, collider: TiledObject): void {

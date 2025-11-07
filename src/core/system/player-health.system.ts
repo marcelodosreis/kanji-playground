@@ -6,7 +6,7 @@ import { GLOBAL_STATE } from "../../types/state.interface";
 import { LEVEL_SCENES } from "../../types/scenes.enum";
 import { createBlink } from "../../utils/create-blink";
 import { applyKnockback } from "../../utils/apply-knockback";
-import { state } from "../state";
+import { state } from "../global-state-controller";
 import { ENGINE_DEFAULT_EVENTS } from "../../types/events.enum";
 
 type Params = {

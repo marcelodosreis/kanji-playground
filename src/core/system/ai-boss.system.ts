@@ -5,7 +5,7 @@ import { BURNER_ANIMATIONS } from "../../types/animations.enum";
 import { BOSS_EVENTS } from "../../types/events.enum";
 import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
 import { isPaused } from "../../utils/wrap-with-pause-check";
-import { state } from "../state";
+import { state } from "../global-state-controller";
 import { GLOBAL_STATE } from "../../types/state.interface";
 
 type Params = { engine: Engine; boss: Boss };

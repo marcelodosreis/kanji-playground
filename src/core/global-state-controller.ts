@@ -2,13 +2,13 @@ import { GLOBAL_STATE, type GLOBAL_STATE_VALUES } from "../types/state.interface
 
 type Listener<K extends GLOBAL_STATE> = (value: GLOBAL_STATE_VALUES[K]) => void;
 
-interface StateManager {
+interface GlobalStateManagerController {
   current(): GLOBAL_STATE_VALUES;
   set<K extends GLOBAL_STATE>(property: K, value: GLOBAL_STATE_VALUES[K]): void;
   subscribe<K extends GLOBAL_STATE>(property: K, listener: Listener<K>): () => void;
 }
 
-function initStateManager(): StateManager {
+function initGlobalStateController(): GlobalStateManagerController {
   const state: GLOBAL_STATE_VALUES = {
     [GLOBAL_STATE.PLAYER_HP]: 3,
     [GLOBAL_STATE.MAX_PLAYER_HP]: 3,
@@ -48,4 +48,4 @@ function initStateManager(): StateManager {
   };
 }
 
-export const state = initStateManager();
+export const state = initGlobalStateController();

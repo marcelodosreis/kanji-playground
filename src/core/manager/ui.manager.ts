@@ -1,6 +1,6 @@
 import type { Engine, EngineGameObj } from "../../types/engine.interface";
 import { GLOBAL_STATE } from "../../types/state.interface";
-import { state } from "../state";
+import { state } from "../global-state-controller";
 
 type SetupHealthBarParams = {
   engine: Engine;

@@ -1,4 +1,4 @@
-import { state } from "../state";
+import { state } from "../global-state-controller";
 import type { Engine, EngineGameObj } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
 import { TAGS } from "../../types/tags.enum";

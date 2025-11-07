@@ -3,7 +3,7 @@ import type { Engine } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
 import { GLOBAL_STATE } from "../../types/state.interface";
 import { isPaused } from "../../utils/wrap-with-pause-check";
-import { state } from "../state";
+import { state } from "../global-state-controller";
 
 type Params = {
   engine: Engine;

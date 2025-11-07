@@ -1,4 +1,4 @@
-import { state } from "../core/state";
+import { state } from "../core/global-state-controller";
 
 export const isPaused = () => state.current().isPaused;
 

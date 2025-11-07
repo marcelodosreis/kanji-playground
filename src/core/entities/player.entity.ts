@@ -2,7 +2,7 @@ import { ENGINE_DEFAULT_EVENTS } from "../../types/events.enum";
 import type { Engine, EngineGameObj } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
 import { TAGS } from "../../types/tags.enum";
-import { state } from "../state";
+import { state } from "../global-state-controller";
 
 export function PlayerEntity(engine: Engine): Player {
   const player = engine.make([

@@ -6,7 +6,7 @@ import { ExitManager } from "../../../core/manager/exit.manager";
 import { MapManager } from "../../../core/manager/map.manager";
 import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
-import { state } from "../../../core/state";
+import { state } from "../../../core/global-state-controller";
 import { PauseSystem } from "../../../core/system/pause.system";
 import { COLORS } from "../../../types/colors.enum";
 import type { Engine, EngineGameObj } from "../../../types/engine.interface";

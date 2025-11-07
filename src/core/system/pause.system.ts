@@ -1,7 +1,7 @@
 import type { Engine, EngineGameObj } from "../../types/engine.interface";
 import { GLOBAL_STATE } from "../../types/state.interface";
 import { createNotificationBox } from "../../utils/create-notification-box";
-import { state } from "../state";
+import { state } from "../global-state-controller";
 
 export class PauseSystem {
   private engine: Engine;

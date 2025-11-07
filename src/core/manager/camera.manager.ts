@@ -4,7 +4,7 @@ import type { Player } from "../../types/player.interface";
 import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { smoothTransition } from "../../utils/smooth-transition";
-import { state } from "../state";
+import { state } from "../global-state-controller";
 
 type CameraSetupParams = {
   engine: Engine;
