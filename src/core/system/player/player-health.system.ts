@@ -7,7 +7,7 @@ import { GLOBAL_STATE } from "../../../types/state.interface";
 import { applyKnockback } from "../../../utils/apply-knockback";
 import { createBlink } from "../../../utils/create-blink";
 import { state } from "../../global-state-controller";
-import { PLAYER_STATE, type PlayerStateMachine } from "./player-state-machine";
+import { type PlayerStateMachine } from "./player-state-machine";
 
 type Params = {
   engine: Engine;
@@ -29,6 +29,8 @@ export function PlayerHealthSystem({
   }
 
   async function handleHurt(params: { amount: number; source: EngineGameObj }) {
+    if (stateMachine.getState() === PLAYER_ANIMATIONS.EXPLODE) return;
+
     stateMachine.dispatch("HURT");
     const playerHp = await applyDamage(params.amount);
 
@@ -42,12 +44,12 @@ export function PlayerHealthSystem({
     }
 
     if (playerHp <= 0) return;
+
     await createBlink(engine, player);
     await createBlink(engine, player);
     await createBlink(engine, player);
 
-    player.isKnockedBack = false;
-    if (stateMachine.getState() === PLAYER_STATE.HURT) {
+    if (stateMachine.isKnockedBack()) {
       stateMachine.dispatch("IDLE");
     }
   }

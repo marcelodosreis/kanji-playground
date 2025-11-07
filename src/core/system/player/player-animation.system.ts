@@ -1,7 +1,7 @@
-import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
 import type { Engine } from "../../../types/engine.interface";
 import type { Player } from "../../../types/player.interface";
-import { PLAYER_STATE, type PlayerStateMachine } from "./player-state-machine";
+import { type PlayerStateMachine } from "./player-state-machine";
+import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
 
 type Params = {
   engine: Engine;
@@ -14,30 +14,18 @@ export function PlayerAnimationSystem({
   player,
   stateMachine,
 }: Params) {
+  let lastApplied: PLAYER_ANIMATIONS = PLAYER_ANIMATIONS.IDLE;
+
   engine.onUpdate(() => {
-    const state = stateMachine.getState();
-    const currentAnim = player.curAnim();
+    if (stateMachine.isAttacking()) return;
 
-    if (player.isAttacking) return;
+    const state = stateMachine.getState() as PLAYER_ANIMATIONS;
 
-    if (state === PLAYER_STATE.IDLE && currentAnim !== PLAYER_ANIMATIONS.IDLE) {
-      player.play(PLAYER_ANIMATIONS.IDLE);
-    } else if (
-      state === PLAYER_STATE.RUN &&
-      currentAnim !== PLAYER_ANIMATIONS.RUN &&
-      player.isGrounded()
-    ) {
-      player.play(PLAYER_ANIMATIONS.RUN);
-    } else if (
-      state === PLAYER_STATE.JUMP &&
-      currentAnim !== PLAYER_ANIMATIONS.JUMP
-    ) {
-      player.play(PLAYER_ANIMATIONS.JUMP);
-    } else if (
-      state === PLAYER_STATE.FALL &&
-      currentAnim !== PLAYER_ANIMATIONS.FALL
-    ) {
-      player.play(PLAYER_ANIMATIONS.FALL);
+    if (state === PLAYER_ANIMATIONS.RUN && !player.isGrounded()) return;
+
+    if (state !== lastApplied) {
+      player.play(state);
+      lastApplied = state;
     }
   });
 }

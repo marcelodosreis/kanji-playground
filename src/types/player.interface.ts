@@ -6,8 +6,6 @@ import type {
 
 export interface Player extends PlayerEngineGameObj {
   speed: number;
-  isAttacking: boolean;
   controlHandlers: EngineEventCtrl[];
-  isKnockedBack: boolean;
   hurt: (amount: number, source?: EngineGameObj) => void;
 }

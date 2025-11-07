@@ -18,8 +18,6 @@ export function PlayerEntity(engine: Engine): Player {
     {
       speed: 150,
       controlHandlers: [],
-      isAttacking: false,
-      isKnockedBack: false,
     },
   ]);
 

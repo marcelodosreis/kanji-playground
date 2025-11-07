@@ -2,111 +2,117 @@ import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
 import type { Player } from "../../../types/player.interface";
 import { StateMachine, type StateMachineConfig } from "../../state-machine";
 
-export enum PLAYER_STATE {
-  IDLE = "IDLE",
-  RUN = "RUN",
-  JUMP = "JUMP",
-  FALL = "FALL",
-  ATTACK = "ATTACK",
-  HURT = "HURT",
-  DEAD = "DEAD",
-}
-
-export type PlayerStateMachine = StateMachine<PlayerContext>;
-
 type PlayerContext = {
   player: Player;
-  stateMachine?: PlayerStateMachine;
+  stateMachine: PlayerStateMachine;
 };
+
+class PlayerStateMachine extends StateMachine<PlayerContext> {
+  public isAttacking(): boolean {
+    return this.getState() === PLAYER_ANIMATIONS.ATTACK;
+  }
+
+  public isKnockedBack(): boolean {
+    return this.getState() === PLAYER_ANIMATIONS.HURT;
+  }
+
+  public canMove(): boolean {
+    const state = this.getState();
+    return (
+      state !== PLAYER_ANIMATIONS.HURT && state !== PLAYER_ANIMATIONS.EXPLODE
+    );
+  }
+
+  public isInLocomotionState(): boolean {
+    const state = this.getState();
+    return (
+      state === PLAYER_ANIMATIONS.IDLE ||
+      state === PLAYER_ANIMATIONS.RUN ||
+      state === PLAYER_ANIMATIONS.JUMP ||
+      state === PLAYER_ANIMATIONS.FALL
+    );
+  }
+}
 
 export function createPlayerStateMachine(
   context: Omit<PlayerContext, "stateMachine">
-) {
+): PlayerStateMachine {
   const ctx = { ...context } as PlayerContext;
 
   const config: StateMachineConfig<PlayerContext> = {
-    initial: PLAYER_STATE.IDLE,
+    initial: PLAYER_ANIMATIONS.IDLE,
     states: {
-      [PLAYER_STATE.IDLE]: {
+      [PLAYER_ANIMATIONS.IDLE]: {
         onEnter: (ctx) => {
-          if (!ctx.player.isAttacking) {
-            ctx.player.play(PLAYER_ANIMATIONS.IDLE);
-          }
+          ctx.player.play(PLAYER_ANIMATIONS.IDLE);
         },
         transitions: {
-          RUN: PLAYER_STATE.RUN,
-          JUMP: PLAYER_STATE.JUMP,
-          FALL: PLAYER_STATE.FALL,
-          ATTACK: PLAYER_STATE.ATTACK,
-          HURT: PLAYER_STATE.HURT,
-          DEAD: PLAYER_STATE.DEAD,
+          RUN: PLAYER_ANIMATIONS.RUN,
+          JUMP: PLAYER_ANIMATIONS.JUMP,
+          FALL: PLAYER_ANIMATIONS.FALL,
+          ATTACK: PLAYER_ANIMATIONS.ATTACK,
+          HURT: PLAYER_ANIMATIONS.HURT,
+          EXPLODE: PLAYER_ANIMATIONS.EXPLODE,
         },
       },
-      [PLAYER_STATE.RUN]: {
+      [PLAYER_ANIMATIONS.RUN]: {
         onEnter: (ctx) => {
-          if (!ctx.player.isAttacking && ctx.player.isGrounded()) {
-            ctx.player.play(PLAYER_ANIMATIONS.RUN);
-          }
+          if (ctx.player.isGrounded()) ctx.player.play(PLAYER_ANIMATIONS.RUN);
         },
         transitions: {
-          IDLE: PLAYER_STATE.IDLE,
-          JUMP: PLAYER_STATE.JUMP,
-          FALL: PLAYER_STATE.FALL,
-          ATTACK: PLAYER_STATE.ATTACK,
-          HURT: PLAYER_STATE.HURT,
-          DEAD: PLAYER_STATE.DEAD,
+          IDLE: PLAYER_ANIMATIONS.IDLE,
+          JUMP: PLAYER_ANIMATIONS.JUMP,
+          FALL: PLAYER_ANIMATIONS.FALL,
+          ATTACK: PLAYER_ANIMATIONS.ATTACK,
+          HURT: PLAYER_ANIMATIONS.HURT,
+          EXPLODE: PLAYER_ANIMATIONS.EXPLODE,
         },
       },
-      [PLAYER_STATE.JUMP]: {
+      [PLAYER_ANIMATIONS.JUMP]: {
         onEnter: (ctx) => {
-          if (!ctx.player.isAttacking) {
-            ctx.player.play(PLAYER_ANIMATIONS.JUMP);
-          }
+          ctx.player.play(PLAYER_ANIMATIONS.JUMP);
         },
         transitions: {
-          IDLE: PLAYER_STATE.IDLE,
-          FALL: PLAYER_STATE.FALL,
-          ATTACK: PLAYER_STATE.ATTACK,
-          HURT: PLAYER_STATE.HURT,
-          DEAD: PLAYER_STATE.DEAD,
+          IDLE: PLAYER_ANIMATIONS.IDLE,
+          FALL: PLAYER_ANIMATIONS.FALL,
+          ATTACK: PLAYER_ANIMATIONS.ATTACK,
+          HURT: PLAYER_ANIMATIONS.HURT,
+          EXPLODE: PLAYER_ANIMATIONS.EXPLODE,
         },
       },
-      [PLAYER_STATE.FALL]: {
+      [PLAYER_ANIMATIONS.FALL]: {
         onEnter: (ctx) => {
-          if (!ctx.player.isAttacking) {
-            ctx.player.play(PLAYER_ANIMATIONS.FALL);
-          }
+          ctx.player.play(PLAYER_ANIMATIONS.FALL);
         },
         transitions: {
-          IDLE: PLAYER_STATE.IDLE,
-          RUN: PLAYER_STATE.RUN,
-          ATTACK: PLAYER_STATE.ATTACK,
-          HURT: PLAYER_STATE.HURT,
-          DEAD: PLAYER_STATE.DEAD,
+          IDLE: PLAYER_ANIMATIONS.IDLE,
+          RUN: PLAYER_ANIMATIONS.RUN,
+          ATTACK: PLAYER_ANIMATIONS.ATTACK,
+          HURT: PLAYER_ANIMATIONS.HURT,
+          EXPLODE: PLAYER_ANIMATIONS.EXPLODE,
         },
       },
-      [PLAYER_STATE.ATTACK]: {
+      [PLAYER_ANIMATIONS.ATTACK]: {
         onEnter: (ctx) => {
-          ctx.player.isAttacking = true;
           ctx.player.play(PLAYER_ANIMATIONS.ATTACK);
         },
         transitions: {
-          IDLE: PLAYER_STATE.IDLE,
-          RUN: PLAYER_STATE.RUN,
-          HURT: PLAYER_STATE.HURT,
-          DEAD: PLAYER_STATE.DEAD,
+          IDLE: PLAYER_ANIMATIONS.IDLE,
+          RUN: PLAYER_ANIMATIONS.RUN,
+          HURT: PLAYER_ANIMATIONS.HURT,
+          EXPLODE: PLAYER_ANIMATIONS.EXPLODE,
         },
       },
-      [PLAYER_STATE.HURT]: {
+      [PLAYER_ANIMATIONS.HURT]: {
         onEnter: (ctx) => {
-          ctx.player.isKnockedBack = true;
+          ctx.player.play(PLAYER_ANIMATIONS.HURT);
         },
         transitions: {
-          IDLE: PLAYER_STATE.IDLE,
-          DEAD: PLAYER_STATE.DEAD,
+          IDLE: PLAYER_ANIMATIONS.IDLE,
+          EXPLODE: PLAYER_ANIMATIONS.EXPLODE,
         },
       },
-      [PLAYER_STATE.DEAD]: {
+      [PLAYER_ANIMATIONS.EXPLODE]: {
         onEnter: (ctx) => {
           ctx.player.play(PLAYER_ANIMATIONS.EXPLODE);
         },
@@ -115,7 +121,9 @@ export function createPlayerStateMachine(
     },
   };
 
-  const stateMachine = new StateMachine<PlayerContext>(config, ctx);
+  const stateMachine = new PlayerStateMachine(config, ctx);
   ctx.stateMachine = stateMachine;
   return stateMachine;
 }
+
+export type { PlayerStateMachine };

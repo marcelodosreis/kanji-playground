@@ -12,6 +12,7 @@ export enum PLAYER_ANIMATIONS {
   FALL = "fall",
   EXPLODE = "explode",
   ATTACK = "attack",
+  HURT = "hurt",
 }
 
 export enum BAT_ANIMATIONS {

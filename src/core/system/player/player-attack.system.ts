@@ -1,14 +1,18 @@
 import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
-import type { Engine } from "../../../types/engine.interface";
+import type { Engine, EngineGameObj } from "../../../types/engine.interface";
 import type { Player } from "../../../types/player.interface";
 import { HITBOX_TAGS } from "../../../types/tags.enum";
 import { isPaused } from "../../../utils/wrap-with-pause-check";
-import { PLAYER_STATE, type PlayerStateMachine } from "./player-state-machine";
+import { type PlayerStateMachine } from "./player-state-machine";
 
 type Params = {
   engine: Engine;
   player: Player;
   stateMachine: PlayerStateMachine;
+};
+
+type SwordHitbox = {
+  destroy: () => void;
 };
 
 export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
@@ -17,13 +21,13 @@ export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
   const HITBOX_START_FRAME = 1;
   const HITBOX_END_FRAME = 5;
 
-  let currentSwordHitbox: any = null;
+  let currentSwordHitbox: SwordHitbox | null = null;
   let lastCheckedFrame = -1;
 
   const handleKeyPress = async (key: string) => {
     if (isPaused()) return;
-    if (key !== "z" || player.curAnim() === PLAYER_ANIMATIONS.ATTACK) return;
-
+    if (key !== "z") return;
+    if (stateMachine.isAttacking()) return;
     stateMachine.dispatch("ATTACK");
     lastCheckedFrame = -1;
   };
@@ -32,7 +36,6 @@ export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
     if (player.curAnim() !== PLAYER_ANIMATIONS.ATTACK) return;
 
     const currentFrame = player.animFrame;
-
     if (currentFrame === lastCheckedFrame) return;
     lastCheckedFrame = currentFrame;
 
@@ -45,7 +48,7 @@ export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
     }
   };
 
-  function createSwordHitbox() {
+  function createSwordHitbox(): SwordHitbox {
     const hitboxWidth = 18;
     const hitboxHeight = 16;
     const offsetX = player.flipX ? -18 : 0;
@@ -61,27 +64,27 @@ export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
       engine.pos(offsetX, offsetY),
       engine.area({ shape: hitboxShape }),
       HITBOX_TAGS.PLAYER_SWORD,
-    ]);
+    ]) as unknown as SwordHitbox;
 
     return hitbox;
   }
 
   function destroySwordHitbox() {
-    if (currentSwordHitbox) {
-      engine.destroy(currentSwordHitbox);
-      currentSwordHitbox = null;
+    if (!currentSwordHitbox) return;
+    if (typeof currentSwordHitbox.destroy === "function") {
+      currentSwordHitbox.destroy();
+    } else {
+      engine.destroy(currentSwordHitbox as EngineGameObj);
     }
+    currentSwordHitbox = null;
   }
 
   function onAttackAnimationEnd(anim: string) {
     if (anim !== PLAYER_ANIMATIONS.ATTACK) return;
-
     destroySwordHitbox();
-    player.isAttacking = false;
     lastCheckedFrame = -1;
 
-    const state = stateMachine.getState();
-    if (state === PLAYER_STATE.ATTACK) {
+    if (stateMachine.getState() === PLAYER_ANIMATIONS.ATTACK) {
       stateMachine.dispatch("IDLE");
     }
   }
