@@ -58,10 +58,12 @@ export class ExitManager {
     exit: TiledObject
   ): Promise<void> {
     const { engine, exitRoomName } = params;
-    const camPos = engine.camPos();
 
-    const background = this.createBackground(engine, camPos);
-    await this.tweenBackgroundToZero(engine, background);
+    const background = this.createBackground(engine);
+
+    const duration = 0.4;
+
+    await this.tweenBackgroundToRight(engine, background, duration);
 
     if (exit.name === MENU_SCENES.FINAL) {
       engine.go(MENU_SCENES.FINAL);
@@ -71,31 +73,36 @@ export class ExitManager {
     engine.go(exitRoomName, { exitName: exit.name });
   }
 
-  private static createBackground(
-    engine: Engine,
-    camPos: { x: number; y: number }
-  ) {
+  private static createBackground(engine: Engine) {
     return engine.add([
-      engine.pos(camPos.x - engine.width(), camPos.y - engine.height() / 2),
+      engine.pos(-engine.width(), 0),
+      engine.fixed(), 
       engine.rect(engine.width(), engine.height()),
       engine.color(COLORS.BACKGROUND_PRIMARY),
+      engine.z(9999), 
     ]);
   }
 
-  private static tweenBackgroundToZero(
+  private static tweenBackgroundToRight(
     engine: Engine,
-    background: any
+    background: any,
+    durationSeconds = 1
   ): Promise<void> {
     return new Promise((resolve) => {
+      const startX = background.pos.x;
+      const endX = 0; 
+      const totalMs = durationSeconds * 1000;
+
       smoothTransition({
         engine,
-        startValue: background.pos.x,
-        endValue: 0,
-        durationSeconds: 0.5,
+        startValue: startX,
+        endValue: endX,
+        durationSeconds,
         onUpdate: (val) => (background.pos.x = val),
         easingFunction: engine.easings.linear,
       });
-      setTimeout(resolve, 500);
+
+      setTimeout(resolve, totalMs + 50);
     });
   }
 }

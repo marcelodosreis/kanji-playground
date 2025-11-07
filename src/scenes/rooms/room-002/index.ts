@@ -77,10 +77,10 @@ export class Room002Scene {
       respawnConfig: {
         bounds: this.config.RESPAWN_BOUNDS,
         roomName: this.config.RESPAWN_ROOM_NAME,
-        exitName: "exit-2",
+        exitName: this.previousSceneData.exitName,
       },
     });
-    
+
     CartridgeManager.setup({
       engine: this.engine,
       map: this.map,
