@@ -3,9 +3,9 @@ import type { Engine } from "../../types/engine.interface";
 import type { Position } from "../../types/position.interface";
 import { TAGS } from "../../types/tags.enum";
 
-export function CartridgeEntity(engine: Engine, pos: Position) {
+export function HealthPickupEntity(engine: Engine, pos: Position) {
   return engine.make([
-    TAGS.CARTRIDGE,
+    TAGS.HEALTH_PICKUP,
     engine.sprite(SPRITES.CARTRIDGE, { anim: "default" }),
     engine.area(),
     engine.anchor("center"),

@@ -33,8 +33,8 @@ export function sprites(): void {
     sliceX: 5,
     sliceY: 3,
     anims: {
-      [BAT_ANIMATIONS.EXPLODE]: { from: 0, to: 4 },
-      [BAT_ANIMATIONS.HURT]: { from: 5, to: 8, speed: 16 },
+      [BAT_ANIMATIONS.EXPLODE]: { from: 6, to: 7 },
+      [BAT_ANIMATIONS.HURT]: { from: 6, to: 7, speed: 16 },
       [BAT_ANIMATIONS.FLYING]: { from: 10, to: 14, loop: true },
     },
   });

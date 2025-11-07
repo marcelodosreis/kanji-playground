@@ -2,7 +2,7 @@ import type { Engine, EngineGameObj } from "../../../types/engine.interface";
 import type { TiledMap } from "../../../types/tiled-map.interface";
 import type { Map } from "../../../types/map.interface";
 
-import { CartridgeManager } from "../../../core/manager/cartridge.manager";
+import { HealthPickupManager } from "../../../core/manager/health-pickup.manager";
 import { CameraManager } from "../../../core/manager/camera.manager";
 import { ExitManager } from "../../../core/manager/exit.manager";
 import { MapManager } from "../../../core/manager/map.manager";
@@ -81,7 +81,7 @@ export class Room002Scene {
       },
     });
 
-    CartridgeManager.setup({
+    HealthPickupManager.setup({
       engine: this.engine,
       map: this.map,
       tiledMap: this.tiledMap,

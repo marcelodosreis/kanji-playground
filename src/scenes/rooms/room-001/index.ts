@@ -1,6 +1,6 @@
 import { BossManager } from "../../../core/manager/boss.manager";
 import { CameraManager } from "../../../core/manager/camera.manager";
-import { CartridgeManager } from "../../../core/manager/cartridge.manager";
+import { HealthPickupManager } from "../../../core/manager/health-pickup.manager";
 import { EnemyManager } from "../../../core/manager/enemy.manager";
 import { ExitManager } from "../../../core/manager/exit.manager";
 import { MapManager } from "../../../core/manager/map.manager";
@@ -95,7 +95,7 @@ export class Room001Scene {
       isBossDefeated: state.current().isBossDefeated,
     });
 
-    CartridgeManager.setup({
+    HealthPickupManager.setup({
       engine: this.engine,
       map: this.map,
       tiledMap: this.tiledMap,

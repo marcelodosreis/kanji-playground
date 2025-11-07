@@ -5,16 +5,16 @@ import { TAGS } from "../../types/tags.enum";
 
 type Params = {
   engine: Engine;
-  cartridge: EngineGameObj;
+  healthPickup: EngineGameObj;
 };
 
-export function CartridgeCollisionSystem({ engine, cartridge }: Params) {
+export function HealthPickupSystem({ engine, healthPickup }: Params) {
   function onPlayerCollision(player: Player) {
     if (player.hp() < state.current().maxPlayerHp) {
       player.heal(1);
     }
-    engine.destroy(cartridge);
+    engine.destroy(healthPickup);
   }
 
-  cartridge.onCollide(TAGS.PLAYER, onPlayerCollision);
+  healthPickup.onCollide(TAGS.PLAYER, onPlayerCollision);
 }

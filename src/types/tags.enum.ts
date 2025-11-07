@@ -2,7 +2,7 @@ export enum TAGS {
   PLAYER = "player",
   FLY_ENEMY = "fly_enemy",
   BOSS = "boss",
-  CARTRIDGE = "coin",
+  HEALTH_PICKUP = "coin",
 }
 
 export enum HITBOX_TAGS {
