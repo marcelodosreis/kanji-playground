@@ -1,7 +1,7 @@
 import { BossManager } from "../../../core/manager/boss.manager";
 import { CameraManager } from "../../../core/manager/camera.manager";
 import { HealthPickupManager } from "../../../core/manager/health-pickup.manager";
-import { EnemyManager } from "../../../core/manager/enemy.manager";
+import { FlyingEnemyManager } from "../../../core/manager/flying-enemy.manager";
 import { ExitManager } from "../../../core/manager/exit.manager";
 import { MapManager } from "../../../core/manager/map.manager";
 import { PlayerManager } from "../../../core/manager/player.manager";
@@ -82,7 +82,7 @@ export class Room001Scene {
       },
     });
 
-    EnemyManager.setup({
+    FlyingEnemyManager.setup({
       engine: this.engine,
       map: this.map,
       tiledMap: this.tiledMap,

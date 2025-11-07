@@ -8,14 +8,14 @@ import { AIFlyingEnemySystem } from "../system/ai-flying-enemy.system";
 import { TAGS } from "../../types/tags.enum";
 import { FlyingEnemyPositionResetSystem } from "../system/flying-enemy-position-reset.system";
 
-type EnemyManagerParams = {
+type FlyingEnemyManagerParams = {
   engine: Engine;
   map: Map;
   tiledMap: TiledMap;
 };
 
-export class EnemyManager {
-  public static setup({ engine, map, tiledMap }: EnemyManagerParams): void {
+export class FlyingEnemyManager {
+  public static setup({ engine, map, tiledMap }: FlyingEnemyManagerParams): void {
     const positions = this.getSpawnPositions(tiledMap);
     this.spawn(engine, map, positions);
   }
