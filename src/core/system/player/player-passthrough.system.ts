@@ -5,16 +5,33 @@ type Params = {
   player: Player;
 };
 
+type CollisionTarget = {
+  is: (tag: string) => boolean;
+};
+
+type CollisionWithTarget = Collision & {
+  target: CollisionTarget;
+};
+
+const COLLISION_TAGS = {
+  PASSTHROUGH: "passthrough",
+};
+
+const shouldPreventResolution = (
+  collision: CollisionWithTarget,
+  player: Player
+): boolean => {
+  return collision.target.is(COLLISION_TAGS.PASSTHROUGH) && player.isJumping();
+};
+
 export function PlayerPassthroughSystem({ player }: Params) {
-  function handleBeforePhysicsResolve(collision: Collision) {
-    if (isPassthroughCollision(collision) && player.isJumping()) {
+  const handleBeforePhysicsResolve = (collision: Collision): void => {
+    const typedCollision = collision as CollisionWithTarget;
+
+    if (shouldPreventResolution(typedCollision, player)) {
       collision.preventResolution();
     }
-  }
-
-  function isPassthroughCollision(collision: any): boolean {
-    return collision.target.is("passthrough");
-  }
+  };
 
   player.onBeforePhysicsResolve(handleBeforePhysicsResolve);
 }

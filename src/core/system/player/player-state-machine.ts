@@ -7,95 +7,119 @@ type PlayerContext = {
   stateMachine: PlayerStateMachine;
 };
 
+type PlayerState = PLAYER_ANIMATIONS;
+
+const StatePredicates = {
+  isAttacking: (state: PlayerState): boolean =>
+    state === PLAYER_ANIMATIONS.ATTACK,
+
+  isKnockedBack: (state: PlayerState): boolean =>
+    state === PLAYER_ANIMATIONS.HURT,
+
+  canMove: (state: PlayerState): boolean => state !== PLAYER_ANIMATIONS.EXPLODE,
+
+  isInLocomotionState: (state: PlayerState): boolean =>
+    [
+      PLAYER_ANIMATIONS.IDLE,
+      PLAYER_ANIMATIONS.RUN,
+      PLAYER_ANIMATIONS.JUMP,
+      PLAYER_ANIMATIONS.FALL,
+    ].includes(state),
+};
+
+const COMMON_TRANSITIONS = {
+  ATTACK: PLAYER_ANIMATIONS.ATTACK,
+  HURT: PLAYER_ANIMATIONS.HURT,
+  EXPLODE: PLAYER_ANIMATIONS.EXPLODE,
+};
+
+const LOCOMOTION_TRANSITIONS = {
+  IDLE: PLAYER_ANIMATIONS.IDLE,
+  RUN: PLAYER_ANIMATIONS.RUN,
+  JUMP: PLAYER_ANIMATIONS.JUMP,
+  FALL: PLAYER_ANIMATIONS.FALL,
+  ...COMMON_TRANSITIONS,
+};
+
+const createStateHandlers = () =>
+  ({
+    [PLAYER_ANIMATIONS.IDLE]: (ctx: PlayerContext): void => {
+      ctx.player.play(PLAYER_ANIMATIONS.IDLE);
+    },
+
+    [PLAYER_ANIMATIONS.RUN]: (ctx: PlayerContext): void => {
+      if (ctx.player.isGrounded()) {
+        ctx.player.play(PLAYER_ANIMATIONS.RUN);
+      }
+    },
+
+    [PLAYER_ANIMATIONS.JUMP]: (ctx: PlayerContext): void => {
+      ctx.player.play(PLAYER_ANIMATIONS.JUMP);
+    },
+
+    [PLAYER_ANIMATIONS.FALL]: (ctx: PlayerContext): void => {
+      ctx.player.play(PLAYER_ANIMATIONS.FALL);
+    },
+
+    [PLAYER_ANIMATIONS.ATTACK]: (ctx: PlayerContext): void => {
+      ctx.player.play(PLAYER_ANIMATIONS.ATTACK);
+    },
+
+    [PLAYER_ANIMATIONS.HURT]: (ctx: PlayerContext): void => {
+      ctx.player.play(PLAYER_ANIMATIONS.HURT);
+    },
+
+    [PLAYER_ANIMATIONS.EXPLODE]: (ctx: PlayerContext): void => {
+      ctx.player.play(PLAYER_ANIMATIONS.EXPLODE);
+    },
+  });
+
 class PlayerStateMachine extends StateMachine<PlayerContext> {
-  public isAttacking(): boolean {
-    return this.getState() === PLAYER_ANIMATIONS.ATTACK;
-  }
+  public isAttacking = (): boolean =>
+    StatePredicates.isAttacking(this.getState() as PlayerState);
 
-  public isKnockedBack(): boolean {
-    return this.getState() === PLAYER_ANIMATIONS.HURT;
-  }
+  public isKnockedBack = (): boolean =>
+    StatePredicates.isKnockedBack(this.getState() as PlayerState);
 
-  public canMove(): boolean {
-    const state = this.getState();
-    return (
-      state !== PLAYER_ANIMATIONS.HURT && state !== PLAYER_ANIMATIONS.EXPLODE
-    );
-  }
+  public canMove = (): boolean =>
+    StatePredicates.canMove(this.getState() as PlayerState);
 
-  public isInLocomotionState(): boolean {
-    const state = this.getState();
-    return (
-      state === PLAYER_ANIMATIONS.IDLE ||
-      state === PLAYER_ANIMATIONS.RUN ||
-      state === PLAYER_ANIMATIONS.JUMP ||
-      state === PLAYER_ANIMATIONS.FALL
-    );
-  }
+  public isInLocomotionState = (): boolean =>
+    StatePredicates.isInLocomotionState(this.getState() as PlayerState);
 }
 
-export function createPlayerStateMachine(
-  context: Omit<PlayerContext, "stateMachine">
-): PlayerStateMachine {
-  const ctx = { ...context } as PlayerContext;
+const createStateMachineConfig = (): StateMachineConfig<PlayerContext> => {
+  const handlers = createStateHandlers();
 
-  const config: StateMachineConfig<PlayerContext> = {
+  return {
     initial: PLAYER_ANIMATIONS.IDLE,
     states: {
       [PLAYER_ANIMATIONS.IDLE]: {
-        onEnter: (ctx) => {
-          ctx.player.play(PLAYER_ANIMATIONS.IDLE);
-        },
-        transitions: {
-          RUN: PLAYER_ANIMATIONS.RUN,
-          JUMP: PLAYER_ANIMATIONS.JUMP,
-          FALL: PLAYER_ANIMATIONS.FALL,
-          ATTACK: PLAYER_ANIMATIONS.ATTACK,
-          HURT: PLAYER_ANIMATIONS.HURT,
-          EXPLODE: PLAYER_ANIMATIONS.EXPLODE,
-        },
+        onEnter: handlers[PLAYER_ANIMATIONS.IDLE],
+        transitions: LOCOMOTION_TRANSITIONS,
       },
       [PLAYER_ANIMATIONS.RUN]: {
-        onEnter: (ctx) => {
-          if (ctx.player.isGrounded()) ctx.player.play(PLAYER_ANIMATIONS.RUN);
-        },
-        transitions: {
-          IDLE: PLAYER_ANIMATIONS.IDLE,
-          JUMP: PLAYER_ANIMATIONS.JUMP,
-          FALL: PLAYER_ANIMATIONS.FALL,
-          ATTACK: PLAYER_ANIMATIONS.ATTACK,
-          HURT: PLAYER_ANIMATIONS.HURT,
-          EXPLODE: PLAYER_ANIMATIONS.EXPLODE,
-        },
+        onEnter: handlers[PLAYER_ANIMATIONS.RUN],
+        transitions: LOCOMOTION_TRANSITIONS,
       },
       [PLAYER_ANIMATIONS.JUMP]: {
-        onEnter: (ctx) => {
-          ctx.player.play(PLAYER_ANIMATIONS.JUMP);
-        },
+        onEnter: handlers[PLAYER_ANIMATIONS.JUMP],
         transitions: {
           IDLE: PLAYER_ANIMATIONS.IDLE,
           FALL: PLAYER_ANIMATIONS.FALL,
-          ATTACK: PLAYER_ANIMATIONS.ATTACK,
-          HURT: PLAYER_ANIMATIONS.HURT,
-          EXPLODE: PLAYER_ANIMATIONS.EXPLODE,
+          ...COMMON_TRANSITIONS,
         },
       },
       [PLAYER_ANIMATIONS.FALL]: {
-        onEnter: (ctx) => {
-          ctx.player.play(PLAYER_ANIMATIONS.FALL);
-        },
+        onEnter: handlers[PLAYER_ANIMATIONS.FALL],
         transitions: {
           IDLE: PLAYER_ANIMATIONS.IDLE,
           RUN: PLAYER_ANIMATIONS.RUN,
-          ATTACK: PLAYER_ANIMATIONS.ATTACK,
-          HURT: PLAYER_ANIMATIONS.HURT,
-          EXPLODE: PLAYER_ANIMATIONS.EXPLODE,
+          ...COMMON_TRANSITIONS,
         },
       },
       [PLAYER_ANIMATIONS.ATTACK]: {
-        onEnter: (ctx) => {
-          ctx.player.play(PLAYER_ANIMATIONS.ATTACK);
-        },
+        onEnter: handlers[PLAYER_ANIMATIONS.ATTACK],
         transitions: {
           IDLE: PLAYER_ANIMATIONS.IDLE,
           RUN: PLAYER_ANIMATIONS.RUN,
@@ -104,26 +128,28 @@ export function createPlayerStateMachine(
         },
       },
       [PLAYER_ANIMATIONS.HURT]: {
-        onEnter: (ctx) => {
-          ctx.player.play(PLAYER_ANIMATIONS.HURT);
-        },
-        transitions: {
-          IDLE: PLAYER_ANIMATIONS.IDLE,
-          EXPLODE: PLAYER_ANIMATIONS.EXPLODE,
-        },
+        onEnter: handlers[PLAYER_ANIMATIONS.HURT],
+        transitions: LOCOMOTION_TRANSITIONS,
       },
       [PLAYER_ANIMATIONS.EXPLODE]: {
-        onEnter: (ctx) => {
-          ctx.player.play(PLAYER_ANIMATIONS.EXPLODE);
-        },
+        onEnter: handlers[PLAYER_ANIMATIONS.EXPLODE],
         transitions: {},
       },
     },
   };
+};
+
+export function createPlayerStateMachine(
+  context: Omit<PlayerContext, "stateMachine">
+): PlayerStateMachine {
+  const config = createStateMachineConfig();
+  const ctx = { ...context } as PlayerContext;
 
   const stateMachine = new PlayerStateMachine(config, ctx);
   ctx.stateMachine = stateMachine;
+
   return stateMachine;
 }
 
 export type { PlayerStateMachine };
+export { StatePredicates };

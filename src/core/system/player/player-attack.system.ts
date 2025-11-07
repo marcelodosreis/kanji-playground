@@ -15,79 +15,124 @@ type SwordHitbox = {
   destroy: () => void;
 };
 
+type HitboxConfig = {
+  width: number;
+  height: number;
+  offsetX: number;
+  offsetY: number;
+};
+
+type AttackState = {
+  currentHitbox: SwordHitbox | null;
+  lastCheckedFrame: number;
+};
+
+const ATTACK_CONFIG = {
+  KEY: "z",
+  HITBOX_START_FRAME: 1,
+  HITBOX_END_FRAME: 5,
+  HITBOX_DIMENSIONS: {
+    width: 18,
+    height: 16,
+    offsetY: 9,
+  },
+};
+
+const createHitboxConfig = (isFlipped: boolean): HitboxConfig => ({
+  width: ATTACK_CONFIG.HITBOX_DIMENSIONS.width,
+  height: ATTACK_CONFIG.HITBOX_DIMENSIONS.height,
+  offsetX: isFlipped ? -ATTACK_CONFIG.HITBOX_DIMENSIONS.width : 0,
+  offsetY: ATTACK_CONFIG.HITBOX_DIMENSIONS.offsetY,
+});
+
+const shouldCreateHitbox = (frame: number, hasHitbox: boolean): boolean =>
+  frame === ATTACK_CONFIG.HITBOX_START_FRAME && !hasHitbox;
+
+const shouldDestroyHitbox = (frame: number, hasHitbox: boolean): boolean =>
+  frame === ATTACK_CONFIG.HITBOX_END_FRAME && hasHitbox;
+
+const isAttackAnimation = (anim: string): boolean =>
+  anim === PLAYER_ANIMATIONS.ATTACK;
+
+const canAttack = (key: string, stateMachine: PlayerStateMachine): boolean =>
+  !isPaused() && key === ATTACK_CONFIG.KEY && !stateMachine.isAttacking();
+
 export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
   player.controlHandlers = player.controlHandlers || [];
 
-  const HITBOX_START_FRAME = 1;
-  const HITBOX_END_FRAME = 5;
-
-  let currentSwordHitbox: SwordHitbox | null = null;
-  let lastCheckedFrame = -1;
-
-  const handleKeyPress = async (key: string) => {
-    if (isPaused()) return;
-    if (key !== "z") return;
-    if (stateMachine.isAttacking()) return;
-    stateMachine.dispatch("ATTACK");
-    lastCheckedFrame = -1;
+  const state: AttackState = {
+    currentHitbox: null,
+    lastCheckedFrame: -1,
   };
 
-  const checkAnimationFrame = () => {
-    if (player.curAnim() !== PLAYER_ANIMATIONS.ATTACK) return;
+  const createSwordHitbox = (): SwordHitbox => {
+    const config = createHitboxConfig(player.flipX);
+    const hitboxShape = new engine.Rect(
+      engine.vec2(0),
+      config.width,
+      config.height
+    );
 
-    const currentFrame = player.animFrame;
-    if (currentFrame === lastCheckedFrame) return;
-    lastCheckedFrame = currentFrame;
+    return player.add([
+      engine.pos(config.offsetX, config.offsetY),
+      engine.area({ shape: hitboxShape }),
+      HITBOX_TAGS.PLAYER_SWORD,
+    ]) as unknown as SwordHitbox;
+  };
 
-    if (currentFrame === HITBOX_START_FRAME && !currentSwordHitbox) {
-      currentSwordHitbox = createSwordHitbox();
+  const destroySwordHitbox = (): void => {
+    if (!state.currentHitbox) return;
+
+    if (typeof state.currentHitbox.destroy === "function") {
+      state.currentHitbox.destroy();
+    } else {
+      engine.destroy(state.currentHitbox as EngineGameObj);
     }
 
-    if (currentFrame === HITBOX_END_FRAME && currentSwordHitbox) {
+    state.currentHitbox = null;
+  };
+
+  const resetAttackState = (): void => {
+    destroySwordHitbox();
+    state.lastCheckedFrame = -1;
+  };
+
+  const handleHitboxLifecycle = (currentFrame: number): void => {
+    if (shouldCreateHitbox(currentFrame, state.currentHitbox !== null)) {
+      state.currentHitbox = createSwordHitbox();
+    }
+
+    if (shouldDestroyHitbox(currentFrame, state.currentHitbox !== null)) {
       destroySwordHitbox();
     }
   };
 
-  function createSwordHitbox(): SwordHitbox {
-    const hitboxWidth = 18;
-    const hitboxHeight = 16;
-    const offsetX = player.flipX ? -18 : 0;
-    const offsetY = 9;
+  const checkAnimationFrame = (): void => {
+    if (!isAttackAnimation(player.curAnim() as PLAYER_ANIMATIONS)) return;
 
-    const hitboxShape = new engine.Rect(
-      engine.vec2(0),
-      hitboxWidth,
-      hitboxHeight
-    );
+    const currentFrame = player.animFrame;
+    if (currentFrame === state.lastCheckedFrame) return;
 
-    const hitbox = player.add([
-      engine.pos(offsetX, offsetY),
-      engine.area({ shape: hitboxShape }),
-      HITBOX_TAGS.PLAYER_SWORD,
-    ]) as unknown as SwordHitbox;
+    state.lastCheckedFrame = currentFrame;
+    handleHitboxLifecycle(currentFrame);
+  };
 
-    return hitbox;
-  }
+  const handleKeyPress = async (key: string): Promise<void> => {
+    if (!canAttack(key, stateMachine)) return;
 
-  function destroySwordHitbox() {
-    if (!currentSwordHitbox) return;
-    if (typeof currentSwordHitbox.destroy === "function") {
-      currentSwordHitbox.destroy();
-    } else {
-      engine.destroy(currentSwordHitbox as EngineGameObj);
-    }
-    currentSwordHitbox = null;
-  }
+    stateMachine.dispatch("ATTACK");
+    resetAttackState();
+  };
 
-  function onAttackAnimationEnd(anim: string) {
-    if (anim !== PLAYER_ANIMATIONS.ATTACK) return;
-    destroySwordHitbox();
-    lastCheckedFrame = -1;
+  const onAttackAnimationEnd = (anim: string): void => {
+    if (!isAttackAnimation(anim)) return;
+
+    resetAttackState();
 
     if (stateMachine.getState() === PLAYER_ANIMATIONS.ATTACK) {
       stateMachine.dispatch("IDLE");
     }
-  }
+  };
 
   player.controlHandlers.push(engine.onKeyPress(handleKeyPress));
   player.onAnimEnd(onAttackAnimationEnd);

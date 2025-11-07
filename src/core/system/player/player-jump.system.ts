@@ -12,69 +12,136 @@ type Params = {
   stateMachine: PlayerStateMachine;
 };
 
-export function PlayerJumpSystem({ engine, player, stateMachine }: Params) {
-  let savedVelocity = { x: 0, y: 0 };
-  const originalGravityScale = player.gravityScale;
-  const JUMP_LAST_FRAME = 4;
+type Velocity = {
+  x: number;
+  y: number;
+};
 
-  async function handleJumpKey(key: string) {
-    if (isPaused()) return;
-    if (key !== "x") return;
-    if (!stateMachine.canMove()) return;
-    if (state.current().isDoubleJumpUnlocked && player.numJumps !== 2) {
-      player.numJumps = 2;
-    }
+type JumpState = {
+  savedVelocity: Velocity;
+  originalGravityScale: number;
+};
+
+const JUMP_CONFIG = {
+  KEY: "x",
+  LAST_FRAME: 4,
+  MAX_JUMPS: 2,
+} as const;
+
+const AERIAL_STATES = [PLAYER_ANIMATIONS.JUMP, PLAYER_ANIMATIONS.FALL];
+
+const isAerialState = (state: string): boolean =>
+  AERIAL_STATES.includes(state as PLAYER_ANIMATIONS);
+
+const isJumpKey = (key: string): boolean => key === JUMP_CONFIG.KEY;
+
+const canInitiateJump = (stateMachine: PlayerStateMachine): boolean =>
+  !isPaused() && stateMachine.canMove();
+
+const shouldDispatchJump = (
+  currentAnim: string | undefined,
+  stateMachine: PlayerStateMachine
+): boolean => {
+  if (currentAnim === undefined) return false;
+  if (isAerialState(currentAnim)) return false;
+  if (stateMachine.isAttacking()) return false;
+  if (stateMachine.getState() === PLAYER_ANIMATIONS.JUMP) return false;
+  return true;
+};
+
+const shouldTransitionToFall = (
+  currentState: string,
+  animFrame: number,
+  isGrounded: boolean
+): boolean =>
+  currentState === PLAYER_ANIMATIONS.JUMP &&
+  animFrame >= JUMP_CONFIG.LAST_FRAME &&
+  !isGrounded;
+
+const shouldTransitionToIdle = (
+  currentState: string,
+  isGrounded: boolean
+): boolean => isGrounded && isAerialState(currentState);
+
+const createVelocity = (x: number, y: number): Velocity => ({ x, y });
+
+const captureVelocity = (player: Player): Velocity =>
+  createVelocity(player.vel.x, player.vel.y);
+
+const applyVelocity = (player: Player, velocity: Velocity): void => {
+  player.vel.x = velocity.x;
+  player.vel.y = velocity.y;
+};
+
+const freezePhysics = (player: Player): void => {
+  applyVelocity(player, createVelocity(0, 0));
+  player.gravityScale = 0;
+};
+
+const restorePhysics = (
+  player: Player,
+  velocity: Velocity,
+  gravityScale: number
+): void => {
+  player.gravityScale = gravityScale;
+  applyVelocity(player, velocity);
+};
+
+const syncDoubleJumpAbility = (player: Player): void => {
+  const isUnlocked = state.current()[GLOBAL_STATE.IS_DOUBLE_JUMB_UNLOCKED];
+  if (isUnlocked && player.numJumps !== JUMP_CONFIG.MAX_JUMPS) {
+    player.numJumps = JUMP_CONFIG.MAX_JUMPS;
+  }
+};
+
+export function PlayerJumpSystem({ engine, player, stateMachine }: Params) {
+  player.controlHandlers = player.controlHandlers || [];
+
+  const jumpState: JumpState = {
+    savedVelocity: createVelocity(0, 0),
+    originalGravityScale: player.gravityScale,
+  };
+
+  const handleJumpKey = async (key: string): Promise<void> => {
+    if (!isJumpKey(key) || !canInitiateJump(stateMachine)) return;
+
+    syncDoubleJumpAbility(player);
     player.doubleJump();
 
-    const cur = player.curAnim();
-    if (
-      cur !== PLAYER_ANIMATIONS.JUMP &&
-      cur !== PLAYER_ANIMATIONS.FALL &&
-      cur !== undefined &&
-      !stateMachine.isAttacking() &&
-      stateMachine.getState() !== PLAYER_ANIMATIONS.JUMP
-    ) {
+    const currentAnim = player.curAnim();
+    if (shouldDispatchJump(currentAnim, stateMachine)) {
       stateMachine.dispatch("JUMP");
     }
-  }
+  };
 
-  function handlePauseChange(paused: boolean) {
+  const handlePauseChange = (paused: boolean): void => {
     if (paused) {
-      savedVelocity = { x: player.vel.x, y: player.vel.y };
-      player.vel.x = 0;
-      player.vel.y = 0;
-      player.gravityScale = 0;
+      jumpState.savedVelocity = captureVelocity(player);
+      freezePhysics(player);
     } else {
-      player.gravityScale = originalGravityScale;
-      player.vel.x = savedVelocity.x;
-      player.vel.y = savedVelocity.y;
+      restorePhysics(
+        player,
+        jumpState.savedVelocity,
+        jumpState.originalGravityScale
+      );
     }
-  }
+  };
 
-  engine.onUpdate(() => {
-    const current = stateMachine.getState();
+  const handleJumpStateTransitions = (): void => {
+    const currentState = stateMachine.getState();
     const isGrounded = player.isGrounded();
 
-    if (
-      isGrounded &&
-      (current === PLAYER_ANIMATIONS.JUMP || current === PLAYER_ANIMATIONS.FALL)
-    ) {
+    if (shouldTransitionToIdle(currentState, isGrounded)) {
       stateMachine.dispatch("IDLE");
       return;
     }
 
-    if (
-      current === PLAYER_ANIMATIONS.JUMP &&
-      player.animFrame >= JUMP_LAST_FRAME
-    ) {
-      if (!isGrounded) {
-        stateMachine.dispatch("FALL");
-      }
+    if (shouldTransitionToFall(currentState, player.animFrame, isGrounded)) {
+      stateMachine.dispatch("FALL");
     }
-  });
+  };
 
   state.subscribe(GLOBAL_STATE.IS_PAUSED, handlePauseChange);
-
-  player.controlHandlers = player.controlHandlers || [];
   player.controlHandlers.push(engine.onKeyPress(handleJumpKey));
+  engine.onUpdate(handleJumpStateTransitions);
 }

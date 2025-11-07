@@ -16,7 +16,7 @@ export function sprites(): void {
       [PLAYER_ANIMATIONS.IDLE]: { from: 0, to: 7, loop: true },
       [PLAYER_ANIMATIONS.ATTACK]: { from: 8, to: 13, speed: 18 },
       // [PLAYER_ANIMATIONS.ATTACK_BOTTOM]: { from: 16, to: 21, speed: 16 },
-      [PLAYER_ANIMATIONS.HURT]: { from: 33, to: 34, speed: 12 },
+      [PLAYER_ANIMATIONS.HURT]: { from: 33, to: 34, speed: 16 },
       // [PLAYER_ANIMATIONS.ACHIVE]: { from: 40, to: 45, speed: 10 },
       [PLAYER_ANIMATIONS.RUN]: { from: 48, to: 52, loop: true },
       // [PLAYER_ANIMATIONS.DASH]: { from: 56, to: 61, speed: 18 },
