@@ -1,15 +1,17 @@
-import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
-import type { Engine } from "../../types/engine.interface";
-import type { Player } from "../../types/player.interface";
-import { HITBOX_TAGS } from "../../types/tags.enum";
-import { isPaused } from "../../utils/wrap-with-pause-check";
+import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
+import type { Engine } from "../../../types/engine.interface";
+import type { Player } from "../../../types/player.interface";
+import { HITBOX_TAGS } from "../../../types/tags.enum";
+import { isPaused } from "../../../utils/wrap-with-pause-check";
+import { PLAYER_STATE, type PlayerStateMachine } from "./player-state-machine";
 
 type Params = {
   engine: Engine;
   player: Player;
+  stateMachine: PlayerStateMachine;
 };
 
-export function PlayerAttackSystem({ engine, player }: Params) {
+export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
   player.controlHandlers = player.controlHandlers || [];
 
   const HITBOX_START_FRAME = 1;
@@ -22,8 +24,7 @@ export function PlayerAttackSystem({ engine, player }: Params) {
     if (isPaused()) return;
     if (key !== "z" || player.curAnim() === PLAYER_ANIMATIONS.ATTACK) return;
 
-    player.isAttacking = true;
-    player.play(PLAYER_ANIMATIONS.ATTACK);
+    stateMachine.dispatch("ATTACK");
     lastCheckedFrame = -1;
   };
 
@@ -76,10 +77,13 @@ export function PlayerAttackSystem({ engine, player }: Params) {
     if (anim !== PLAYER_ANIMATIONS.ATTACK) return;
 
     destroySwordHitbox();
-
     player.isAttacking = false;
-    player.play(PLAYER_ANIMATIONS.IDLE);
     lastCheckedFrame = -1;
+
+    const state = stateMachine.getState();
+    if (state === PLAYER_STATE.ATTACK) {
+      stateMachine.dispatch("IDLE");
+    }
   }
 
   player.controlHandlers.push(engine.onKeyPress(handleKeyPress));

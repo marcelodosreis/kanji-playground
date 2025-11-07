@@ -1,16 +1,18 @@
-import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
-import type { Engine } from "../../types/engine.interface";
-import type { Player } from "../../types/player.interface";
-import { GLOBAL_STATE } from "../../types/state.interface";
-import { isPaused } from "../../utils/wrap-with-pause-check";
-import { state } from "../global-state-controller";
+import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
+import type { Engine } from "../../../types/engine.interface";
+import type { Player } from "../../../types/player.interface";
+import { GLOBAL_STATE } from "../../../types/state.interface";
+import { isPaused } from "../../../utils/wrap-with-pause-check";
+import { state } from "../../global-state-controller";
+import { PLAYER_STATE, type PlayerStateMachine } from "./player-state-machine";
 
 type Params = {
   engine: Engine;
   player: Player;
+  stateMachine: PlayerStateMachine;
 };
 
-export function PlayerJumpSystem({ engine, player }: Params) {
+export function PlayerJumpSystem({ engine, player, stateMachine }: Params) {
   let savedVelocity = { x: 0, y: 0 };
   const originalGravityScale = player.gravityScale;
 
@@ -28,9 +30,10 @@ export function PlayerJumpSystem({ engine, player }: Params) {
         cur !== PLAYER_ANIMATIONS.JUMP &&
         cur !== PLAYER_ANIMATIONS.FALL &&
         cur !== undefined &&
-        !player.isAttacking
+        !player.isAttacking &&
+        stateMachine.getState() !== PLAYER_STATE.JUMP
       ) {
-        player.play(PLAYER_ANIMATIONS.JUMP);
+        stateMachine.dispatch("JUMP");
       }
     }
   }
@@ -47,6 +50,19 @@ export function PlayerJumpSystem({ engine, player }: Params) {
       player.vel.y = savedVelocity.y;
     }
   }
+
+  engine.onUpdate(() => {
+    if (player.isGrounded() && stateMachine.getState() === PLAYER_STATE.JUMP) {
+      stateMachine.dispatch("IDLE");
+    }
+    if (
+      !player.isGrounded() &&
+      player.vel.y > 0 &&
+      stateMachine.getState() === PLAYER_STATE.JUMP
+    ) {
+      stateMachine.dispatch("FALL");
+    }
+  });
 
   state.subscribe(GLOBAL_STATE.IS_PAUSED, handlePauseChange);
 

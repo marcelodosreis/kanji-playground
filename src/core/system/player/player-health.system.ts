@@ -1,17 +1,18 @@
-// player-health.system.ts
-import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
-import type { Engine, EngineGameObj } from "../../types/engine.interface";
-import type { Player } from "../../types/player.interface";
-import { GLOBAL_STATE } from "../../types/state.interface";
-import { LEVEL_SCENES } from "../../types/scenes.enum";
-import { createBlink } from "../../utils/create-blink";
-import { applyKnockback } from "../../utils/apply-knockback";
-import { state } from "../global-state-controller";
-import { ENGINE_DEFAULT_EVENTS } from "../../types/events.enum";
+import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
+import type { Engine, EngineGameObj } from "../../../types/engine.interface";
+import { ENGINE_DEFAULT_EVENTS } from "../../../types/events.enum";
+import type { Player } from "../../../types/player.interface";
+import { LEVEL_SCENES } from "../../../types/scenes.enum";
+import { GLOBAL_STATE } from "../../../types/state.interface";
+import { applyKnockback } from "../../../utils/apply-knockback";
+import { createBlink } from "../../../utils/create-blink";
+import { state } from "../../global-state-controller";
+import { PLAYER_STATE, type PlayerStateMachine } from "./player-state-machine";
 
 type Params = {
   engine: Engine;
   player: Player;
+  stateMachine: PlayerStateMachine;
   destinationName: string;
   previousSceneData: { exitName?: string };
 };
@@ -19,6 +20,7 @@ type Params = {
 export function PlayerHealthSystem({
   engine,
   player,
+  stateMachine,
   destinationName,
   previousSceneData,
 }: Params) {
@@ -27,6 +29,7 @@ export function PlayerHealthSystem({
   }
 
   async function handleHurt(params: { amount: number; source: EngineGameObj }) {
+    stateMachine.dispatch("HURT");
     const playerHp = await applyDamage(params.amount);
 
     if (params.source) {
@@ -42,6 +45,11 @@ export function PlayerHealthSystem({
     await createBlink(engine, player);
     await createBlink(engine, player);
     await createBlink(engine, player);
+
+    player.isKnockedBack = false;
+    if (stateMachine.getState() === PLAYER_STATE.HURT) {
+      stateMachine.dispatch("IDLE");
+    }
   }
 
   function syncPlayerHealth() {
@@ -58,7 +66,7 @@ export function PlayerHealthSystem({
   }
 
   function handleDeath() {
-    player.play(PLAYER_ANIMATIONS.EXPLODE);
+    stateMachine.dispatch("DEAD");
   }
 
   async function respawnPlayerFullLife(maxHp: number) {

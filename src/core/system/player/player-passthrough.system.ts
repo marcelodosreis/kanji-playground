@@ -1,5 +1,5 @@
 import type { Collision } from "kaplay";
-import type { Player } from "../../types/player.interface";
+import type { Player } from "../../../types/player.interface";
 
 type Params = {
   player: Player;

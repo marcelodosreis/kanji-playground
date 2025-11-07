@@ -4,13 +4,14 @@ import type { Player } from "../../types/player.interface";
 import { TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { PlayerEntity } from "../entities/player.entity";
-import { PlayerAnimationSystem } from "../system/player-animation.system";
-import { PlayerAttackSystem } from "../system/player-attack.system";
-import { PlayerHealthSystem } from "../system/player-health.system";
-import { PlayerJumpSystem } from "../system/player-jump.system";
-import { PlayerPassthroughSystem } from "../system/player-passthrough.system";
-import { PlayerBoundarySystem } from "../system/player-boundary.system";
-import { PlayerWalkSystem } from "../system/player-walk.system";
+import { PlayerAnimationSystem } from "../system/player/player-animation.system";
+import { PlayerAttackSystem } from "../system/player/player-attack.system";
+import { PlayerHealthSystem } from "../system/player/player-health.system";
+import { PlayerJumpSystem } from "../system/player/player-jump.system";
+import { PlayerPassthroughSystem } from "../system/player/player-passthrough.system";
+import { PlayerBoundarySystem } from "../system/player/player-boundary.system";
+import { PlayerWalkSystem } from "../system/player/player-walk.system";
+import { createPlayerStateMachine } from "../system/player/player-state-machine";
 
 type PositionOffset = {
   x: number;
@@ -123,10 +124,25 @@ export class PlayerManager {
   }
 
   private initializeSystems(player: Player): void {
-    PlayerJumpSystem({ engine: this.engine, player });
-    PlayerWalkSystem({ engine: this.engine, player });
+    const playerContext = { player };
+    const playerStateMachine = createPlayerStateMachine(playerContext);
 
-    PlayerAttackSystem({ engine: this.engine, player });
+    PlayerJumpSystem({
+      engine: this.engine,
+      player,
+      stateMachine: playerStateMachine,
+    });
+    PlayerWalkSystem({
+      engine: this.engine,
+      player,
+      stateMachine: playerStateMachine,
+    });
+
+    PlayerAttackSystem({
+      engine: this.engine,
+      player,
+      stateMachine: playerStateMachine,
+    });
     PlayerBoundarySystem({
       engine: this.engine,
       player,
@@ -137,8 +153,13 @@ export class PlayerManager {
       player,
       destinationName: this.respawnConfig.roomName,
       previousSceneData: { exitName: this.respawnConfig.exitName },
+      stateMachine: playerStateMachine,
     });
-    PlayerAnimationSystem({ engine: this.engine, player });
+    PlayerAnimationSystem({
+      engine: this.engine,
+      player,
+      stateMachine: playerStateMachine,
+    });
     PlayerPassthroughSystem({ player });
   }
 }
