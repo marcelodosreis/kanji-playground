@@ -15,8 +15,8 @@ export function createFocusableButton(
   const { label, width, height, onSelect } = opts;
   const baseColor = engine.Color.fromHex("#ffffff");
   const focusColor = engine.Color.fromHex("#ffe28a");
-  const bgNormal = engine.Color.fromHex("#2b2e4a");
-  const bgFocused = engine.Color.fromHex("#3a3f6b");
+  const bgNormal = engine.Color.fromHex("#44544a");
+  const bgFocused = engine.Color.fromHex("#629e56");
 
   const bg = engine.add([
     engine.rect(width, height),
