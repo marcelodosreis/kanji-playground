@@ -15,9 +15,28 @@ type Params = { engine: Engine; enemy: Enemy };
 
 export function AIFlyingEnemySystem({ engine, enemy }: Params) {
   const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
+  const RETURN_THRESHOLD = 20;
 
   function isPlayerInRange(): boolean {
     return enemy.pos.dist(player.pos) < enemy.range;
+  }
+
+  function isAtInitialPosition(): boolean {
+    return enemy.pos.dist(enemy.initialPos) < RETURN_THRESHOLD;
+  }
+
+  function isBeyondPursuitLimit(): boolean {
+    return enemy.pos.dist(enemy.initialPos) > enemy.maxPursuitDistance;
+  }
+
+  function canReachPlayer(): boolean {
+    const distanceToPlayer = enemy.pos.dist(player.pos);
+    const distancePlayerFromInitial = player.pos.dist(enemy.initialPos);
+
+    return (
+      distancePlayerFromInitial <= enemy.maxPursuitDistance &&
+      distanceToPlayer < enemy.range
+    );
   }
 
   async function patrolRightEnter() {
@@ -72,21 +91,46 @@ export function AIFlyingEnemySystem({ engine, enemy }: Params) {
       enemy.enterState(FLYING_ENEMY_EVENTS.ATTACK);
       return;
     }
-    enemy.enterState(FLYING_ENEMY_EVENTS.PATROL_RIGHT);
+    enemy.enterState(FLYING_ENEMY_EVENTS.RETURN);
   }
 
   function attackUpdate() {
     if (!enemy.curAnim()) enemy.play(BAT_ANIMATIONS.FLYING);
     if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
-    if (!isPlayerInRange()) {
-      enemy.enterState(FLYING_ENEMY_EVENTS.ALERT);
+
+    if (isBeyondPursuitLimit()) {
+      enemy.enterState(FLYING_ENEMY_EVENTS.RETURN);
       return;
     }
+
+    if (!isPlayerInRange()) {
+      enemy.enterState(FLYING_ENEMY_EVENTS.RETURN);
+      return;
+    }
+
     enemy.flipX = player.pos.x <= enemy.pos.x;
     enemy.moveTo(
       engine.vec2(player.pos.x, player.pos.y + 12),
       enemy.pursuitSpeed
     );
+  }
+
+  function returnUpdate() {
+    if (!enemy.curAnim()) enemy.play(BAT_ANIMATIONS.FLYING);
+    if (enemy.hp() <= 0) return;
+
+    if (canReachPlayer()) {
+      enemy.enterState(FLYING_ENEMY_EVENTS.ALERT);
+      return;
+    }
+
+    if (isAtInitialPosition()) {
+      enemy.enterState(FLYING_ENEMY_EVENTS.PATROL_RIGHT);
+      return;
+    }
+
+    enemy.flipX = enemy.initialPos.x <= enemy.pos.x;
+    enemy.moveTo(enemy.initialPos, enemy.speed);
   }
 
   function handleIsPausedChange(paused: boolean) {
@@ -121,6 +165,10 @@ export function AIFlyingEnemySystem({ engine, enemy }: Params) {
     enemy.onStateUpdate(
       FLYING_ENEMY_EVENTS.ATTACK,
       wrapWithPauseCheck(attackUpdate)
+    );
+    enemy.onStateUpdate(
+      FLYING_ENEMY_EVENTS.RETURN,
+      wrapWithPauseCheck(returnUpdate)
     );
   }
 

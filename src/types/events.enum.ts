@@ -10,11 +10,11 @@ export enum BOSS_EVENTS {
 }
 
 export enum FLYING_ENEMY_EVENTS {
-  ATTACK = "attack",
+  PATROL_RIGHT = "patrol_right",
+  PATROL_LEFT = "patrol_left",
   ALERT = "alert",
-  RETREAT = "retreat",
-  PATROL_RIGHT = "patrol-right",
-  PATROL_LEFT = "patrol-left",
+  ATTACK = "attack",
+  RETURN = "return",
   EXPLODE = "explode",
 }
 

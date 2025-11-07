@@ -5,6 +5,7 @@ export interface Enemy extends EnemyEngineGameObj {
   speed: number;
   range: number;
   pursuitSpeed: number;
+  maxPursuitDistance: number;
   initialPos: Position;
   isKnockedBack: boolean;
 }

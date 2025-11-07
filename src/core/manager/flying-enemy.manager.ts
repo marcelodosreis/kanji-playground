@@ -15,7 +15,11 @@ type FlyingEnemyManagerParams = {
 };
 
 export class FlyingEnemyManager {
-  public static setup({ engine, map, tiledMap }: FlyingEnemyManagerParams): void {
+  public static setup({
+    engine,
+    map,
+    tiledMap,
+  }: FlyingEnemyManagerParams): void {
     const positions = this.getSpawnPositions(tiledMap);
     this.spawn(engine, map, positions);
   }

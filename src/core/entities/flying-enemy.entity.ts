@@ -22,7 +22,8 @@ export function FlyingEnemyEntity(engine: Engine, initialPos: Position): Enemy {
       speed: 90,
       pursuitSpeed: 130,
       range: 90,
-      initialPos,
+      maxPursuitDistance: 300,
+      initialPos: engine.vec2(initialPos.x, initialPos.y),
       isKnockedBack: false,
     },
   ]);
