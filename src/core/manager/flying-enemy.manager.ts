@@ -4,8 +4,13 @@ import type { Map } from "../../types/map.interface";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import type { Enemy } from "../../types/enemy.interface";
 import { TAGS } from "../../types/tags.enum";
-import { FlyingEnemySystem } from "../system/ai-flying-enemy.system";
-
+import type { Player } from "../../types/player.interface";
+import { createFlyingEnemyStateMachine } from "../system/enemies/flying-enemy/flying-enemy-state-machine";
+import { FlyingEnemyPatrolSystem } from "../system/enemies/flying-enemy/flying-enemy-patrol.system";
+import { FlyingEnemyAttackSystem } from "../system/enemies/flying-enemy/flying-enemy-attack.system";
+import { FlyingEnemyCollisionSystem } from "../system/enemies/flying-enemy/flying-enemy-collision.system";
+import { FlyingEnemyAnimationSystem } from "../system/enemies/flying-enemy/flying-enemy-animation.system";
+import { FlyingEnemyReturnSystem } from "../system/enemies/flying-enemy/flying-enemy-return.system";
 
 type FlyingEnemyManagerParams = {
   engine: Engine;
@@ -63,6 +68,35 @@ export class FlyingEnemyManager {
   }
 
   private initializeSystems(enemy: Enemy): void {
-    FlyingEnemySystem({ engine: this.engine, enemy });
+    const [player] = this.engine.get(TAGS.PLAYER, {
+      recursive: true,
+    }) as Player[];
+
+    const stateMachine = createFlyingEnemyStateMachine({
+      engine: this.engine,
+      enemy,
+      player,
+    });
+
+    FlyingEnemyPatrolSystem({
+      engine: this.engine,
+      enemy,
+      player,
+      stateMachine,
+    });
+    FlyingEnemyAttackSystem({
+      engine: this.engine,
+      enemy,
+      player,
+      stateMachine,
+    });
+    FlyingEnemyCollisionSystem({ engine: this.engine, enemy, player });
+    FlyingEnemyAnimationSystem({ engine: this.engine, enemy });
+    FlyingEnemyReturnSystem({
+      engine: this.engine,
+      enemy,
+      player,
+      stateMachine,
+    });
   }
 }
