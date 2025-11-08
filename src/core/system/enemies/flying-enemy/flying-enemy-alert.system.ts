@@ -24,8 +24,9 @@ export function FlyingEnemyAlertSystem({
 
   engine.onUpdate(() => {
     if (!stateMachine.isAlert() || isPaused()) return;
-
     if (enemy.hp() <= 0) return;
+    
+    enemy.flipX = player.pos.x < enemy.pos.x;
 
     alertTimer += engine.dt();
 

@@ -32,7 +32,7 @@ export function FlyingEnemyCollisionSystem({ engine, enemy, player }: Params) {
 
   async function onHurt(): Promise<void> {
     if (enemy.hp() === 0) {
-      return enemy.trigger(FLYING_ENEMY_EVENTS.EXPLODE);
+      return enemy.enterState(FLYING_ENEMY_EVENTS.EXPLODE);
     }
 
     await applyKnockback({

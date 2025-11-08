@@ -2,9 +2,6 @@ import type { Enemy } from "../../../../types/enemy.interface";
 import type { Engine } from "../../../../types/engine.interface";
 import { FLYING_ENEMY_EVENTS } from "../../../../types/events.enum";
 import type { Player } from "../../../../types/player.interface";
-import { GLOBAL_STATE } from "../../../../types/state.interface";
-
-import { GLOBAL_STATE_CONTROLLER } from "../../../global-state-controller";
 import { StateMachine, type StateMachineConfig } from "../../../state-machine";
 
 type FlyingEnemyContext = {
@@ -17,59 +14,128 @@ type FlyingEnemyContextWithMachine = FlyingEnemyContext & {
   stateMachine: FlyingEnemyStateMachine;
 };
 
+type FlyingEnemyState = FLYING_ENEMY_EVENTS;
+
+const StatePredicates = {
+  isPatrolling: (state: FlyingEnemyState): boolean =>
+    state === FLYING_ENEMY_EVENTS.PATROL_LEFT ||
+    state === FLYING_ENEMY_EVENTS.PATROL_RIGHT,
+
+  isAttacking: (state: FlyingEnemyState): boolean =>
+    state === FLYING_ENEMY_EVENTS.ATTACK,
+
+  isReturning: (state: FlyingEnemyState): boolean =>
+    state === FLYING_ENEMY_EVENTS.RETURN,
+
+  isAlert: (state: FlyingEnemyState): boolean =>
+    state === FLYING_ENEMY_EVENTS.ALERT,
+
+  isExploding: (state: FlyingEnemyState): boolean =>
+    state === FLYING_ENEMY_EVENTS.EXPLODE,
+
+  canMove: (state: FlyingEnemyState): boolean =>
+    state !== FLYING_ENEMY_EVENTS.EXPLODE,
+};
+
+const createStateHandlers = () => ({
+  [FLYING_ENEMY_EVENTS.PATROL_RIGHT]: (
+    _ctx: FlyingEnemyContextWithMachine
+  ): void => {},
+
+  [FLYING_ENEMY_EVENTS.PATROL_LEFT]: (
+    _ctx: FlyingEnemyContextWithMachine
+  ): void => {},
+
+  [FLYING_ENEMY_EVENTS.ALERT]: (
+    _ctx: FlyingEnemyContextWithMachine
+  ): void => {},
+
+  [FLYING_ENEMY_EVENTS.ATTACK]: (
+    _ctx: FlyingEnemyContextWithMachine
+  ): void => {},
+
+  [FLYING_ENEMY_EVENTS.RETURN]: (
+    _ctx: FlyingEnemyContextWithMachine
+  ): void => {},
+
+  [FLYING_ENEMY_EVENTS.EXPLODE]: (ctx: FlyingEnemyContextWithMachine): void => {
+    ctx.enemy.collisionIgnore = ["player"];
+    ctx.enemy.unuse("body");
+  },
+});
+
 class FlyingEnemyStateMachine extends StateMachine<FlyingEnemyContextWithMachine> {
-  public isPatrolling = (): boolean => {
-    const state = this.getState();
-    return (
-      state === FLYING_ENEMY_EVENTS.PATROL_LEFT ||
-      state === FLYING_ENEMY_EVENTS.PATROL_RIGHT
-    );
-  };
+  public isPatrolling = (): boolean =>
+    StatePredicates.isPatrolling(this.getState() as FlyingEnemyState);
 
   public isAttacking = (): boolean =>
-    this.getState() === FLYING_ENEMY_EVENTS.ATTACK;
+    StatePredicates.isAttacking(this.getState() as FlyingEnemyState);
 
   public isReturning = (): boolean =>
-    this.getState() === FLYING_ENEMY_EVENTS.RETURN;
+    StatePredicates.isReturning(this.getState() as FlyingEnemyState);
 
-  public isAlert = (): boolean => this.getState() === FLYING_ENEMY_EVENTS.ALERT;
+  public isAlert = (): boolean =>
+    StatePredicates.isAlert(this.getState() as FlyingEnemyState);
+
+  public isExploding = (): boolean =>
+    StatePredicates.isExploding(this.getState() as FlyingEnemyState);
+
+  public canMove = (): boolean =>
+    StatePredicates.canMove(this.getState() as FlyingEnemyState);
 }
 
 const createStateMachineConfig =
   (): StateMachineConfig<FlyingEnemyContextWithMachine> => {
+    const handlers = createStateHandlers();
+
     return {
       initial: FLYING_ENEMY_EVENTS.PATROL_RIGHT,
       states: {
         [FLYING_ENEMY_EVENTS.PATROL_RIGHT]: {
+          onEnter: handlers[FLYING_ENEMY_EVENTS.PATROL_RIGHT],
           transitions: {
             [FLYING_ENEMY_EVENTS.PATROL_LEFT]: FLYING_ENEMY_EVENTS.PATROL_LEFT,
             [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
+            [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
           },
         },
         [FLYING_ENEMY_EVENTS.PATROL_LEFT]: {
+          onEnter: handlers[FLYING_ENEMY_EVENTS.PATROL_LEFT],
           transitions: {
             [FLYING_ENEMY_EVENTS.PATROL_RIGHT]:
               FLYING_ENEMY_EVENTS.PATROL_RIGHT,
             [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
+            [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
           },
         },
         [FLYING_ENEMY_EVENTS.ALERT]: {
+          onEnter: handlers[FLYING_ENEMY_EVENTS.ALERT],
           transitions: {
             [FLYING_ENEMY_EVENTS.ATTACK]: FLYING_ENEMY_EVENTS.ATTACK,
             [FLYING_ENEMY_EVENTS.RETURN]: FLYING_ENEMY_EVENTS.RETURN,
+            [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
           },
         },
         [FLYING_ENEMY_EVENTS.ATTACK]: {
+          onEnter: handlers[FLYING_ENEMY_EVENTS.ATTACK],
           transitions: {
             [FLYING_ENEMY_EVENTS.RETURN]: FLYING_ENEMY_EVENTS.RETURN,
+            [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
+            [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
           },
         },
         [FLYING_ENEMY_EVENTS.RETURN]: {
+          onEnter: handlers[FLYING_ENEMY_EVENTS.RETURN],
           transitions: {
             [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
             [FLYING_ENEMY_EVENTS.PATROL_RIGHT]:
               FLYING_ENEMY_EVENTS.PATROL_RIGHT,
+            [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
           },
+        },
+        [FLYING_ENEMY_EVENTS.EXPLODE]: {
+          onEnter: handlers[FLYING_ENEMY_EVENTS.EXPLODE],
+          transitions: {},
         },
       },
     };
@@ -84,29 +150,8 @@ export function createFlyingEnemyStateMachine(
   const stateMachine = new FlyingEnemyStateMachine(config, ctx);
   ctx.stateMachine = stateMachine;
 
-  function handlePauseStateChange(paused: boolean): void {
-    if (!paused) {
-      stateMachine.enterState(stateMachine.getState());
-    }
-  }
-
-  GLOBAL_STATE_CONTROLLER.subscribe(
-    GLOBAL_STATE.IS_PAUSED,
-    handlePauseStateChange
-  );
-
-  ctx.enemy.enterState = (state: string): void => {
-    stateMachine.enterState(state);
-  };
-
-  ctx.enemy.state = stateMachine.getState();
-
-  ctx.engine.onUpdate(() => {
-    ctx.enemy.state = stateMachine.getState();
-    stateMachine.update();
-  });
-
   return stateMachine;
 }
 
-export type { FlyingEnemyStateMachine };
+export type { FlyingEnemyStateMachine, FlyingEnemyContext };
+export { StatePredicates };

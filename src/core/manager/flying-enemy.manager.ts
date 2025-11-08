@@ -97,13 +97,13 @@ export class FlyingEnemyManager {
       player,
       stateMachine,
     });
-    FlyingEnemyCollisionSystem({ engine: this.engine, enemy, player });
-    FlyingEnemyAnimationSystem({ engine: this.engine, enemy });
     FlyingEnemyReturnSystem({
       engine: this.engine,
       enemy,
       player,
       stateMachine,
     });
+    FlyingEnemyCollisionSystem({ engine: this.engine, enemy, player });
+    FlyingEnemyAnimationSystem({ engine: this.engine, enemy });
   }
 }
