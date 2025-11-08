@@ -1,6 +1,6 @@
 import { engine } from "./core/engine";
-import { sprites } from "./core/sprites";
-import { audios } from "./core/audio";
+import { sprites } from "./core/loaders/sprites";
+import { audios } from "./core/loaders/audio";
 
 import { HomeMenuScene } from "./scenes/menus/home";
 import { ControlsMenuScene } from "./scenes/menus/controls";

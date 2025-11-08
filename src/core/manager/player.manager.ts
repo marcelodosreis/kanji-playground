@@ -12,6 +12,7 @@ import { PlayerPassthroughSystem } from "../system/player/player-passthrough.sys
 import { PlayerBoundarySystem } from "../system/player/player-boundary.system";
 import { PlayerWalkSystem } from "../system/player/player-walk.system";
 import { createPlayerStateMachine } from "../system/player/player-state-machine";
+import { MapLayer, MapLayerHelper } from "../../utils/map-layer.helper";
 
 type PositionOffset = {
   x: number;
@@ -35,8 +36,6 @@ type PlayerManagerParams = {
   respawnConfig: RespawnConfig;
 };
 
-const PLAYER_LAYER_INDEX = 5;
-
 export class PlayerManager {
   private readonly engine: Engine;
   private readonly map: Map;
@@ -44,7 +43,7 @@ export class PlayerManager {
   private readonly previousSceneData: EngineGameObj;
   private readonly playerStartNames: string[];
   private readonly entranceExitMapping: Record<string, string>;
-  private readonly positionOffset?: PositionOffset;
+  private readonly positionOffset: PositionOffset;
   private readonly respawnConfig: RespawnConfig;
 
   private constructor(params: PlayerManagerParams) {
@@ -54,7 +53,7 @@ export class PlayerManager {
     this.previousSceneData = params.previousSceneData;
     this.playerStartNames = params.playerStartNames;
     this.entranceExitMapping = params.entranceExitMapping;
-    this.positionOffset = params.positionOffset;
+    this.positionOffset = params.positionOffset ?? { x: 0, y: 0 };
     this.respawnConfig = params.respawnConfig;
   }
 
@@ -86,11 +85,7 @@ export class PlayerManager {
   }
 
   private getPlayerPositions(): TiledObject[] {
-    const layer = this.tiledMap.layers[PLAYER_LAYER_INDEX];
-    if (!layer || !layer.objects) {
-      return [];
-    }
-    return layer.objects as TiledObject[];
+    return MapLayerHelper.getObjects(this.tiledMap, MapLayer.PIN);
   }
 
   private isValidStartPosition(position: TiledObject): boolean {
@@ -117,10 +112,8 @@ export class PlayerManager {
   }
 
   private positionPlayer(player: Player, position: TiledObject): void {
-    const offsetX = this.positionOffset?.x ?? 0;
-    const offsetY = this.positionOffset?.y ?? 0;
-    player.pos.x = position.x + offsetX;
-    player.pos.y = position.y + offsetY;
+    player.pos.x = position.x + this.positionOffset.x;
+    player.pos.y = position.y + this.positionOffset.y;
   }
 
   private initializeSystems(player: Player): void {

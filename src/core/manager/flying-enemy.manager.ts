@@ -12,14 +12,13 @@ import { FlyingEnemyCollisionSystem } from "../system/enemies/flying-enemy/flyin
 import { FlyingEnemyAnimationSystem } from "../system/enemies/flying-enemy/flying-enemy-animation.system";
 import { FlyingEnemyReturnSystem } from "../system/enemies/flying-enemy/flying-enemy-return.system";
 import { FlyingEnemyAlertSystem } from "../system/enemies/flying-enemy/flying-enemy-alert.system";
+import { MapLayer, MapLayerHelper } from "../../utils/map-layer.helper";
 
 type FlyingEnemyManagerParams = {
   engine: Engine;
   map: Map;
   tiledMap: TiledMap;
 };
-
-const ENEMY_LAYER_INDEX = 5;
 
 export class FlyingEnemyManager {
   private readonly engine: Engine;
@@ -43,11 +42,7 @@ export class FlyingEnemyManager {
   }
 
   private getSpawnPositions(): TiledObject[] {
-    const layer = this.tiledMap.layers[ENEMY_LAYER_INDEX];
-    if (!layer || !layer.objects) {
-      return [];
-    }
-    return layer.objects as TiledObject[];
+    return MapLayerHelper.getObjects(this.tiledMap, MapLayer.PIN);
   }
 
   private spawnEnemies(positions: TiledObject[]): void {

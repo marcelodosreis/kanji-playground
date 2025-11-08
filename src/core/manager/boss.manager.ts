@@ -5,7 +5,8 @@ import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import type { Boss } from "../../types/boss.interface";
 import { TAGS } from "../../types/tags.enum";
 import { AIBossSystem } from "../system/ai-boss.system";
-import { BossEventHandlerSystem } from "../system/boss-event-handler.system";
+import { BossEventHandlerSystem } from "../system/boss-event-handler.system";import { MapLayer, MapLayerHelper } from "../../utils/map-layer.helper";
+;
 
 type BossManagerParams = {
   engine: Engine;
@@ -39,6 +40,7 @@ export class BossManager {
   }
 
   private static getBossPosition(tiledMap: TiledMap): TiledObject | undefined {
-    return tiledMap.layers[5].objects?.find((pos) => pos.name === TAGS.BOSS);
+    const objects = MapLayerHelper.getObjects(tiledMap, MapLayer.PIN);
+    return objects.find((pos) => pos.name === TAGS.BOSS);
   }
 }

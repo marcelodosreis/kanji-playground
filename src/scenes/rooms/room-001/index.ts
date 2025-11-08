@@ -27,14 +27,11 @@ const CONFIG = {
   INITIAL_CAMERA_POS: { x: 170, y: 270 },
   GRAVITY: 1000,
   MAP_SPRITE_NAME: LEVEL_SCENES.ROOM_001,
-  COLLIDERS_LAYER_INDEX: 4,
   PLAYER_START_NAMES: ["player", "entrance-1", "entrance-2"],
   ENTRANCE_EXIT_MAPPING: {
     "entrance-1": "exit-1",
     "entrance-2": "exit-2",
   },
-  CAMERA_ZONES_LAYER_INDEX: 6,
-  EXITS_LAYER_INDEX: 7,
   EXIT_ROOM_NAME: LEVEL_SCENES.ROOM_002,
 };
 
@@ -62,7 +59,6 @@ export class Room001Scene {
       engine: this.engine,
       tiledMap: this.tiledMap,
       cameraScale: this.config.CAMERA_SCALE,
-      collidersLayerIndex: this.config.COLLIDERS_LAYER_INDEX,
       gravity: this.config.GRAVITY,
       initialCameraPos: this.config.INITIAL_CAMERA_POS,
       mapSpriteName: this.config.MAP_SPRITE_NAME,
@@ -106,7 +102,6 @@ export class Room001Scene {
       map: this.map,
       tiledMap: this.tiledMap,
       initialCameraPos: this.config.INITIAL_CAMERA_POS,
-      cameraZonesLayerIndex: this.config.CAMERA_ZONES_LAYER_INDEX,
       previousSceneExitName: this.previousSceneData.exitName,
     });
 
@@ -114,7 +109,6 @@ export class Room001Scene {
       engine: this.engine,
       map: this.map,
       tiledMap: this.tiledMap,
-      exitsLayerIndex: this.config.EXITS_LAYER_INDEX,
       exitRoomName: this.config.EXIT_ROOM_NAME,
     });
 

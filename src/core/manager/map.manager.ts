@@ -17,7 +17,6 @@ type SetupParams = {
   initialCameraPos: InitialCameraPos;
   gravity: number;
   mapSpriteName: string;
-  collidersLayerIndex: number;
 };
 
 export class MapManager {
@@ -29,14 +28,13 @@ export class MapManager {
     initialCameraPos,
     gravity,
     mapSpriteName,
-    collidersLayerIndex,
   }: SetupParams): void {
     this.configureEngine(engine, cameraScale, initialCameraPos, gravity);
 
     const map = this.createMap(engine, mapSpriteName);
     setMap(map);
 
-    const colliders = this.extractColliders(tiledMap, collidersLayerIndex);
+    const colliders = this.extractColliders(tiledMap);
 
     ColliderManager.setup(engine, map, colliders);
     this.processBossBarriers(engine, map, colliders);
@@ -59,9 +57,8 @@ export class MapManager {
 
   private static extractColliders(
     tiledMap: TiledMap,
-    layerIndex: number
   ): TiledObject[] {
-    return tiledMap.layers[layerIndex].objects as TiledObject[];
+    return tiledMap.layers[4].objects as TiledObject[];
   }
 
   private static processBossBarriers(

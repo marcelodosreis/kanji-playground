@@ -5,12 +5,12 @@ import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { smoothTransition } from "../../utils/smooth-transition";
 import { GLOBAL_STATE_CONTROLLER } from "../global-state-controller";
+import { MapLayer, MapLayerHelper } from "../../utils/map-layer.helper";
 
 type CameraSetupParams = {
   engine: Engine;
   map: Map;
   tiledMap: TiledMap;
-  cameraZonesLayerIndex: number;
   initialCameraPos: { x: number; y: number };
   previousSceneExitName?: string | null;
 };
@@ -71,10 +71,8 @@ export class CameraManager {
     engine,
     map,
     tiledMap,
-    cameraZonesLayerIndex,
   }: CameraSetupParams): void {
-    const cameras = tiledMap.layers[cameraZonesLayerIndex]
-      .objects as TiledObject[];
+    const cameras = MapLayerHelper.getObjects(tiledMap, MapLayer.CAMERA);
 
     cameras.forEach((camera) => {
       const cameraZone = this.createCameraZone(engine, map, camera);

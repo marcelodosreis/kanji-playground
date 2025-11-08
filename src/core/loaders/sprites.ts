@@ -3,8 +3,8 @@ import {
   BAT_ANIMATIONS,
   PLAYER_ANIMATIONS,
   SPRITES,
-} from "../types/animations.enum";
-import { engine } from "./engine";
+} from "../../types/animations.enum";
+import { engine } from "../engine";
 
 export function sprites(): void {
   engine.loadFont("glyphmesss", "./fonts/glyphmesss.ttf");

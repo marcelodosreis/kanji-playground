@@ -5,12 +5,12 @@ import { MENU_SCENES } from "../../types/scenes.enum";
 import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { smoothTransition } from "../../utils/smooth-transition";
+import { MapLayer, MapLayerHelper } from "../../utils/map-layer.helper";
 
 type SetupParams = {
   engine: Engine;
   map: Map;
   tiledMap: TiledMap;
-  exitsLayerIndex: number;
   exitRoomName: string;
 };
 
@@ -19,20 +19,12 @@ export class ExitManager {
     engine,
     map,
     tiledMap,
-    exitsLayerIndex,
     exitRoomName,
   }: SetupParams): void {
-    const exits = this.getExits(tiledMap, exitsLayerIndex);
+    const exits = MapLayerHelper.getObjects(tiledMap, MapLayer.EXIT);
     exits.forEach((exit) =>
       this.createExitZone({ engine, map, exitRoomName }, exit)
     );
-  }
-
-  private static getExits(
-    tiledMap: TiledMap,
-    layerIndex: number
-  ): TiledObject[] {
-    return tiledMap.layers[layerIndex].objects as TiledObject[];
   }
 
   private static createExitZone(
@@ -76,10 +68,10 @@ export class ExitManager {
   private static createBackground(engine: Engine) {
     return engine.add([
       engine.pos(-engine.width(), 0),
-      engine.fixed(), 
+      engine.fixed(),
       engine.rect(engine.width(), engine.height()),
       engine.color(COLORS.BACKGROUND_PRIMARY),
-      engine.z(9999), 
+      engine.z(9999),
     ]);
   }
 
@@ -90,7 +82,7 @@ export class ExitManager {
   ): Promise<void> {
     return new Promise((resolve) => {
       const startX = background.pos.x;
-      const endX = 0; 
+      const endX = 0;
       const totalMs = durationSeconds * 1000;
 
       smoothTransition({
