@@ -25,7 +25,7 @@ export function FlyingEnemyEventHandlerSystem({ engine, enemy }: Params) {
       engine,
       target: enemy,
       source: player,
-      strength: 3,
+      strength: 5,
     });
   }
 

@@ -27,10 +27,15 @@ type HealthState = {
   max: number;
 };
 
+type HurtLockState = {
+  isLocked: boolean;
+};
+
 const HEALTH_CONFIG = {
   KNOCKBACK_STRENGTH: 1,
   BLINK_COUNT: 3,
   MIN_HP_FOR_RESPAWN: 1,
+  HURT_LOCK_DURATION_MS: 300,
 };
 
 const getHealthState = (): HealthState => ({
@@ -47,11 +52,17 @@ const isDead = (hp: number): boolean => hp <= 0;
 const isExplodeAnimation = (anim: string): boolean =>
   anim === PLAYER_ANIMATIONS.EXPLODE;
 
+const isHurtAnimation = (anim: string): boolean =>
+  anim === PLAYER_ANIMATIONS.HURT;
+
 const shouldRespawnWithFullLife = (currentHp: number): boolean =>
   currentHp <= HEALTH_CONFIG.MIN_HP_FOR_RESPAWN;
 
 const calculateDamage = (current: number, amount: number): number =>
   current - amount;
+
+const delay = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 const applyBlinkEffect = async (
   engine: Engine,
@@ -70,6 +81,10 @@ export function PlayerHealthSystem({
   destinationName,
   previousSceneData,
 }: Params) {
+  const hurtLock: HurtLockState = {
+    isLocked: false,
+  };
+
   const syncPlayerHealth = (): void => {
     setPlayerHP(player.hp());
   };
@@ -109,6 +124,12 @@ export function PlayerHealthSystem({
     });
   };
 
+  const lockHurtState = async (durationMs: number): Promise<void> => {
+    hurtLock.isLocked = true;
+    await delay(durationMs);
+    hurtLock.isLocked = false;
+  };
+
   const handleHurt = async ({ amount, source }: HurtParams): Promise<void> => {
     if (stateMachine.getState() === PLAYER_ANIMATIONS.EXPLODE) return;
 
@@ -118,6 +139,8 @@ export function PlayerHealthSystem({
     applyKnockbackEffect(source);
 
     if (isDead(playerHp)) return;
+
+    lockHurtState(HEALTH_CONFIG.HURT_LOCK_DURATION_MS);
 
     await applyBlinkEffect(engine, player, HEALTH_CONFIG.BLINK_COUNT);
 
@@ -141,6 +164,11 @@ export function PlayerHealthSystem({
     if (isExplodeAnimation(anim)) {
       const { max } = getHealthState();
       respawnPlayerFullLife(max);
+      return;
+    }
+
+    if (isHurtAnimation(anim) && !hurtLock.isLocked) {
+      stateMachine.dispatch("IDLE");
     }
   };
 
