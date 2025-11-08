@@ -3,10 +3,7 @@ import type { Engine } from "../../../../types/engine.interface";
 import { FLYING_ENEMY_EVENTS } from "../../../../types/events.enum";
 import type { Player } from "../../../../types/player.interface";
 import { GLOBAL_STATE } from "../../../../types/state.interface";
-import {
-  isPaused,
-  wrapWithPauseCheck,
-} from "../../../../utils/wrap-with-pause-check";
+
 import { GLOBAL_STATE_CONTROLLER } from "../../../global-state-controller";
 import { StateMachine, type StateMachineConfig } from "../../../state-machine";
 
@@ -20,12 +17,6 @@ type FlyingEnemyContextWithMachine = FlyingEnemyContext & {
   stateMachine: FlyingEnemyStateMachine;
 };
 
-function wrapWithPauseCheckCtx<T>(
-  callback: (ctx: T) => void | Promise<void>
-): (ctx: T) => void | Promise<void> {
-  return (ctx: T) => wrapWithPauseCheck(() => callback(ctx))();
-}
-
 const createStateHandlers = () => ({
   [FLYING_ENEMY_EVENTS.PATROL_RIGHT]: {
     onEnter: async (ctx: FlyingEnemyContextWithMachine): Promise<void> => {
@@ -33,8 +24,7 @@ const createStateHandlers = () => ({
 
       if (
         ctx.enemy.state === FLYING_ENEMY_EVENTS.PATROL_RIGHT &&
-        ctx.enemy.hp() > 0 &&
-        !isPaused()
+        ctx.enemy.hp() > 0
       ) {
         ctx.stateMachine.dispatch(FLYING_ENEMY_EVENTS.PATROL_LEFT);
       }
@@ -47,8 +37,7 @@ const createStateHandlers = () => ({
 
       if (
         ctx.enemy.state === FLYING_ENEMY_EVENTS.PATROL_LEFT &&
-        ctx.enemy.hp() > 0 &&
-        !isPaused()
+        ctx.enemy.hp() > 0
       ) {
         ctx.stateMachine.dispatch(FLYING_ENEMY_EVENTS.PATROL_RIGHT);
       }
@@ -59,7 +48,7 @@ const createStateHandlers = () => ({
     onEnter: async (ctx: FlyingEnemyContextWithMachine): Promise<void> => {
       await ctx.engine.wait(0.5);
 
-      if (ctx.enemy.hp() <= 0 || isPaused()) return;
+      if (ctx.enemy.hp() <= 0) return;
 
       const isPlayerInRange =
         ctx.enemy.pos.dist(ctx.player.pos) < ctx.enemy.range;
@@ -73,7 +62,6 @@ const createStateHandlers = () => ({
   },
 
   [FLYING_ENEMY_EVENTS.ATTACK]: {},
-
   [FLYING_ENEMY_EVENTS.RETURN]: {},
 });
 
@@ -103,18 +91,14 @@ const createStateMachineConfig =
       initial: FLYING_ENEMY_EVENTS.PATROL_RIGHT,
       states: {
         [FLYING_ENEMY_EVENTS.PATROL_RIGHT]: {
-          onEnter: wrapWithPauseCheckCtx(
-            handlers[FLYING_ENEMY_EVENTS.PATROL_RIGHT].onEnter
-          ),
+          onEnter: handlers[FLYING_ENEMY_EVENTS.PATROL_RIGHT].onEnter,
           transitions: {
             [FLYING_ENEMY_EVENTS.PATROL_LEFT]: FLYING_ENEMY_EVENTS.PATROL_LEFT,
             [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
           },
         },
         [FLYING_ENEMY_EVENTS.PATROL_LEFT]: {
-          onEnter: wrapWithPauseCheckCtx(
-            handlers[FLYING_ENEMY_EVENTS.PATROL_LEFT].onEnter
-          ),
+          onEnter: handlers[FLYING_ENEMY_EVENTS.PATROL_LEFT].onEnter,
           transitions: {
             [FLYING_ENEMY_EVENTS.PATROL_RIGHT]:
               FLYING_ENEMY_EVENTS.PATROL_RIGHT,
@@ -122,9 +106,7 @@ const createStateMachineConfig =
           },
         },
         [FLYING_ENEMY_EVENTS.ALERT]: {
-          onEnter: wrapWithPauseCheckCtx(
-            handlers[FLYING_ENEMY_EVENTS.ALERT].onEnter
-          ),
+          onEnter: handlers[FLYING_ENEMY_EVENTS.ALERT].onEnter,
           transitions: {
             [FLYING_ENEMY_EVENTS.ATTACK]: FLYING_ENEMY_EVENTS.ATTACK,
             [FLYING_ENEMY_EVENTS.RETURN]: FLYING_ENEMY_EVENTS.RETURN,

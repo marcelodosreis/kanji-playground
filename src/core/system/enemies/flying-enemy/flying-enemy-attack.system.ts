@@ -3,6 +3,7 @@ import type { Enemy } from "../../../../types/enemy.interface";
 import type { Player } from "../../../../types/player.interface";
 import type { FlyingEnemyStateMachine } from "./flying-enemy-state-machine";
 import { FLYING_ENEMY_EVENTS } from "../../../../types/events.enum";
+import { isPaused } from "../../../../utils/wrap-with-pause-check";
 
 type Params = {
   engine: Engine;
@@ -13,7 +14,7 @@ type Params = {
 
 export function FlyingEnemyAttackSystem({ engine, enemy, player, stateMachine }: Params) {
   engine.onUpdate(() => {
-    if (!stateMachine.isAttacking()) return;
+    if (!stateMachine.isAttacking() || isPaused()) return;
 
     if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
 

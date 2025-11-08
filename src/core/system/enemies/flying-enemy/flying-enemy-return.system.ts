@@ -3,6 +3,7 @@ import type { Enemy } from "../../../../types/enemy.interface";
 import type { Player } from "../../../../types/player.interface";
 import type { FlyingEnemyStateMachine } from "./flying-enemy-state-machine";
 import { FLYING_ENEMY_EVENTS } from "../../../../types/events.enum";
+import { isPaused } from "../../../../utils/wrap-with-pause-check";
 
 type Params = {
   engine: Engine;
@@ -14,9 +15,14 @@ type Params = {
 const RETURN_THRESHOLD = 20;
 const POSITION_RESET_DISTANCE = 400;
 
-export function FlyingEnemyReturnSystem({ engine, enemy, player, stateMachine }: Params) {
+export function FlyingEnemyReturnSystem({
+  engine,
+  enemy,
+  player,
+  stateMachine,
+}: Params) {
   engine.onUpdate(() => {
-    if (!stateMachine.isReturning()) return;
+    if (!stateMachine.isReturning() || isPaused()) return;
 
     if (enemy.hp() <= 0) return;
 
@@ -31,7 +37,8 @@ export function FlyingEnemyReturnSystem({ engine, enemy, player, stateMachine }:
       return;
     }
 
-    const isAtInitialPosition = enemy.pos.dist(enemy.initialPos) < RETURN_THRESHOLD;
+    const isAtInitialPosition =
+      enemy.pos.dist(enemy.initialPos) < RETURN_THRESHOLD;
 
     if (isAtInitialPosition) {
       stateMachine.dispatch(FLYING_ENEMY_EVENTS.PATROL_RIGHT);
