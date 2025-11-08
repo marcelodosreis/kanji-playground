@@ -1,8 +1,6 @@
 import type { Engine } from "../../types/engine.interface";
-import {
-  createFocusableButton,
-  type FocusableButton,
-} from "../../utils/create-focusable-button";
+import { createMenuButtons, type MenuButton } from "../../utils/menu/create-menu-button";
+import { createMenuText } from "../../utils/menu/create-menu-text";
 import { setBackgroundColor } from "../../utils/set-background-color";
 
 type MenuItem = {
@@ -30,7 +28,7 @@ type SetupParams = {
 };
 
 export class MenuManager {
-  private static buttons: FocusableButton[] = [];
+  private static buttons: MenuButton[] = [];
   private static currentIndex = 0;
   private static keyHandlerCancel?: () => void;
 
@@ -63,12 +61,11 @@ export class MenuManager {
     size: number,
     centerX: number
   ): void {
-    engine.add([
-      engine.pos(centerX, 60),
-      engine.anchor("center"),
-      engine.text(title, { size, font: "glyphmesss", align: "center" }),
-      engine.color(engine.Color.fromHex("#ffffff")),
-    ]);
+    createMenuText(engine, title, {
+      size,
+      pos: { x: centerX, y: 60 },
+      colorHex: "#ffffff",
+    });
   }
 
   private static addSubtitle(
@@ -77,22 +74,21 @@ export class MenuManager {
     size: number,
     centerX: number
   ): void {
-    engine.add([
-      engine.pos(centerX, 90),
-      engine.anchor("center"),
-      engine.text(subtitle, { size, font: "glyphmesss", align: "center" }),
-      engine.color(engine.Color.fromHex("#c7c9ff")),
-      engine.opacity(0.85),
-    ]);
+    createMenuText(engine, subtitle, {
+      size,
+      pos: { x: centerX, y: 90 },
+      colorHex: "#c7c9ff",
+      opacity: 0.85,
+    });
   }
 
   private static createButtons(
     engine: Engine,
     items: MenuItem[],
     config: Config
-  ): FocusableButton[] {
+  ): MenuButton[] {
     return items.map((item, i) => {
-      const btn = createFocusableButton(engine, {
+      const btn = createMenuButtons(engine, {
         label: item.label,
         width: config.buttonWidth,
         height: config.buttonHeight,
@@ -107,7 +103,7 @@ export class MenuManager {
   }
 
   private static setupButtonHoverEvents(
-    button: FocusableButton,
+    button: MenuButton,
     index: number
   ): void {
     button.on("hoverenter", () => {
