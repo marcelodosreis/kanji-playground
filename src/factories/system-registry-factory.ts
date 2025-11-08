@@ -16,7 +16,7 @@ import type {
   EnemySystemContext,
 } from "../types/system.types";
 
-export class SystemRegistry {
+export class SystemRegistryFactory {
   static registerPlayerSystems(context: PlayerSystemContext): void {
     if (!context.boundValue) return;
     

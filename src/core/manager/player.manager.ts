@@ -8,7 +8,7 @@ import {
 } from "./base-entity.manager";
 import type { EngineGameObj } from "../../types/engine.type";
 import { createPlayerStateMachine } from "../system/player/player-state-machine";
-import { SystemRegistry } from "../../factories/system-registry";
+import { SystemRegistryFactory } from "../../factories/system-registry-factory";
 
 type PositionOffset = { x: number; y: number };
 type RespawnConfig = { bounds: number; roomName: string; exitName?: string };
@@ -57,7 +57,7 @@ export class PlayerManager extends BaseEntityManager<Player> {
 
   private initializeSystems(player: Player): void {
     const stateMachine = createPlayerStateMachine({ player });
-    SystemRegistry.registerPlayerSystems({
+    SystemRegistryFactory.registerPlayerSystems({
       engine: this.engine,
       player,
       stateMachine,

@@ -10,7 +10,7 @@ import { EntityFactory } from "../../factories/entity-factory";
 import type { Enemy } from "../../types/enemy.interface";
 import { getPlayer } from "../../utils/get-player";
 import { createFlyingEnemyStateMachine } from "../system/enemies/flying-enemy/flying-enemy-state-machine";
-import { SystemRegistry } from "../../factories/system-registry";
+import { SystemRegistryFactory } from "../../factories/system-registry-factory";
 
 export type FlyingEnemyManagerParams = BaseManagerParams;
 
@@ -24,21 +24,23 @@ export class FlyingEnemyManager extends BaseEntityManager<void> {
     manager.setup();
   }
 
-  public setup(): void {
+  public setup(): Enemy[] {
     const positions = this.resolveSpawnPositions();
-    this.spawnEntities(positions);
+    return this.spawnEntities(positions);
   }
 
   private resolveSpawnPositions(): TiledObject[] {
     return TiledObjectHelper.findByType(this.tiledMap, TAGS.FLY_ENEMY);
   }
 
-  private spawnEntities(positions: TiledObject[]): void {
+  private spawnEntities(positions: TiledObject[]): Enemy[] {
     const player = getPlayer({ engine: this.engine });
-    if (!player) return;
-    positions.forEach((pos) => {
+    if (!player) return [];
+
+    return positions.map((pos) => {
       const enemy = this.createEntity(pos);
       this.initializeSystems(enemy, player);
+      return enemy;
     });
   }
 
@@ -57,7 +59,7 @@ export class FlyingEnemyManager extends BaseEntityManager<void> {
       enemy,
       player,
     });
-    SystemRegistry.registerFlyingEnemySystems({
+    SystemRegistryFactory.registerFlyingEnemySystems({
       engine: this.engine,
       enemy,
       player,
