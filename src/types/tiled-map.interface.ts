@@ -1,4 +1,4 @@
-import type { Position } from "./position.interface";
+import type { Vec2 } from "kaplay";
 
 export interface TiledMap {
   compressionlevel: number;
@@ -43,7 +43,7 @@ export interface TiledObject {
   visible: boolean;
   x: number;
   y: number;
-  polygon?: [Position];
+  polygon?: [Vec2];
   properties: [{ value: number }];
 }
 

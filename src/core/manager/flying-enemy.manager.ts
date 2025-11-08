@@ -4,16 +4,17 @@ import type { Player } from "../../types/player.interface";
 import {
   BaseEntityManager,
   type BaseManagerParams,
-} from "./_/base-entity.manager";
+} from "./base-entity.manager";
 import { TiledObjectHelper } from "../../helpers/tiled-object.helper";
 import { EntityFactory } from "../../factories/entity-factory";
-import { SystemInitializerHelper } from "../../helpers/system-initializer.helper";
 import type { Enemy } from "../../types/enemy.interface";
 import { getPlayer } from "../../utils/get-player";
+import { createFlyingEnemyStateMachine } from "../system/enemies/flying-enemy/flying-enemy-state-machine";
+import { SystemRegistry } from "../../factories/system-registry";
 
 export type FlyingEnemyManagerParams = BaseManagerParams;
 
-export class FlyingEnemyManager extends BaseEntityManager<Enemy> {
+export class FlyingEnemyManager extends BaseEntityManager<void> {
   private constructor(params: FlyingEnemyManagerParams) {
     super(params);
   }
@@ -24,25 +25,24 @@ export class FlyingEnemyManager extends BaseEntityManager<Enemy> {
   }
 
   public setup(): void {
-    const positions = TiledObjectHelper.findByType(
-      this.tiledMap,
-      TAGS.FLY_ENEMY
-    );
-    this.spawnFromPositions(positions);
+    const positions = this.resolveSpawnPositions();
+    this.spawnEntities(positions);
   }
 
-  private spawnFromPositions(positions: TiledObject[]): void {
+  private resolveSpawnPositions(): TiledObject[] {
+    return TiledObjectHelper.findByType(this.tiledMap, TAGS.FLY_ENEMY);
+  }
+
+  private spawnEntities(positions: TiledObject[]): void {
     const player = getPlayer({ engine: this.engine });
     if (!player) return;
-    positions.forEach((pos) => this.spawnAtPosition(pos, player));
+    positions.forEach((pos) => {
+      const enemy = this.createEntity(pos);
+      this.initializeSystems(enemy, player);
+    });
   }
 
-  private spawnAtPosition(position: TiledObject, player: Player): void {
-    const enemy = this.createEnemy(position);
-    this.initializeEnemy(enemy, player);
-  }
-
-  private createEnemy(position: TiledObject): Enemy {
+  private createEntity(position: TiledObject): Enemy {
     return EntityFactory.createFlyingEnemy(
       this.engine,
       this.map,
@@ -51,7 +51,17 @@ export class FlyingEnemyManager extends BaseEntityManager<Enemy> {
     );
   }
 
-  private initializeEnemy(enemy: Enemy, player: Player): void {
-    SystemInitializerHelper.initFlyingEnemySystems(this.engine, enemy, player);
+  private initializeSystems(enemy: Enemy, player: Player): void {
+    const stateMachine = createFlyingEnemyStateMachine({
+      engine: this.engine,
+      enemy,
+      player,
+    });
+    SystemRegistry.registerFlyingEnemySystems({
+      engine: this.engine,
+      enemy,
+      player,
+      stateMachine,
+    });
   }
 }

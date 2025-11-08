@@ -1,14 +1,14 @@
 import { EntityFactory } from "../../factories/entity-factory";
-
 import type { Player } from "../../types/player.interface";
 import type { TiledObject } from "../../types/tiled-map.interface";
-import { SystemInitializerHelper } from "../../helpers/system-initializer.helper";
 import { PlayerPositionResolver } from "../../helpers/player-position-resolver.helper";
 import {
   BaseEntityManager,
   type BaseManagerParams,
-} from "./_/base-entity.manager";
+} from "./base-entity.manager";
 import type { EngineGameObj } from "../../types/engine.type";
+import { createPlayerStateMachine } from "../system/player/player-state-machine";
+import { SystemRegistry } from "../../factories/system-registry";
 
 type PositionOffset = { x: number; y: number };
 type RespawnConfig = { bounds: number; roomName: string; exitName?: string };
@@ -43,33 +43,41 @@ export class PlayerManager extends BaseEntityManager<Player> {
   }
 
   public setup(): Player {
-    const player = this.createPlayer();
-    this.initializePlayerSystems(player);
-    const startPosition = PlayerPositionResolver.resolveStart(
-      this.tiledMap,
-      this.previousSceneData,
-      this.playerStartNames,
-      this.entranceExitMapping
-    );
-    if (startPosition) {
-      this.positionPlayer(player, startPosition);
-    }
+    const player = this.createEntity();
+    this.initializeSystems(player);
+    const positions = this.resolveSpawnPositions();
+    const startPosition = positions[0];
+    if (startPosition) this.applyPosition(player, startPosition);
     return player;
   }
 
-  private createPlayer(): Player {
+  private createEntity(): Player {
     return EntityFactory.createPlayer(this.engine, this.map);
   }
 
-  private initializePlayerSystems(player: Player): void {
-    SystemInitializerHelper.initPlayerSystems(this.engine, player, {
+  private initializeSystems(player: Player): void {
+    const stateMachine = createPlayerStateMachine({ player });
+    SystemRegistry.registerPlayerSystems({
+      engine: this.engine,
+      player,
+      stateMachine,
       boundValue: this.respawnConfig.bounds,
       destinationName: this.respawnConfig.roomName,
       previousSceneData: { exitName: this.respawnConfig.exitName },
     });
   }
 
-  private positionPlayer(player: Player, position: TiledObject): void {
+  private resolveSpawnPositions(): TiledObject[] {
+    const position = PlayerPositionResolver.resolveStart(
+      this.tiledMap,
+      this.previousSceneData,
+      this.playerStartNames,
+      this.entranceExitMapping
+    );
+    return position ? [position] : [];
+  }
+
+  private applyPosition(player: Player, position: TiledObject): void {
     player.pos.x = position.x + this.positionOffset.x;
     player.pos.y = position.y + this.positionOffset.y;
   }
