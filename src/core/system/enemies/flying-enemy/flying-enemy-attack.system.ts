@@ -12,16 +12,21 @@ type Params = {
   stateMachine: FlyingEnemyStateMachine;
 };
 
-export function FlyingEnemyAttackSystem({ engine, enemy, player, stateMachine }: Params) {
+export function FlyingEnemyAttackSystem({
+  engine,
+  enemy,
+  player,
+  stateMachine,
+}: Params) {
   engine.onUpdate(() => {
     if (!stateMachine.isAttacking() || isPaused()) return;
 
     if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
 
-    const isBeyondPursuitLimit = enemy.pos.dist(enemy.initialPos) > enemy.maxPursuitDistance;
-    const isPlayerInRange = enemy.pos.dist(player.pos) < enemy.range;
+    const isBeyondPursuitLimit =
+      enemy.pos.dist(enemy.initialPos) > enemy.maxPursuitDistance;
 
-    if (isBeyondPursuitLimit || !isPlayerInRange) {
+    if (isBeyondPursuitLimit) {
       stateMachine.dispatch(FLYING_ENEMY_EVENTS.RETURN);
       return;
     }

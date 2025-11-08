@@ -11,6 +11,7 @@ import { FlyingEnemyAttackSystem } from "../system/enemies/flying-enemy/flying-e
 import { FlyingEnemyCollisionSystem } from "../system/enemies/flying-enemy/flying-enemy-collision.system";
 import { FlyingEnemyAnimationSystem } from "../system/enemies/flying-enemy/flying-enemy-animation.system";
 import { FlyingEnemyReturnSystem } from "../system/enemies/flying-enemy/flying-enemy-return.system";
+import { FlyingEnemyAlertSystem } from "../system/enemies/flying-enemy/flying-enemy-alert.system";
 
 type FlyingEnemyManagerParams = {
   engine: Engine;
@@ -79,6 +80,12 @@ export class FlyingEnemyManager {
     });
 
     FlyingEnemyPatrolSystem({
+      engine: this.engine,
+      enemy,
+      player,
+      stateMachine,
+    });
+    FlyingEnemyAlertSystem({
       engine: this.engine,
       enemy,
       player,
