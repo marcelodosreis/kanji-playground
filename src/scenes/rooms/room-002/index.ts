@@ -1,7 +1,5 @@
 import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import type { TiledMap } from "../../../types/tiled-map.interface";
-import type { Map } from "../../../types/map.interface";
-
 import { CameraManager } from "../../../core/manager/camera.manager";
 import { MapManager } from "../../../core/manager/map.manager";
 import { PlayerManager } from "../../../core/manager/player.manager";
@@ -36,7 +34,6 @@ export class Room002Scene {
   private engine: Engine;
   private tiledMap: TiledMap;
   private previousSceneData: EngineGameObj;
-  private map!: Map;
   private config = CONFIG;
 
   constructor(params: Room002Params) {
@@ -50,25 +47,22 @@ export class Room002Scene {
   public initialize(): void {
     setBackgroundColor(this.engine, this.config.BACKGROUND_COLOR);
 
-    MapManager.setup({
+    const map = MapManager.setup({
       engine: this.engine,
       tiledMap: this.tiledMap,
-      cameraScale: this.config.CAMERA_SCALE,
       gravity: this.config.GRAVITY,
-      initialCameraPos: this.config.INITIAL_CAMERA_POS,
       mapSpriteName: this.config.MAP_SPRITE_NAME,
-      setMap: (map: Map) => (this.map = map),
       exitRoomName: this.config.EXIT_ROOM_NAME,
     });
 
     PlayerManager.setup({
+      map,
       engine: this.engine,
-      map: this.map,
       tiledMap: this.tiledMap,
       previousSceneData: this.previousSceneData,
       playerStartNames: this.config.PLAYER_START_NAMES,
       entranceExitMapping: this.config.ENTRANCE_EXIT_MAPPING,
-      positionOffset: { x: this.map.pos.x, y: this.map.pos.y },
+      positionOffset: { x: map.pos.x, y: map.pos.y },
       respawnConfig: {
         bounds: this.config.RESPAWN_BOUNDS,
         roomName: this.config.RESPAWN_ROOM_NAME,
@@ -77,10 +71,11 @@ export class Room002Scene {
     });
 
     CameraManager.setup({
+      map,
       engine: this.engine,
-      map: this.map,
       tiledMap: this.tiledMap,
       initialCameraPos: this.config.INITIAL_CAMERA_POS,
+      previousSceneExitName: this.previousSceneData.exitName,
     });
 
     UIManager.setup({

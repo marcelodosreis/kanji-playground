@@ -14,14 +14,14 @@ import { SystemRegistryFactory } from "../../factories/system-registry-factory";
 
 export type FlyingEnemyManagerParams = BaseManagerParams;
 
-export class FlyingEnemyManager extends BaseEntityManager<void> {
+export class FlyingEnemyManager extends BaseEntityManager<Enemy[]> {
   private constructor(params: FlyingEnemyManagerParams) {
     super(params);
   }
 
-  public static setup(params: FlyingEnemyManagerParams): void {
+  public static setup(params: FlyingEnemyManagerParams): Enemy[] {
     const manager = new FlyingEnemyManager(params);
-    manager.setup();
+    return manager.setup();
   }
 
   public setup(): Enemy[] {

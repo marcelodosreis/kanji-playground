@@ -16,6 +16,7 @@ type ExitSystemParams = {
 export function ExitSystem(params: ExitSystemParams): void {
   const { engine, map, tiledMap, exitRoomName } = params;
   const exits = MapLayerHelper.getObjects(tiledMap, MapLayer.EXIT);
+  console.log(exits)
   exits.forEach((exit) => createExitZone({ engine, map, exitRoomName }, exit));
 }
 

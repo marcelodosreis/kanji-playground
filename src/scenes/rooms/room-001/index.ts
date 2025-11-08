@@ -7,7 +7,6 @@ import { UIManager } from "../../../core/manager/ui.manager";
 import { GLOBAL_STATE_CONTROLLER } from "../../../core/global-state-controller";
 import { COLORS } from "../../../types/colors.enum";
 import type { Engine, EngineGameObj } from "../../../types/engine.type";
-import type { Map } from "../../../types/map.interface";
 import { LEVEL_SCENES } from "../../../types/scenes.enum";
 import type { TiledMap } from "../../../types/tiled-map.interface";
 import { setBackgroundColor } from "../../../utils/set-background-color";
@@ -36,7 +35,6 @@ export class Room001Scene {
   private engine: Engine;
   private tiledMap: TiledMap;
   private previousSceneData: EngineGameObj;
-  private map!: Map;
   private config = CONFIG;
 
   constructor(params: Room001Params) {
@@ -50,20 +48,17 @@ export class Room001Scene {
   public initialize(): void {
     setBackgroundColor(this.engine, this.config.BACKGROUND_COLOR);
 
-    MapManager.setup({
+    const map = MapManager.setup({
       engine: this.engine,
       tiledMap: this.tiledMap,
-      cameraScale: this.config.CAMERA_SCALE,
       gravity: this.config.GRAVITY,
-      initialCameraPos: this.config.INITIAL_CAMERA_POS,
       mapSpriteName: this.config.MAP_SPRITE_NAME,
-      setMap: (map: Map) => (this.map = map),
       exitRoomName: this.config.EXIT_ROOM_NAME,
     });
 
     PlayerManager.setup({
+      map: map,
       engine: this.engine,
-      map: this.map,
       tiledMap: this.tiledMap,
       previousSceneData: this.previousSceneData,
       playerStartNames: this.config.PLAYER_START_NAMES,
@@ -75,21 +70,21 @@ export class Room001Scene {
     });
 
     FlyingEnemyManager.setup({
+      map: map,
       engine: this.engine,
-      map: this.map,
       tiledMap: this.tiledMap,
     });
 
     BossManager.setup({
+      map: map,
       engine: this.engine,
-      map: this.map,
       tiledMap: this.tiledMap,
       isBossDefeated: GLOBAL_STATE_CONTROLLER.current().isBossDefeated,
     });
 
     CameraManager.setup({
+      map: map,
       engine: this.engine,
-      map: this.map,
       tiledMap: this.tiledMap,
       initialCameraPos: this.config.INITIAL_CAMERA_POS,
       previousSceneExitName: this.previousSceneData.exitName,

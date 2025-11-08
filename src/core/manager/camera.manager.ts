@@ -17,6 +17,7 @@ type CameraSetupParams = {
 
 export class CameraManager {
   public static setup(params: CameraSetupParams): void {
+    params.engine.camScale(2);
     this.setInitialCameraPosition(params);
     this.setupCameraFollow(params);
     this.setupCameraZones(params);
@@ -27,6 +28,7 @@ export class CameraManager {
     initialCameraPos,
     previousSceneExitName,
   }: CameraSetupParams): void {
+    console.log('[DEBUG]', previousSceneExitName)
     if (!previousSceneExitName) {
       this.setCameraPosition(engine, initialCameraPos.x, initialCameraPos.y);
     } else {
