@@ -10,8 +10,8 @@ interface GlobalStateManagerController {
 
 function initGlobalStateController(): GlobalStateManagerController {
   const state: GLOBAL_STATE_VALUES = {
-    [GLOBAL_STATE.PLAYER_HP]: 3,
-    [GLOBAL_STATE.MAX_PLAYER_HP]: 3,
+    [GLOBAL_STATE.PLAYER_HP]: 300,
+    [GLOBAL_STATE.MAX_PLAYER_HP]: 300,
     [GLOBAL_STATE.IS_DOUBLE_JUMB_UNLOCKED]: false,
     [GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT]: false,
     [GLOBAL_STATE.IS_BOSS_DEFEATED]: false,

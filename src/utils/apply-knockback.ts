@@ -26,11 +26,19 @@ export async function applyKnockback({
   const duration = 0.3;
   const start = performance.now();
 
+  const maxVerticalVel = -200;
+
   while (performance.now() - start < duration * 1000) {
     const t = (performance.now() - start) / 1000 / duration;
     const easeOut = 1 - (1 - t) * (1 - t);
     const currentSpeed = baseSpeed * (1 - easeOut);
+
     target.move(direction * currentSpeed, -verticalPower * (1 - t));
+
+    if (target.vel && target.vel.y < maxVerticalVel) {
+      target.vel.y = maxVerticalVel;
+    }
+
     await engine.wait(0.016);
   }
 

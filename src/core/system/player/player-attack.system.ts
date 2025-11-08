@@ -1,7 +1,8 @@
 import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
 import type { Engine, EngineGameObj } from "../../../types/engine.interface";
 import type { Player } from "../../../types/player.interface";
-import { HITBOX_TAGS } from "../../../types/tags.enum";
+import { EXTRA_TAGS, HITBOX_TAGS, TAGS } from "../../../types/tags.enum";
+import { applyKnockback } from "../../../utils/apply-knockback";
 import { isPaused } from "../../../utils/wrap-with-pause-check";
 import { type PlayerStateMachine } from "./player-state-machine";
 
@@ -11,7 +12,7 @@ type Params = {
   stateMachine: PlayerStateMachine;
 };
 
-type SwordHitbox = {
+type SwordHitbox = EngineGameObj & {
   destroy: () => void;
 };
 
@@ -73,11 +74,22 @@ export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
       config.height
     );
 
-    return player.add([
+    const hitbox = player.add([
       engine.pos(config.offsetX, config.offsetY),
       engine.area({ shape: hitboxShape }),
       HITBOX_TAGS.PLAYER_SWORD,
-    ]) as unknown as SwordHitbox;
+    ]) as SwordHitbox;
+
+    hitbox.onCollide(EXTRA_TAGS.HITTABLE, (enemy: EngineGameObj) => {
+      applyKnockback({
+        engine,
+        target: player,
+        source: enemy,
+        strength: 0.4,
+      });
+    });
+
+    return hitbox;
   };
 
   const destroySwordHitbox = (): void => {

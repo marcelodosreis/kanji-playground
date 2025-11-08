@@ -5,6 +5,10 @@ export enum TAGS {
   HEALTH_PICKUP = "coin",
 }
 
+export enum EXTRA_TAGS {
+  HITTABLE = "hittable",
+}
+
 export enum HITBOX_TAGS {
   PLAYER_SWORD = "sword-hitbox",
   BOSS_FIRE_HITBOX = "fire-hitbox",
