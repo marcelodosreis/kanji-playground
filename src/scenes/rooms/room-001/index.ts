@@ -6,7 +6,7 @@ import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
 import { GLOBAL_STATE_CONTROLLER } from "../../../core/global-state-controller";
 import { COLORS } from "../../../types/colors.enum";
-import type { Engine, EngineGameObj } from "../../../types/engine.interface";
+import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import type { Map } from "../../../types/map.interface";
 import { LEVEL_SCENES } from "../../../types/scenes.enum";
 import type { TiledMap } from "../../../types/tiled-map.interface";

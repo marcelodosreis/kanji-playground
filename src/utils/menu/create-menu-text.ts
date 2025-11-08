@@ -1,5 +1,5 @@
 import type { Anchor } from "kaplay";
-import type { Engine, EngineGameObj } from "../../types/engine.interface";
+import type { Engine, EngineGameObj } from "../../types/engine.type";
 
 export interface MenuTextOptions {
   size?: number;

@@ -2,7 +2,7 @@ import type {
   PlayerEngineGameObj,
   EngineEventCtrl,
   EngineGameObj,
-} from "./engine.interface";
+} from "./engine.type";
 
 export interface Player extends PlayerEngineGameObj {
   speed: number;

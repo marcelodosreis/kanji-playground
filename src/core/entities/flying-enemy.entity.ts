@@ -1,11 +1,11 @@
+import type { Vec2 } from "kaplay";
 import { BAT_ANIMATIONS, SPRITES } from "../../types/animations.enum";
 import type { Enemy } from "../../types/enemy.interface";
-import type { Engine } from "../../types/engine.interface";
+import type { Engine } from "../../types/engine.type";
 import { FLYING_ENEMY_EVENTS } from "../../types/events.enum";
-import type { Position } from "../../types/position.interface";
 import { EXTRA_TAGS, TAGS } from "../../types/tags.enum";
 
-export function FlyingEnemyEntity(engine: Engine, initialPos: Position): Enemy {
+export function FlyingEnemyEntity(engine: Engine, initialPos: Vec2): Enemy {
   return engine.make([
     TAGS.FLY_ENEMY,
     EXTRA_TAGS.HITTABLE,

@@ -1,5 +1,5 @@
 import type { LerpValue } from "kaplay";
-import type { Engine } from "../types/engine.interface";
+import type { Engine } from "../types/engine.type";
 
 export interface smoothTransitionParams<V extends LerpValue> {
   engine: Engine;

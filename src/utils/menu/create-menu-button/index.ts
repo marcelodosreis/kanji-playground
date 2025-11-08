@@ -3,7 +3,7 @@ import { createBaseButton } from "./base-button";
 import { applyFocusState } from "./focus-state";
 import { bindHoverTriggers } from "./hover";
 import { bindClickHandler } from "./click";
-import type { Engine, EngineGameObj } from "../../../types/engine.interface";
+import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import { createMenuText } from "../create-menu-text";
 
 export interface MenuButton extends EngineGameObj {

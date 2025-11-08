@@ -1,4 +1,4 @@
-import type { Engine } from "../../types/engine.interface";
+import type { Engine } from "../../types/engine.type";
 import { createMenuButtons, type MenuButton } from "../../utils/menu/create-menu-button";
 import { createMenuText } from "../../utils/menu/create-menu-text";
 import { setBackgroundColor } from "../../utils/set-background-color";

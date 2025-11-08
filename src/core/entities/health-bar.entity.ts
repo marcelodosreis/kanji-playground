@@ -1,4 +1,4 @@
-import type { Engine, EngineGameObj } from "../../types/engine.interface";
+import type { Engine, EngineGameObj } from "../../types/engine.type";
 
 const HEALTH_BAR_CONFIG = {
   sprite: "healthBar",

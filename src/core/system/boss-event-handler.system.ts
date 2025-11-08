@@ -1,4 +1,4 @@
-import type { Engine } from "../../types/engine.interface";
+import type { Engine } from "../../types/engine.type";
 import type { Boss } from "../../types/boss.interface";
 import { BURNER_ANIMATIONS } from "../../types/animations.enum";
 import { BOSS_EVENTS, ENGINE_DEFAULT_EVENTS } from "../../types/events.enum";
@@ -6,7 +6,7 @@ import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
 import { createBlink } from "../../utils/create-blink";
 import { GLOBAL_STATE_CONTROLLER } from "../global-state-controller";
 import { createNotification } from "../../utils/create-notification";
-import { GLOBAL_STATE } from "../../types/state.interface";
+import { GLOBAL_STATE } from "../../types/global-state.enum";
 import type { Player } from "../../types/player.interface";
 
 type Params = { engine: Engine; boss: Boss };

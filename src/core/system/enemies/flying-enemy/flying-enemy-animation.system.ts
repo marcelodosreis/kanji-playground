@@ -1,4 +1,4 @@
-import type { Engine } from "../../../../types/engine.interface";
+import type { Engine } from "../../../../types/engine.type";
 import type { Enemy } from "../../../../types/enemy.interface";
 import { BAT_ANIMATIONS } from "../../../../types/animations.enum";
 import { ENGINE_DEFAULT_EVENTS } from "../../../../types/events.enum";

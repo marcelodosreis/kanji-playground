@@ -1,7 +1,7 @@
 import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
-import type { Engine } from "../../../types/engine.interface";
+import type { Engine } from "../../../types/engine.type";
 import type { Player } from "../../../types/player.interface";
-import { GLOBAL_STATE } from "../../../types/state.interface";
+import { GLOBAL_STATE } from "../../../types/global-state.enum";
 import { isPaused } from "../../../utils/is-paused";
 import { GLOBAL_STATE_CONTROLLER } from "../../global-state-controller";
 import { type PlayerStateMachine } from "./player-state-machine";

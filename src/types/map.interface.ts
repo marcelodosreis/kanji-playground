@@ -1,4 +1,4 @@
-import type { EngineGameObj, MapEngineGameObj } from "./engine.interface";
+import type { EngineGameObj, MapEngineGameObj } from "./engine.type";
 
 export type Map = MapEngineGameObj;
 

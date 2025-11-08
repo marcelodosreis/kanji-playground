@@ -1,4 +1,4 @@
-import type { Engine } from "../../../types/engine.interface";
+import type { Engine } from "../../../types/engine.type";
 import { MenuManager } from "../../../core/manager/menu.manager";
 import { setBackgroundColor } from "../../../utils/set-background-color";
 import { MENU_SCENES } from "../../../types/scenes.enum";

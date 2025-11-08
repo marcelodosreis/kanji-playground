@@ -1,4 +1,4 @@
-import type { Engine } from "../../types/engine.interface";
+import type { Engine } from "../../types/engine.type";
 import { HealthBarSystem } from "../system/health-bar.system";
 
 type SetupUIParams = {

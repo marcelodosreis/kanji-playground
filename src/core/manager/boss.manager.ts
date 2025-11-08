@@ -1,5 +1,5 @@
 import { BossEntity } from "../entities/boss.entity";
-import type { Engine } from "../../types/engine.interface";
+import type { Engine } from "../../types/engine.type";
 import type { Map } from "../../types/map.interface";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import type { Boss } from "../../types/boss.interface";

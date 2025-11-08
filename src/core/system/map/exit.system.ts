@@ -1,4 +1,4 @@
-import type { Engine } from "../../../types/engine.interface";
+import type { Engine } from "../../../types/engine.type";
 import type { Map } from "../../../types/map.interface";
 import { MENU_SCENES } from "../../../types/scenes.enum";
 import { MAP_TAGS, TAGS } from "../../../types/tags.enum";

@@ -1,4 +1,4 @@
-import type { Engine } from "../../types/engine.interface";
+import type { Engine } from "../../types/engine.type";
 import type { Map } from "../../types/map.interface";
 import type { TiledMap } from "../../types/tiled-map.interface";
 import { MapLayer, MapLayerHelper } from "../../utils/map-layer-helper";

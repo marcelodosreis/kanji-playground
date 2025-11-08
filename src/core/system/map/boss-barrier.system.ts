@@ -1,9 +1,9 @@
-import type { Engine, EngineGameObj } from "../../../types/engine.interface";
+import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import type { TiledObject } from "../../../types/tiled-map.interface";
 import type { BossBarrier } from "../../../types/map.interface";
 import { MAP_TAGS, TAGS } from "../../../types/tags.enum";
 import { GLOBAL_STATE_CONTROLLER } from "../../global-state-controller";
-import { GLOBAL_STATE } from "../../../types/state.interface";
+import { GLOBAL_STATE } from "../../../types/global-state.enum";
 import { smoothTransition } from "../../../utils/smooth-transition";
 
 type Params = {

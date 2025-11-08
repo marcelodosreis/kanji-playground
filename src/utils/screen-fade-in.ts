@@ -1,5 +1,5 @@
 import { COLORS } from "../types/colors.enum";
-import type { Engine } from "../types/engine.interface";
+import type { Engine } from "../types/engine.type";
 import { smoothTransition } from "./smooth-transition";
 
 export type OverlayEntity = {

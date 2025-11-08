@@ -1,9 +1,9 @@
 import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
-import type { Engine, EngineGameObj } from "../../../types/engine.interface";
+import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import { ENGINE_DEFAULT_EVENTS } from "../../../types/events.enum";
 import type { Player } from "../../../types/player.interface";
 import { LEVEL_SCENES } from "../../../types/scenes.enum";
-import { GLOBAL_STATE } from "../../../types/state.interface";
+import { GLOBAL_STATE } from "../../../types/global-state.enum";
 import { applyKnockback } from "../../../utils/apply-knockback";
 import { createBlink } from "../../../utils/create-blink";
 import { screenFadeIn } from "../../../utils/screen-fade-in";

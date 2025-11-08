@@ -1,5 +1,5 @@
 import kaplay from "kaplay";
-import type { Engine } from "../types/engine.interface";
+import type { Engine } from "../types/engine.type";
 
 const scale = 1;
 

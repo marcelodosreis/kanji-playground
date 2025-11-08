@@ -1,5 +1,5 @@
 import type { GameObj } from "kaplay";
-import type { Engine } from "../types/engine.interface";
+import type { Engine } from "../types/engine.type";
 import { smoothTransition } from "./smooth-transition";
 
 

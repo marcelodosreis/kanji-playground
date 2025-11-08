@@ -1,7 +1,7 @@
 import type {
   BossBarrierEngineGameObj,
   Engine,
-} from "../../types/engine.interface";
+} from "../../types/engine.type";
 import type { TiledObject } from "../../types/tiled-map.interface";
 import { MAP_TAGS } from "../../types/tags.enum";
 

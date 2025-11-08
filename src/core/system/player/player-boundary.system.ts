@@ -1,4 +1,4 @@
-import type { Engine } from "../../../types/engine.interface";
+import type { Engine } from "../../../types/engine.type";
 import type { Player } from "../../../types/player.interface";
 
 type Params = {

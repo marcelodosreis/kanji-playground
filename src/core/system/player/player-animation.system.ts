@@ -1,4 +1,4 @@
-import type { Engine } from "../../../types/engine.interface";
+import type { Engine } from "../../../types/engine.type";
 import type { Player } from "../../../types/player.interface";
 import { type PlayerStateMachine } from "./player-state-machine";
 import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";

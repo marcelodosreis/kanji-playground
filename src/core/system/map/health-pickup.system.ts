@@ -1,5 +1,5 @@
 import { GLOBAL_STATE_CONTROLLER } from "../../global-state-controller";
-import type { Engine, EngineGameObj } from "../../../types/engine.interface";
+import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import type { Player } from "../../../types/player.interface";
 import { TAGS } from "../../../types/tags.enum";
 

@@ -1,4 +1,4 @@
-import type { Engine, EngineGameObj } from "../../../types/engine.interface";
+import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import type { TiledMap } from "../../../types/tiled-map.interface";
 import type { Map } from "../../../types/map.interface";
 

@@ -1,5 +1,5 @@
-import type { Engine } from "../../types/engine.interface";
-import { GLOBAL_STATE } from "../../types/state.interface";
+import type { Engine } from "../../types/engine.type";
+import { GLOBAL_STATE } from "../../types/global-state.enum";
 import { HealthBarEntity } from "../entities/health-bar.entity";
 import { GLOBAL_STATE_CONTROLLER } from "../global-state-controller";
 

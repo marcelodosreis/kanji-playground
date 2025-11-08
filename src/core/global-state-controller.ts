@@ -1,4 +1,4 @@
-import { GLOBAL_STATE, type GLOBAL_STATE_VALUES } from "../types/state.interface";
+import { GLOBAL_STATE, type GLOBAL_STATE_VALUES } from "../types/global-state.enum";
 
 type Listener<K extends GLOBAL_STATE> = (value: GLOBAL_STATE_VALUES[K]) => void;
 

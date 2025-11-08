@@ -1,5 +1,5 @@
-import type { Engine, EngineGameObj } from "../../../types/engine.interface";
-import { GLOBAL_STATE } from "../../../types/state.interface";
+import type { Engine, EngineGameObj } from "../../../types/engine.type";
+import { GLOBAL_STATE } from "../../../types/global-state.enum";
 import { createNotification } from "../../../utils/create-notification";
 import { GLOBAL_STATE_CONTROLLER } from "../../global-state-controller";
 

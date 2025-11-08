@@ -1,4 +1,4 @@
-import type { Engine } from "../../../../types/engine.interface";
+import type { Engine } from "../../../../types/engine.type";
 import type { Enemy } from "../../../../types/enemy.interface";
 import type { Player } from "../../../../types/player.interface";
 import type { FlyingEnemyStateMachine } from "./flying-enemy-state-machine";

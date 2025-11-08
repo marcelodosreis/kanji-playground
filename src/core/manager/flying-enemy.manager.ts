@@ -1,104 +1,57 @@
-import { FlyingEnemyEntity } from "../entities/flying-enemy.entity";
-import type { Engine } from "../../types/engine.interface";
-import type { Map } from "../../types/map.interface";
-import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
-import type { Enemy } from "../../types/enemy.interface";
+import type { TiledObject } from "../../types/tiled-map.interface";
 import { TAGS } from "../../types/tags.enum";
 import type { Player } from "../../types/player.interface";
-import { createFlyingEnemyStateMachine } from "../system/enemies/flying-enemy/flying-enemy-state-machine";
-import { FlyingEnemyPatrolSystem } from "../system/enemies/flying-enemy/flying-enemy-patrol.system";
-import { FlyingEnemyAttackSystem } from "../system/enemies/flying-enemy/flying-enemy-attack.system";
-import { FlyingEnemyCollisionSystem } from "../system/enemies/flying-enemy/flying-enemy-collision.system";
-import { FlyingEnemyAnimationSystem } from "../system/enemies/flying-enemy/flying-enemy-animation.system";
-import { FlyingEnemyReturnSystem } from "../system/enemies/flying-enemy/flying-enemy-return.system";
-import { FlyingEnemyAlertSystem } from "../system/enemies/flying-enemy/flying-enemy-alert.system";
-import { MapLayer, MapLayerHelper } from "../../utils/map-layer-helper";
+import {
+  BaseEntityManager,
+  type BaseManagerParams,
+} from "./_/base-entity.manager";
+import { TiledObjectHelper } from "../../helpers/tiled-object.helper";
+import { EntityFactory } from "../../factories/entity-factory";
+import { SystemInitializerHelper } from "../../helpers/system-initializer.helper";
+import type { Enemy } from "../../types/enemy.interface";
+import { getPlayer } from "../../utils/get-player";
 
-type FlyingEnemyManagerParams = {
-  engine: Engine;
-  map: Map;
-  tiledMap: TiledMap;
-};
+export type FlyingEnemyManagerParams = BaseManagerParams;
 
-export class FlyingEnemyManager {
-  private readonly engine: Engine;
-  private readonly map: Map;
-  private readonly tiledMap: TiledMap;
-
+export class FlyingEnemyManager extends BaseEntityManager<Enemy> {
   private constructor(params: FlyingEnemyManagerParams) {
-    this.engine = params.engine;
-    this.map = params.map;
-    this.tiledMap = params.tiledMap;
+    super(params);
   }
 
   public static setup(params: FlyingEnemyManagerParams): void {
     const manager = new FlyingEnemyManager(params);
-    manager.setupInstance();
+    manager.setup();
   }
 
-  private setupInstance(): void {
-    const positions = this.getSpawnPositions();
-    this.spawnEnemies(positions);
-  }
-
-  private getSpawnPositions(): TiledObject[] {
-    return MapLayerHelper.getObjects(this.tiledMap, MapLayer.PIN);
-  }
-
-  private spawnEnemies(positions: TiledObject[]): void {
-    positions
-      .filter((pos) => this.isValidSpawnPosition(pos))
-      .forEach((pos) => this.createEnemy(pos));
-  }
-
-  private isValidSpawnPosition(position: TiledObject): boolean {
-    return position.type === TAGS.FLY_ENEMY;
-  }
-
-  private createEnemy(position: TiledObject): void {
-    const spawnPosition = this.engine.vec2(position.x, position.y);
-    const enemy = this.map.add<Enemy>(
-      FlyingEnemyEntity(this.engine, spawnPosition)
+  public setup(): void {
+    const positions = TiledObjectHelper.findByType(
+      this.tiledMap,
+      TAGS.FLY_ENEMY
     );
-    this.initializeSystems(enemy);
+    this.spawnFromPositions(positions);
   }
 
-  private initializeSystems(enemy: Enemy): void {
-    const [player] = this.engine.get(TAGS.PLAYER, {
-      recursive: true,
-    }) as Player[];
+  private spawnFromPositions(positions: TiledObject[]): void {
+    const player = getPlayer({ engine: this.engine });
+    if (!player) return;
+    positions.forEach((pos) => this.spawnAtPosition(pos, player));
+  }
 
-    const stateMachine = createFlyingEnemyStateMachine({
-      engine: this.engine,
-      enemy,
-      player,
-    });
+  private spawnAtPosition(position: TiledObject, player: Player): void {
+    const enemy = this.createEnemy(position);
+    this.initializeEnemy(enemy, player);
+  }
 
-    FlyingEnemyPatrolSystem({
-      engine: this.engine,
-      enemy,
-      player,
-      stateMachine,
-    });
-    FlyingEnemyAlertSystem({
-      engine: this.engine,
-      enemy,
-      player,
-      stateMachine,
-    });
-    FlyingEnemyAttackSystem({
-      engine: this.engine,
-      enemy,
-      player,
-      stateMachine,
-    });
-    FlyingEnemyReturnSystem({
-      engine: this.engine,
-      enemy,
-      player,
-      stateMachine,
-    });
-    FlyingEnemyCollisionSystem({ engine: this.engine, enemy, player });
-    FlyingEnemyAnimationSystem({ engine: this.engine, enemy });
+  private createEnemy(position: TiledObject): Enemy {
+    return EntityFactory.createFlyingEnemy(
+      this.engine,
+      this.map,
+      position.x,
+      position.y
+    );
+  }
+
+  private initializeEnemy(enemy: Enemy, player: Player): void {
+    SystemInitializerHelper.initFlyingEnemySystems(this.engine, enemy, player);
   }
 }
