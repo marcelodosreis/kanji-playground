@@ -1,7 +1,7 @@
 import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
 import type { Engine, EngineGameObj } from "../../../types/engine.interface";
 import type { Player } from "../../../types/player.interface";
-import { EXTRA_TAGS, HITBOX_TAGS, TAGS } from "../../../types/tags.enum";
+import { EXTRA_TAGS, HITBOX_TAGS } from "../../../types/tags.enum";
 import { applyKnockback } from "../../../utils/apply-knockback";
 import { isPaused } from "../../../utils/wrap-with-pause-check";
 import { type PlayerStateMachine } from "./player-state-machine";
