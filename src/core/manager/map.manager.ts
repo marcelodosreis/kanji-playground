@@ -1,8 +1,13 @@
 import type { Engine } from "../../types/engine.interface";
 import type { Map } from "../../types/map.interface";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
-import { BossBarrierManager } from "./boss-barrier.manager";
-import { ColliderManager } from "./collider.manager";
+import { BossBarrierEntity } from "../entities/boss-barrier.entity";
+import {
+  BossBarrierSystem,
+  isBossBarrier,
+} from "../system/boss-barrier.system";
+import { ColliderSystem } from "../system/collider.system";
+import { PauseSystem } from "../system/pause.system";
 
 type InitialCameraPos = {
   x: number;
@@ -36,8 +41,9 @@ export class MapManager {
 
     const colliders = this.extractColliders(tiledMap);
 
-    ColliderManager.setup(engine, map, colliders);
+    ColliderSystem({ engine, map, colliders });
     this.processBossBarriers(engine, map, colliders);
+    PauseSystem.setup({ engine });
   }
 
   private static configureEngine(
@@ -55,9 +61,7 @@ export class MapManager {
     return engine.add([engine.pos(0, 0), engine.sprite(spriteName)]);
   }
 
-  private static extractColliders(
-    tiledMap: TiledMap,
-  ): TiledObject[] {
+  private static extractColliders(tiledMap: TiledMap): TiledObject[] {
     return tiledMap.layers[4].objects as TiledObject[];
   }
 
@@ -66,10 +70,9 @@ export class MapManager {
     map: Map,
     colliders: TiledObject[]
   ): void {
-    colliders
-      .filter(BossBarrierManager.isBossBarrier)
-      .forEach((collider) => {
-        BossBarrierManager.setup(engine, map, collider)
-      });
+    colliders.filter(isBossBarrier).forEach((collider) => {
+      const bossBarrier = map.add(BossBarrierEntity(engine, collider));
+      BossBarrierSystem({ engine, bossBarrier, collider });
+    });
   }
 }
