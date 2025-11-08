@@ -1,17 +1,16 @@
-import type { Engine } from "../../types/engine.interface";
-import type { Map } from "../../types/map.interface";
-import { MAP_TAGS } from "../../types/tags.enum";
-import type { TiledObject } from "../../types/tiled-map.interface";
+import type { Engine } from "../../../types/engine.interface";
+import type { Map } from "../../../types/map.interface";
+import type { TiledObject } from "../../../types/tiled-map.interface";
 import type { Vec2 } from "kaplay";
+import { MAP_TAGS } from "../../../types/tags.enum";
 
-/**
- * Process and add colliders to the map.
- */
-export function ColliderSystem(params: {
+type ColliderSystemParams = {
   engine: Engine;
   map: Map;
   colliders: TiledObject[];
-}): void {
+};
+
+export function ColliderSystem(params: ColliderSystemParams): void {
   const { engine, map, colliders } = params;
 
   colliders.forEach((collider) => {

@@ -2,9 +2,7 @@ import type { Engine, EngineGameObj } from "../../../types/engine.interface";
 import type { TiledMap } from "../../../types/tiled-map.interface";
 import type { Map } from "../../../types/map.interface";
 
-import { HealthPickupManager } from "../../../core/manager/health-pickup.manager";
 import { CameraManager } from "../../../core/manager/camera.manager";
-import { ExitManager } from "../../../core/manager/exit.manager";
 import { MapManager } from "../../../core/manager/map.manager";
 import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
@@ -60,6 +58,7 @@ export class Room002Scene {
       initialCameraPos: this.config.INITIAL_CAMERA_POS,
       mapSpriteName: this.config.MAP_SPRITE_NAME,
       setMap: (map: Map) => (this.map = map),
+      exitRoomName: this.config.EXIT_ROOM_NAME,
     });
 
     PlayerManager.setup({
@@ -77,24 +76,11 @@ export class Room002Scene {
       },
     });
 
-    HealthPickupManager.setup({
-      engine: this.engine,
-      map: this.map,
-      tiledMap: this.tiledMap,
-    });
-
     CameraManager.setup({
       engine: this.engine,
       map: this.map,
       tiledMap: this.tiledMap,
       initialCameraPos: this.config.INITIAL_CAMERA_POS,
-    });
-
-    ExitManager.setup({
-      engine: this.engine,
-      map: this.map,
-      tiledMap: this.tiledMap,
-      exitRoomName: this.config.EXIT_ROOM_NAME,
     });
 
     UIManager.setup({
