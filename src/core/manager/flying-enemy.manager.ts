@@ -12,7 +12,7 @@ import { FlyingEnemyCollisionSystem } from "../system/enemies/flying-enemy/flyin
 import { FlyingEnemyAnimationSystem } from "../system/enemies/flying-enemy/flying-enemy-animation.system";
 import { FlyingEnemyReturnSystem } from "../system/enemies/flying-enemy/flying-enemy-return.system";
 import { FlyingEnemyAlertSystem } from "../system/enemies/flying-enemy/flying-enemy-alert.system";
-import { MapLayer, MapLayerHelper } from "../../utils/map-layer.helper";
+import { MapLayer, MapLayerHelper } from "../../utils/map-layer-helper";
 
 type FlyingEnemyManagerParams = {
   engine: Engine;

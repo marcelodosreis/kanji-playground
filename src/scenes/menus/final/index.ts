@@ -1,6 +1,6 @@
 import { COLORS } from "../../../types/colors.enum";
 import type { Engine } from "../../../types/engine.interface";
-import { createNotificationBox } from "../../../utils/create-notification-box";
+import { createNotification } from "../../../utils/create-notification";
 import { setBackgroundColor } from "../../../utils/set-background-color";
 
 type FinalExitSceneParams = {
@@ -18,7 +18,7 @@ export class FinalExitScene {
   private initialize(): void {
     setBackgroundColor(this.engine, COLORS.BACKGROUND_PRIMARY);
     this.engine.add(
-      createNotificationBox(
+      createNotification(
         this.engine,
         "You escaped the factory!\n The End. Thanks for playing!"
       )

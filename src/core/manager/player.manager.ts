@@ -12,7 +12,7 @@ import { PlayerPassthroughSystem } from "../system/player/player-passthrough.sys
 import { PlayerBoundarySystem } from "../system/player/player-boundary.system";
 import { PlayerWalkSystem } from "../system/player/player-walk.system";
 import { createPlayerStateMachine } from "../system/player/player-state-machine";
-import { MapLayer, MapLayerHelper } from "../../utils/map-layer.helper";
+import { MapLayer, MapLayerHelper } from "../../utils/map-layer-helper";
 
 type PositionOffset = {
   x: number;

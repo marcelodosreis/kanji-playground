@@ -1,6 +1,6 @@
 import type { Engine, EngineGameObj } from "../../../types/engine.interface";
 import { GLOBAL_STATE } from "../../../types/state.interface";
-import { createNotificationBox } from "../../../utils/create-notification-box";
+import { createNotification } from "../../../utils/create-notification";
 import { GLOBAL_STATE_CONTROLLER } from "../../global-state-controller";
 
 type PauseSystemParams = {
@@ -20,7 +20,7 @@ export function PauseSystem({ engine }: PauseSystemParams): void {
   };
 
   const showPauseNotification = (): void => {
-    const notification = createNotificationBox(
+    const notification = createNotification(
       engine,
       "PAUSED\n\nPress ESC to resume"
     );

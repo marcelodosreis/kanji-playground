@@ -1,7 +1,7 @@
 import type { Engine } from "../../types/engine.interface";
 import type { Map } from "../../types/map.interface";
 import type { TiledMap } from "../../types/tiled-map.interface";
-import { MapLayer, MapLayerHelper } from "../../utils/map-layer.helper";
+import { MapLayer, MapLayerHelper } from "../../utils/map-layer-helper";
 import { BossBarrierEntity } from "../entities/boss-barrier.entity";
 import {
   BossBarrierSystem,

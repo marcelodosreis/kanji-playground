@@ -5,7 +5,7 @@ import { BOSS_EVENTS, ENGINE_DEFAULT_EVENTS } from "../../types/events.enum";
 import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
 import { createBlink } from "../../utils/create-blink";
 import { GLOBAL_STATE_CONTROLLER } from "../global-state-controller";
-import { createNotificationBox } from "../../utils/create-notification-box";
+import { createNotification } from "../../utils/create-notification";
 import { GLOBAL_STATE } from "../../types/state.interface";
 import type { Player } from "../../types/player.interface";
 
@@ -59,7 +59,7 @@ export function BossEventHandlerSystem({ engine, boss }: Params) {
     boss.unuse("body");
 
     const notification = engine.add(
-      createNotificationBox(
+      createNotification(
         engine,
         "You unlocked a new ability!\nYou can now double jump."
       )
