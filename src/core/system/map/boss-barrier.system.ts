@@ -9,43 +9,24 @@ import { GLOBAL_STATE } from "../../../types/global-state.enum";
 import { smoothTransition } from "../../../utils/smooth-transition";
 import type { Player } from "../../../types/player.interface";
 
-type BossBarrierParams = {
+type Params = {
   engine: Engine;
   map: Map;
   tiledMap: TiledMap;
 };
 
-const isBossBarrier = (obj: TiledObject): boolean =>
-  obj?.name === MAP_TAGS.BOSS_BARRIER;
+export function BossBarrierSystem({ engine, map, tiledMap }: Params): void {
+  const colliders = MapLayerHelper.getObjects(tiledMap, MapLayer.COLLIDERS);
+  const barriers = colliders.filter(isBossBarrier);
 
-const shouldActivateBarrier = (): boolean => {
-  const state = GLOBAL_STATE_CONTROLLER.current();
-  return !state.isPlayerInBossFight && !state.isBossDefeated;
-};
-
-const shouldDeactivateBarrier = (): boolean => {
-  const state = GLOBAL_STATE_CONTROLLER.current();
-  return state.isBossDefeated;
-};
-
-const isInBossFight = (): boolean =>
-  GLOBAL_STATE_CONTROLLER.current().isPlayerInBossFight;
-
-const getCameraTargetX = (collider: TiledObject, fallback: number): number =>
-  Number(collider.properties?.[0]?.value ?? fallback);
-
-export function BossBarrierSystem({
-  engine,
-  map,
-  tiledMap,
-}: BossBarrierParams): void {
-  const objects = MapLayerHelper.getObjects(tiledMap, MapLayer.COLLIDERS);
-  const barriers = objects.filter(isBossBarrier);
-
-  barriers.forEach((collider) => {
+  for (const collider of barriers) {
     const barrier = createBarrier(engine, map, collider);
-    setupBarrierBehavior(engine, barrier, collider);
-  });
+    attachBarrierLogic(engine, barrier, collider);
+  }
+}
+
+function isBossBarrier(obj: TiledObject): boolean {
+  return obj?.name === MAP_TAGS.BOSS_BARRIER;
 }
 
 function createBarrier(
@@ -56,22 +37,19 @@ function createBarrier(
   return map.add(BossBarrierEntity(engine, collider)) as unknown as BossBarrier;
 }
 
-function setupBarrierBehavior(
+function attachBarrierLogic(
   engine: Engine,
   barrier: BossBarrier,
   collider: TiledObject
 ): void {
-  extendBarrierWithActions(engine, barrier, collider);
-  setupBarrierCollisions(engine, barrier);
+  barrier.activate = createActivateAction(engine, collider);
+  barrier.deactivate = createDeactivateAction(engine);
+  setupCollisions(engine, barrier);
 }
 
-function extendBarrierWithActions(
-  engine: Engine,
-  barrier: BossBarrier,
-  collider: TiledObject
-): void {
-  barrier.activate = function () {
-    if (!shouldActivateBarrier()) return;
+function createActivateAction(engine: Engine, collider: TiledObject) {
+  return function activate(this: BossBarrier) {
+    if (!canActivate()) return;
 
     const targetX = getCameraTargetX(collider, engine.camPos().x);
 
@@ -80,20 +58,22 @@ function extendBarrierWithActions(
       startValue: engine.camPos().x,
       endValue: targetX,
       durationSeconds: 1,
-      onUpdate: (val) => engine.camPos(val, engine.camPos().y),
+      onUpdate: (x) => engine.camPos(x, engine.camPos().y),
       easingFunction: engine.easings.linear,
     });
   };
+}
 
-  barrier.deactivate = async function (playerPosX: number) {
-    if (!shouldDeactivateBarrier()) return;
+function createDeactivateAction(engine: Engine) {
+  return async function deactivate(this: BossBarrier, playerPosX: number) {
+    if (!canDeactivate()) return;
 
     smoothTransition({
       engine,
       startValue: this.opacity,
       endValue: 0,
       durationSeconds: 1,
-      onUpdate: (val) => (this.opacity = val),
+      onUpdate: (v) => (this.opacity = v),
       easingFunction: engine.easings.linear,
     });
 
@@ -102,7 +82,7 @@ function extendBarrierWithActions(
       startValue: engine.camPos().x,
       endValue: playerPosX,
       durationSeconds: 1,
-      onUpdate: (val) => engine.camPos(val, engine.camPos().y),
+      onUpdate: (x) => engine.camPos(x, engine.camPos().y),
       easingFunction: engine.easings.linear,
     });
 
@@ -110,22 +90,38 @@ function extendBarrierWithActions(
   };
 }
 
-function setupBarrierCollisions(engine: Engine, barrier: BossBarrier): void {
+function setupCollisions(engine: Engine, barrier: BossBarrier): void {
   barrier.onCollide(TAGS.PLAYER, (player: Player) => {
-    if (shouldDeactivateBarrier()) {
+    if (canDeactivate()) {
       GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, false);
       barrier.deactivate(player.pos.x);
       return;
     }
-
     if (isInBossFight()) return;
   });
 
   barrier.onCollideEnd(TAGS.PLAYER, () => {
-    if (isInBossFight() || shouldDeactivateBarrier()) return;
+    if (isInBossFight() || canDeactivate()) return;
 
     barrier.activate();
     GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, true);
     barrier.use(engine.body({ isStatic: true }));
   });
+}
+
+function canActivate(): boolean {
+  const s = GLOBAL_STATE_CONTROLLER.current();
+  return !s.isPlayerInBossFight && !s.isBossDefeated;
+}
+
+function canDeactivate(): boolean {
+  return GLOBAL_STATE_CONTROLLER.current().isBossDefeated;
+}
+
+function isInBossFight(): boolean {
+  return GLOBAL_STATE_CONTROLLER.current().isPlayerInBossFight;
+}
+
+function getCameraTargetX(collider: TiledObject, fallback: number): number {
+  return Number(collider.properties?.[0]?.value ?? fallback);
 }

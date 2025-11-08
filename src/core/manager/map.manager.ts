@@ -4,7 +4,6 @@ import type { TiledMap } from "../../types/tiled-map.interface";
 import { BossBarrierSystem } from "../system/map/boss-barrier.system";
 import { CollisionSystem } from "../system/map/collision.system";
 import { ExitSystem } from "../system/map/exit.system";
-import { PauseSystem } from "../system/map/pause.system";
 
 type SetupParams = {
   engine: Engine;
@@ -31,7 +30,6 @@ export class MapManager {
 
     const map = this.createMap(engine, mapSpriteName);
 
-    PauseSystem({ engine });
     CollisionSystem({ engine, map, tiledMap });
     BossBarrierSystem({
       engine,

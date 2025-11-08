@@ -7,6 +7,7 @@ import { setBackgroundColor } from "../../../utils/set-background-color";
 import { LEVEL_SCENES } from "../../../types/scenes.enum";
 import { COLORS } from "../../../types/colors.enum";
 import { HealthPickupManager } from "../../../core/manager/health-pickup.manager";
+import { PauseManager } from "../../../core/manager/pause.manager";
 
 type Room002Params = {
   engine: Engine;
@@ -76,6 +77,8 @@ export class Room002Scene {
       engine: this.engine,
       tiledMap: this.tiledMap,
     });
+
+    PauseManager.setup({ engine: this.engine });
 
     UIManager.setup({
       engine: this.engine,

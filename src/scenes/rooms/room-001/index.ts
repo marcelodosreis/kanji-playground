@@ -10,6 +10,7 @@ import { LEVEL_SCENES } from "../../../types/scenes.enum";
 import type { TiledMap } from "../../../types/tiled-map.interface";
 import { setBackgroundColor } from "../../../utils/set-background-color";
 import { HealthPickupManager } from "../../../core/manager/health-pickup.manager";
+import { PauseManager } from "../../../core/manager/pause.manager";
 
 type Room001Params = {
   engine: Engine;
@@ -75,12 +76,14 @@ export class Room001Scene {
       engine: this.engine,
       tiledMap: this.tiledMap,
     });
-  
+
     HealthPickupManager.setup({
       map,
       engine: this.engine,
       tiledMap: this.tiledMap,
     });
+
+    PauseManager.setup({ engine: this.engine });
 
     BossManager.setup({
       map: map,

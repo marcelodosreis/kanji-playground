@@ -10,58 +10,46 @@ type Params = {
   tiledMap: TiledMap;
 };
 
-const isPolygon = (obj: TiledObject): boolean =>
-  Boolean(obj?.polygon && obj.polygon.length > 0);
+export function CollisionSystem({ engine, map, tiledMap }: Params): void {
+  const colliders = MapLayerHelper.getObjects(tiledMap, MapLayer.COLLIDERS);
 
-const isBossBarrier = (obj: TiledObject): boolean =>
-  obj?.name === MAP_TAGS.BOSS_BARRIER;
+  for (const obj of colliders) {
+    if (isBossBarrier(obj)) continue;
 
-const polygonCoordinates = (engine: Engine, obj: TiledObject) =>
-  obj.polygon?.map((p) => engine.vec2(p.x, p.y));
+    const shape = isPolygon(obj)
+      ? createPolygonShape(engine, obj)
+      : createRectShape(engine, obj);
 
-const createPolygonArea = (
-  engine: Engine,
-  coordinates: ReturnType<Engine["vec2"]>[]
-) =>
-  engine.area({
-    shape: new engine.Polygon(coordinates),
+    if (!shape) continue;
+
+    const body = engine.body({ isStatic: true });
+    const position = engine.pos(obj.x, obj.y);
+
+    map.add([position, shape, body, MAP_TAGS.COLLIDER, obj.type]);
+  }
+}
+
+function isPolygon(obj: TiledObject): boolean {
+  return Boolean(obj?.polygon && obj.polygon.length > 0);
+}
+
+function isBossBarrier(obj: TiledObject): boolean {
+  return obj?.name === MAP_TAGS.BOSS_BARRIER;
+}
+
+function createPolygonShape(engine: Engine, obj: TiledObject) {
+  const points = obj.polygon?.map((p) => engine.vec2(p.x, p.y));
+  if (!points?.length) return null;
+
+  return engine.area({
+    shape: new engine.Polygon(points),
     collisionIgnore: [MAP_TAGS.COLLIDER],
   });
+}
 
-const createRectArea = (engine: Engine, obj: TiledObject) =>
-  engine.area({
+function createRectShape(engine: Engine, obj: TiledObject) {
+  return engine.area({
     shape: new engine.Rect(engine.vec2(0), obj.width, obj.height),
     collisionIgnore: [MAP_TAGS.COLLIDER],
   });
-
-const createStaticBody = (engine: Engine) => engine.body({ isStatic: true });
-
-const addCollider = (
-  map: Map,
-  position: ReturnType<Engine["pos"]>,
-  area: ReturnType<Engine["area"]>,
-  body: ReturnType<Engine["body"]>,
-  type?: string
-): void => {
-  map.add([position, area, body, MAP_TAGS.COLLIDER, type]);
-};
-
-export function CollisionSystem({ engine, map, tiledMap }: Params): void {
-  const objects = MapLayerHelper.getObjects(tiledMap, MapLayer.COLLIDERS);
-
-  for (const obj of objects) {
-    if (isBossBarrier(obj)) continue;
-
-    if (isPolygon(obj)) {
-      const coords = polygonCoordinates(engine, obj);
-      if (!coords || coords.length === 0) continue;
-      const area = createPolygonArea(engine, coords);
-      const body = createStaticBody(engine);
-      addCollider(map, engine.pos(obj.x, obj.y), area, body, obj.type);
-    } else {
-      const area = createRectArea(engine, obj);
-      const body = createStaticBody(engine);
-      addCollider(map, engine.pos(obj.x, obj.y), area, body, obj.type);
-    }
-  }
 }

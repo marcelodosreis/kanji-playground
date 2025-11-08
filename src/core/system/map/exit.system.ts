@@ -14,36 +14,38 @@ type ExitSystemParams = {
 };
 
 export function ExitSystem(params: ExitSystemParams): void {
-  const { engine, map, tiledMap, exitRoomName } = params;
-  const exits = MapLayerHelper.getObjects(tiledMap, MapLayer.EXIT);
-  exits.forEach((exit) => createExitZone({ engine, map, exitRoomName }, exit));
+  const exits = MapLayerHelper.getObjects(params.tiledMap, MapLayer.EXIT);
+  exits.forEach((exit) => registerExitZone(params, exit));
 }
 
-function createExitZone(
-  params: { engine: Engine; map: Map; exitRoomName?: string },
+function registerExitZone(
+  { engine, map, exitRoomName }: ExitSystemParams,
   exit: TiledObject
 ): void {
-  const { engine, map } = params;
+  const area = engine.area({
+    shape: new engine.Rect(engine.vec2(0), exit.width, exit.height),
+    collisionIgnore: [MAP_TAGS.COLLIDER],
+  });
+
+  const body = engine.body({ isStatic: true });
 
   const exitZone = map.add([
     engine.pos(exit.x, exit.y),
-    engine.area({
-      shape: new engine.Rect(engine.vec2(0), exit.width, exit.height),
-      collisionIgnore: [MAP_TAGS.COLLIDER],
-    }),
-    engine.body({ isStatic: true }),
+    area,
+    body,
     exit.name,
   ]);
 
-  exitZone.onCollide(TAGS.PLAYER, () => handlePlayerExit(params, exit));
+  exitZone.onCollide(TAGS.PLAYER, () =>
+    triggerExitTransition(engine, exit, exitRoomName)
+  );
 }
 
-async function handlePlayerExit(
-  params: { engine: Engine; exitRoomName?: string },
-  exit: TiledObject
+async function triggerExitTransition(
+  engine: Engine,
+  exit: TiledObject,
+  exitRoomName?: string
 ): Promise<void> {
-  const { engine, exitRoomName } = params;
-
   if (!exitRoomName) {
     console.error(
       "ExitSystem: exitRoomName is undefined, aborting navigation",
@@ -52,17 +54,24 @@ async function handlePlayerExit(
     return;
   }
 
-  const duration = 0.4;
+  const fadeDuration = 0.4;
 
   await screenFadeIn({
     engine,
-    durationSeconds: duration,
+    durationSeconds: fadeDuration,
   });
 
+  navigateToNextScene(engine, exit, exitRoomName);
+}
+
+function navigateToNextScene(
+  engine: Engine,
+  exit: TiledObject,
+  exitRoomName: string
+): void {
   if (exit.name === MENU_SCENES.FINAL) {
     engine.go(MENU_SCENES.FINAL);
-    return;
+  } else {
+    engine.go(exitRoomName, { exitName: exit.name });
   }
-
-  engine.go(exitRoomName, { exitName: exit.name });
 }
