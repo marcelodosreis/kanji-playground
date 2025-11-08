@@ -4,7 +4,7 @@ import { BURNER_ANIMATIONS } from "../../types/animations.enum";
 import { BOSS_EVENTS, ENGINE_DEFAULT_EVENTS } from "../../types/events.enum";
 import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
 import { createBlink } from "../../utils/create-blink";
-import { state } from "../global-state-controller";
+import { GLOBAL_STATE_CONTROLLER } from "../global-state-controller";
 import { createNotificationBox } from "../../utils/create-notification-box";
 import { GLOBAL_STATE } from "../../types/state.interface";
 import type { Player } from "../../types/player.interface";
@@ -48,8 +48,8 @@ export function BossEventHandlerSystem({ engine, boss }: Params) {
   }
 
   function explode() {
-    state.set(GLOBAL_STATE.IS_BOSS_DEFEATED, true);
-    state.set(GLOBAL_STATE.IS_DOUBLE_JUMB_UNLOCKED, true);
+    GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_BOSS_DEFEATED, true);
+    GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_DOUBLE_JUMB_UNLOCKED, true);
 
     boss.trigger(BOSS_EVENTS.EXPLODE);
     boss.enterState(BOSS_EVENTS.EXPLODE);

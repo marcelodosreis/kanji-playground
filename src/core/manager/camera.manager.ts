@@ -4,7 +4,7 @@ import type { Player } from "../../types/player.interface";
 import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { smoothTransition } from "../../utils/smooth-transition";
-import { state } from "../global-state-controller";
+import { GLOBAL_STATE_CONTROLLER } from "../global-state-controller";
 
 type CameraSetupParams = {
   engine: Engine;
@@ -46,7 +46,7 @@ export class CameraManager {
   }: CameraSetupParams): void {
     engine.onUpdate(() => {
       const player = engine.get(TAGS.PLAYER, { recursive: true })[0] as Player;
-      if (state.current().isPlayerInBossFight) return;
+      if (GLOBAL_STATE_CONTROLLER.current().isPlayerInBossFight) return;
 
       const targetX = this.calculateCameraX(map, player, tiledMap);
       this.setCameraPosition(engine, targetX, engine.camPos().y);

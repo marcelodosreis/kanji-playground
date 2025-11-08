@@ -5,7 +5,7 @@ import { BURNER_ANIMATIONS } from "../../types/animations.enum";
 import { BOSS_EVENTS } from "../../types/events.enum";
 import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
 import { isPaused } from "../../utils/wrap-with-pause-check";
-import { state } from "../global-state-controller";
+import { GLOBAL_STATE_CONTROLLER } from "../global-state-controller";
 import { GLOBAL_STATE } from "../../types/state.interface";
 
 type Params = { engine: Engine; boss: Boss };
@@ -24,7 +24,7 @@ export function AIBossSystem({ engine, boss }: Params) {
   }
 
   function idleUpdate() {
-    if (state.current().isPlayerInBossFight) {
+    if (GLOBAL_STATE_CONTROLLER.current().isPlayerInBossFight) {
       boss.enterState(BOSS_EVENTS.RUN);
     }
   }
@@ -93,7 +93,7 @@ export function AIBossSystem({ engine, boss }: Params) {
   }
 
   function start() {
-    state.subscribe(GLOBAL_STATE.IS_PAUSED, handleIsPausedChange);
+    GLOBAL_STATE_CONTROLLER.subscribe(GLOBAL_STATE.IS_PAUSED, handleIsPausedChange);
 
     boss.onStateEnter(BOSS_EVENTS.RUN, followEnter);
     boss.onStateUpdate(BOSS_EVENTS.RUN, followUpdate);

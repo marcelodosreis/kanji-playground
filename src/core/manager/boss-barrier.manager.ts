@@ -4,7 +4,7 @@ import { GLOBAL_STATE } from "../../types/state.interface";
 import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledObject } from "../../types/tiled-map.interface";
 import { smoothTransition } from "../../utils/smooth-transition";
-import { state } from "../global-state-controller";
+import { GLOBAL_STATE_CONTROLLER } from "../global-state-controller";
 
 export class BossBarrierManager {
   public static setup(engine: Engine, map: Map, collider: TiledObject): void {
@@ -40,7 +40,7 @@ export class BossBarrierManager {
   }
 
   private static createActivate(engine: Engine, collider: TiledObject) {
-    const currentState = state.current();
+    const currentState = GLOBAL_STATE_CONTROLLER.current();
 
     return function activate(this: BossBarrier) {
       if (currentState.isPlayerInBossFight || currentState.isBossDefeated)
@@ -57,7 +57,7 @@ export class BossBarrierManager {
   }
 
   private static createDeactivate(engine: Engine) {
-    const currentState = state.current();
+    const currentState = GLOBAL_STATE_CONTROLLER.current();
 
     return async function deactivate(this: BossBarrier, playerPosX: number) {
       if (currentState.isPlayerInBossFight || currentState.isBossDefeated)
@@ -100,10 +100,10 @@ export class BossBarrierManager {
     bossBarrier: BossBarrier,
     player: EngineGameObj
   ): Promise<void> {
-    const currentState = state.current();
+    const currentState = GLOBAL_STATE_CONTROLLER.current();
 
     if (currentState.isBossDefeated) {
-      state.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, false);
+      GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, false);
       bossBarrier.deactivate(player.pos.x);
       return;
     }
@@ -115,11 +115,11 @@ export class BossBarrierManager {
     engine: Engine,
     bossBarrier: BossBarrier
   ): void {
-    const currentState = state.current();
+    const currentState = GLOBAL_STATE_CONTROLLER.current();
 
     if (currentState.isPlayerInBossFight || currentState.isBossDefeated) return;
 
-    state.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, true);
+    GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, true);
     bossBarrier.activate();
     bossBarrier.use(engine.body({ isStatic: true }));
   }

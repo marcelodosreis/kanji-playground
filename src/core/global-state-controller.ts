@@ -48,4 +48,4 @@ function initGlobalStateController(): GlobalStateManagerController {
   };
 }
 
-export const state = initGlobalStateController();
+export const GLOBAL_STATE_CONTROLLER = initGlobalStateController();

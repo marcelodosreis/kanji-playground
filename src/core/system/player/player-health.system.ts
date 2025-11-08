@@ -6,7 +6,7 @@ import { LEVEL_SCENES } from "../../../types/scenes.enum";
 import { GLOBAL_STATE } from "../../../types/state.interface";
 import { applyKnockback } from "../../../utils/apply-knockback";
 import { createBlink } from "../../../utils/create-blink";
-import { state } from "../../global-state-controller";
+import { GLOBAL_STATE_CONTROLLER } from "../../global-state-controller";
 import { type PlayerStateMachine } from "./player-state-machine";
 
 type Params = {
@@ -39,12 +39,12 @@ const HEALTH_CONFIG = {
 };
 
 const getHealthState = (): HealthState => ({
-  current: state.current()[GLOBAL_STATE.PLAYER_HP],
-  max: state.current()[GLOBAL_STATE.MAX_PLAYER_HP],
+  current: GLOBAL_STATE_CONTROLLER.current()[GLOBAL_STATE.PLAYER_HP],
+  max: GLOBAL_STATE_CONTROLLER.current()[GLOBAL_STATE.MAX_PLAYER_HP],
 });
 
 const setPlayerHP = (hp: number): void => {
-  state.set(GLOBAL_STATE.PLAYER_HP, hp);
+  GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.PLAYER_HP, hp);
 };
 
 const isDead = (hp: number): boolean => hp <= 0;
@@ -91,7 +91,7 @@ export function PlayerHealthSystem({
 
   const respawnPlayerFullLife = (maxHp: number): void => {
     setPlayerHP(maxHp);
-    state.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, false);
+    GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, false);
     engine.go(LEVEL_SCENES.ROOM_001, { exitName: null });
   };
 

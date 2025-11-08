@@ -2,7 +2,7 @@ import { ENGINE_DEFAULT_EVENTS } from "../../types/events.enum";
 import type { Engine, EngineGameObj } from "../../types/engine.interface";
 import type { Player } from "../../types/player.interface";
 import { TAGS } from "../../types/tags.enum";
-import { state } from "../global-state-controller";
+import { GLOBAL_STATE_CONTROLLER } from "../global-state-controller";
 
 export function PlayerEntity(engine: Engine): Player {
   const player = engine.make([
@@ -14,7 +14,7 @@ export function PlayerEntity(engine: Engine): Player {
     engine.body({ mass: 100, jumpForce: 320 }),
     engine.doubleJump(1),
     engine.opacity(),
-    engine.health(state.current().playerHp),
+    engine.health(GLOBAL_STATE_CONTROLLER.current().playerHp),
     {
       speed: 150,
       controlHandlers: [],

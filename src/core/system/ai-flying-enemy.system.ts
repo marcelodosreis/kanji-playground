@@ -19,7 +19,7 @@ import {
   isPaused,
   wrapWithPauseCheck,
 } from "../../utils/wrap-with-pause-check";
-import { state } from "../global-state-controller";
+import { GLOBAL_STATE_CONTROLLER } from "../global-state-controller";
 import { GLOBAL_STATE } from "../../types/state.interface";
 import { BAT_ANIMATIONS } from "../../types/animations.enum";
 import { StateMachine, type StateMachineConfig } from "../state-machine";
@@ -213,7 +213,7 @@ export function AIFlyingEnemySystem({
     }
   }
 
-  state.subscribe(GLOBAL_STATE.IS_PAUSED, handleIsPausedChange);
+  GLOBAL_STATE_CONTROLLER.subscribe(GLOBAL_STATE.IS_PAUSED, handleIsPausedChange);
 
   enemy.enterState = (state: string) => {
     stateMachine.enterState(state);

@@ -1,6 +1,6 @@
 import type { Engine, EngineGameObj } from "../../types/engine.interface";
 import { GLOBAL_STATE } from "../../types/state.interface";
-import { state } from "../global-state-controller";
+import { GLOBAL_STATE_CONTROLLER } from "../global-state-controller";
 
 type SetupHealthBarParams = {
   engine: Engine;
@@ -32,7 +32,7 @@ export class UIManager {
       },
       setEvents(this: EngineGameObj) {
         this.on("update", () => {
-          const currentHp = state.current()[GLOBAL_STATE.PLAYER_HP];
+          const currentHp = GLOBAL_STATE_CONTROLLER.current()[GLOBAL_STATE.PLAYER_HP];
           if (currentHp === 0) {
             engine.destroy(this);
             return;

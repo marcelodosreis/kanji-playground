@@ -3,7 +3,7 @@ import type { Engine } from "../../../types/engine.interface";
 import type { Player } from "../../../types/player.interface";
 import { GLOBAL_STATE } from "../../../types/state.interface";
 import { isPaused } from "../../../utils/wrap-with-pause-check";
-import { state } from "../../global-state-controller";
+import { GLOBAL_STATE_CONTROLLER } from "../../global-state-controller";
 import { type PlayerStateMachine } from "./player-state-machine";
 
 type Params = {
@@ -88,7 +88,8 @@ const restorePhysics = (
 };
 
 const syncDoubleJumpAbility = (player: Player): void => {
-  const isUnlocked = state.current()[GLOBAL_STATE.IS_DOUBLE_JUMB_UNLOCKED];
+  const isUnlocked =
+    GLOBAL_STATE_CONTROLLER.current()[GLOBAL_STATE.IS_DOUBLE_JUMB_UNLOCKED];
   if (isUnlocked && player.numJumps !== JUMP_CONFIG.MAX_JUMPS) {
     player.numJumps = JUMP_CONFIG.MAX_JUMPS;
   }
@@ -141,7 +142,7 @@ export function PlayerJumpSystem({ engine, player, stateMachine }: Params) {
     }
   };
 
-  state.subscribe(GLOBAL_STATE.IS_PAUSED, handlePauseChange);
+  GLOBAL_STATE_CONTROLLER.subscribe(GLOBAL_STATE.IS_PAUSED, handlePauseChange);
   player.controlHandlers.push(engine.onKeyPress(handleJumpKey));
   engine.onUpdate(handleJumpStateTransitions);
 }
