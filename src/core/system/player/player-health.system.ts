@@ -160,9 +160,11 @@ export function PlayerHealthSystem({
     }
   };
 
-  const handleAnimationEnd = (anim: string): void => {
-    if (isExplodeAnimation(anim)) {
+  const handleAnimationEnd = async (anim: string): Promise<void> => {
+    const LAST_EXPLODE_PLAYER_FRAME = 109;
+    if (isExplodeAnimation(anim) && player.animFrame === LAST_EXPLODE_PLAYER_FRAME) {
       const { max } = getHealthState();
+      await engine.wait(2);
       respawnPlayerFullLife(max);
       return;
     }
