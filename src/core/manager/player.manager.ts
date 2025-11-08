@@ -19,6 +19,7 @@ export type PlayerManagerParams = BaseManagerParams & {
   entranceExitMapping: Record<string, string>;
   positionOffset?: PositionOffset;
   respawnConfig: RespawnConfig;
+  initialCameraPos: { x: number; y: number };
 };
 
 export class PlayerManager extends BaseEntityManager<Player> {
@@ -27,6 +28,7 @@ export class PlayerManager extends BaseEntityManager<Player> {
   private readonly entranceExitMapping: Record<string, string>;
   private readonly positionOffset: PositionOffset;
   private readonly respawnConfig: RespawnConfig;
+  private readonly initialCameraPos: { x: number; y: number };
 
   private constructor(params: PlayerManagerParams) {
     super(params);
@@ -35,6 +37,7 @@ export class PlayerManager extends BaseEntityManager<Player> {
     this.entranceExitMapping = params.entranceExitMapping;
     this.positionOffset = params.positionOffset ?? { x: 0, y: 0 };
     this.respawnConfig = params.respawnConfig;
+    this.initialCameraPos = params.initialCameraPos;
   }
 
   public static setup(params: PlayerManagerParams): Player {
@@ -44,10 +47,10 @@ export class PlayerManager extends BaseEntityManager<Player> {
 
   public setup(): Player {
     const player = this.createEntity();
-    this.initializeSystems(player);
     const positions = this.resolveSpawnPositions();
     const startPosition = positions[0];
     if (startPosition) this.applyPosition(player, startPosition);
+    this.initializeSystems(player);
     return player;
   }
 
@@ -64,6 +67,10 @@ export class PlayerManager extends BaseEntityManager<Player> {
       boundValue: this.respawnConfig.bounds,
       destinationName: this.respawnConfig.roomName,
       previousSceneData: { exitName: this.respawnConfig.exitName },
+      map: this.map,
+      tiledMap: this.tiledMap,
+      initialCameraPos: this.initialCameraPos,
+      previousSceneExitName: this.previousSceneData?.exitName,
     });
   }
 

@@ -7,6 +7,7 @@ import { FlyingEnemyReturnSystem } from "../core/system/enemies/flying-enemy/fly
 import { PlayerAnimationSystem } from "../core/system/player/player-animation.system";
 import { PlayerAttackSystem } from "../core/system/player/player-attack.system";
 import { PlayerBoundarySystem } from "../core/system/player/player-boundary.system";
+import { PlayerCameraSystem } from "../core/system/player/player-camera.system";
 import { PlayerHealthSystem } from "../core/system/player/player-health.system";
 import { PlayerJumpSystem } from "../core/system/player/player-jump.system";
 import { PlayerPassthroughSystem } from "../core/system/player/player-passthrough.system";
@@ -19,7 +20,7 @@ import type {
 export class SystemRegistryFactory {
   static registerPlayerSystems(context: PlayerSystemContext): void {
     if (!context.boundValue) return;
-    
+
     PlayerJumpSystem({
       engine: context.engine,
       player: context.player,
@@ -53,6 +54,14 @@ export class SystemRegistryFactory {
       stateMachine: context.stateMachine,
     });
     PlayerPassthroughSystem({ player: context.player });
+    PlayerCameraSystem({
+      engine: context.engine,
+      map: context.map,
+      tiledMap: context.tiledMap,
+      player: context.player,
+      initialCameraPos: context.initialCameraPos,
+      previousSceneExitName: context.previousSceneExitName,
+    });
   }
 
   static registerFlyingEnemySystems(context: EnemySystemContext): void {

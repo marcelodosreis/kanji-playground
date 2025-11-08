@@ -1,5 +1,4 @@
 import { BossManager } from "../../../core/manager/boss.manager";
-import { CameraManager } from "../../../core/manager/camera.manager";
 import { FlyingEnemyManager } from "../../../core/manager/flying-enemy.manager";
 import { MapManager } from "../../../core/manager/map.manager";
 import { PlayerManager } from "../../../core/manager/player.manager";
@@ -67,6 +66,7 @@ export class Room001Scene {
         bounds: 1000,
         roomName: this.config.MAP_SPRITE_NAME,
       },
+      initialCameraPos: this.config.INITIAL_CAMERA_POS,
     });
 
     FlyingEnemyManager.setup({
@@ -80,14 +80,6 @@ export class Room001Scene {
       engine: this.engine,
       tiledMap: this.tiledMap,
       isBossDefeated: GLOBAL_STATE_CONTROLLER.current().isBossDefeated,
-    });
-
-    CameraManager.setup({
-      map: map,
-      engine: this.engine,
-      tiledMap: this.tiledMap,
-      initialCameraPos: this.config.INITIAL_CAMERA_POS,
-      previousSceneExitName: this.previousSceneData.exitName,
     });
 
     UIManager.setup({

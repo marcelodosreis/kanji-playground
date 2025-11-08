@@ -1,6 +1,5 @@
 import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import type { TiledMap } from "../../../types/tiled-map.interface";
-import { CameraManager } from "../../../core/manager/camera.manager";
 import { MapManager } from "../../../core/manager/map.manager";
 import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
@@ -68,14 +67,7 @@ export class Room002Scene {
         roomName: this.config.RESPAWN_ROOM_NAME,
         exitName: this.previousSceneData.exitName,
       },
-    });
-
-    CameraManager.setup({
-      map,
-      engine: this.engine,
-      tiledMap: this.tiledMap,
       initialCameraPos: this.config.INITIAL_CAMERA_POS,
-      previousSceneExitName: this.previousSceneData.exitName,
     });
 
     UIManager.setup({
