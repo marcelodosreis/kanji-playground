@@ -6,6 +6,7 @@ import { LEVEL_SCENES } from "../../../types/scenes.enum";
 import { GLOBAL_STATE } from "../../../types/state.interface";
 import { applyKnockback } from "../../../utils/apply-knockback";
 import { createBlink } from "../../../utils/create-blink";
+import { screenFadeIn } from "../../../utils/screen-fade-in";
 import { GLOBAL_STATE_CONTROLLER } from "../../global-state-controller";
 import { type PlayerStateMachine } from "./player-state-machine";
 
@@ -162,9 +163,16 @@ export function PlayerHealthSystem({
 
   const handleAnimationEnd = async (anim: string): Promise<void> => {
     const LAST_EXPLODE_PLAYER_FRAME = 109;
-    if (isExplodeAnimation(anim) && player.animFrame === LAST_EXPLODE_PLAYER_FRAME) {
+    if (
+      isExplodeAnimation(anim) &&
+      player.animFrame === LAST_EXPLODE_PLAYER_FRAME
+    ) {
       const { max } = getHealthState();
       await engine.wait(2);
+      await screenFadeIn({
+        engine,
+        durationSeconds: 0.4,
+      });
       respawnPlayerFullLife(max);
       return;
     }

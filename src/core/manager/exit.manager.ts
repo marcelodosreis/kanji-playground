@@ -1,11 +1,10 @@
-import { COLORS } from "../../types/colors.enum";
 import type { Engine } from "../../types/engine.interface";
 import type { Map } from "../../types/map.interface";
 import { MENU_SCENES } from "../../types/scenes.enum";
 import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
-import { smoothTransition } from "../../utils/smooth-transition";
 import { MapLayer, MapLayerHelper } from "../../utils/map-layer.helper";
+import { screenFadeIn } from "../../utils/screen-fade-in";
 
 type SetupParams = {
   engine: Engine;
@@ -51,11 +50,12 @@ export class ExitManager {
   ): Promise<void> {
     const { engine, exitRoomName } = params;
 
-    const background = this.createBackground(engine);
-
     const duration = 0.4;
 
-    await this.tweenBackgroundToRight(engine, background, duration);
+    await screenFadeIn({
+      engine,
+      durationSeconds: duration,
+    });
 
     if (exit.name === MENU_SCENES.FINAL) {
       engine.go(MENU_SCENES.FINAL);
@@ -63,38 +63,5 @@ export class ExitManager {
     }
 
     engine.go(exitRoomName, { exitName: exit.name });
-  }
-
-  private static createBackground(engine: Engine) {
-    return engine.add([
-      engine.pos(-engine.width(), 0),
-      engine.fixed(),
-      engine.rect(engine.width(), engine.height()),
-      engine.color(COLORS.BACKGROUND_PRIMARY),
-      engine.z(9999),
-    ]);
-  }
-
-  private static tweenBackgroundToRight(
-    engine: Engine,
-    background: any,
-    durationSeconds = 1
-  ): Promise<void> {
-    return new Promise((resolve) => {
-      const startX = background.pos.x;
-      const endX = 0;
-      const totalMs = durationSeconds * 1000;
-
-      smoothTransition({
-        engine,
-        startValue: startX,
-        endValue: endX,
-        durationSeconds,
-        onUpdate: (val) => (background.pos.x = val),
-        easingFunction: engine.easings.linear,
-      });
-
-      setTimeout(resolve, totalMs + 50);
-    });
   }
 }
