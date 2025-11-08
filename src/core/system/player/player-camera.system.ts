@@ -1,4 +1,4 @@
-import type { Engine } from "../../../types/engine.type";
+import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import type { Map } from "../../../types/map.interface";
 import type { Player } from "../../../types/player.interface";
 import { MAP_TAGS, TAGS } from "../../../types/tags.enum";
@@ -15,93 +15,130 @@ type Params = {
   previousSceneExitName?: string | null;
 };
 
-export function PlayerCameraSystem(params: Params): void {
-  params.engine.camScale(2);
-  setInitialCameraPosition(params);
-  setupCameraFollow(params);
-  setupCameraZones(params);
-}
+type CameraZone = EngineGameObj & {
+  onCollide: (tag: string, callback: () => void) => void;
+};
 
-function setInitialCameraPosition({
-  engine,
-  initialCameraPos,
-  previousSceneExitName,
-}: Params): void {
-  if (!previousSceneExitName) {
-    setCameraPosition(engine, initialCameraPos.x, initialCameraPos.y);
-  } else {
-    const [player] = engine.get(TAGS.PLAYER, { recursive: true }) as Player[];
-    setCameraPosition(engine, player.pos.x, player.pos.y);
-  }
-}
+type CameraBounds = {
+  left: number;
+  right: number;
+};
 
-function setCameraPosition(engine: Engine, x: number, y: number): void {
+const CAMERA_CONFIG = {
+  SCALE: 2,
+  HORIZONTAL_OFFSET: 160,
+  TRANSITION_DURATION: 0.8,
+} as const;
+
+const getPlayerFromEngine = (engine: Engine): Player =>
+  engine.get(TAGS.PLAYER, { recursive: true })[0] as Player;
+
+const setCameraPosition = (engine: Engine, x: number, y: number): void => {
   engine.camPos(x, y);
-}
+};
 
-function setupCameraFollow({ engine, map, tiledMap }: Params): void {
-  engine.onUpdate(() => {
-    const player = engine.get(TAGS.PLAYER, { recursive: true })[0] as Player;
-    if (GLOBAL_STATE_CONTROLLER.current().isPlayerInBossFight) return;
+const calculateBounds = (map: Map, tiledMap: TiledMap): CameraBounds => ({
+  left: map.pos.x + CAMERA_CONFIG.HORIZONTAL_OFFSET,
+  right:
+    map.pos.x +
+    tiledMap.width * tiledMap.tilewidth -
+    CAMERA_CONFIG.HORIZONTAL_OFFSET,
+});
 
-    const targetX = calculateCameraX(map, player, tiledMap);
-    setCameraPosition(engine, targetX, engine.camPos().y);
-  });
-}
-
-function calculateCameraX(
-  map: Map,
-  player: Player,
-  tiledMap: TiledMap
-): number {
-  const leftBound = map.pos.x + 160;
-  const rightBound = map.pos.x + tiledMap.width * tiledMap.tilewidth - 160;
-  const playerX = player.pos.x;
-
-  if (playerX < leftBound) return leftBound;
-  if (playerX > rightBound) return rightBound;
+const clampCameraX = (playerX: number, bounds: CameraBounds): number => {
+  if (playerX < bounds.left) return bounds.left;
+  if (playerX > bounds.right) return bounds.right;
   return playerX;
-}
+};
 
-function setupCameraZones({ engine, map, tiledMap }: Params): void {
-  const cameras = MapLayerHelper.getObjects(tiledMap, MapLayer.CAMERA);
+const shouldUsePlayerPosition = (
+  previousSceneExitName?: string | null
+): boolean => !!previousSceneExitName;
 
-  cameras.forEach((camera) => {
-    const cameraZone = createCameraZone(engine, map, camera);
-    setupCameraZoneCollision(engine, cameraZone, camera);
-  });
-}
+const isInBossFight = (): boolean =>
+  GLOBAL_STATE_CONTROLLER.current().isPlayerInBossFight;
 
-function createCameraZone(engine: Engine, map: Map, camera: TiledObject): any {
+const getCameraTargetY = (camera: TiledObject): number =>
+  Number(camera.properties[0].value);
+
+const shouldTransitionCamera = (currentY: number, targetY: number): boolean =>
+  currentY !== targetY;
+
+const createCameraZone = (
+  engine: Engine,
+  map: Map,
+  camera: TiledObject
+): CameraZone => {
   return map.add([
     engine.area({
       shape: new engine.Rect(engine.vec2(0), camera.width, camera.height),
       collisionIgnore: [MAP_TAGS.COLLIDER],
     }),
     engine.pos(camera.x, camera.y),
-  ]);
-}
+  ]) as CameraZone;
+};
 
-function setupCameraZoneCollision(
-  engine: Engine,
-  cameraZone: any,
-  camera: TiledObject
-): void {
-  cameraZone.onCollide(TAGS.PLAYER, () => {
-    handleCameraZoneCollision(engine, camera);
+const applyCameraTransition = (engine: Engine, targetY: number): void => {
+  smoothTransition({
+    engine,
+    startValue: engine.camPos().y,
+    endValue: targetY,
+    durationSeconds: CAMERA_CONFIG.TRANSITION_DURATION,
+    onUpdate: (val) => setCameraPosition(engine, engine.camPos().x, val),
+    easingFunction: engine.easings.linear,
   });
-}
+};
 
-function handleCameraZoneCollision(engine: Engine, camera: TiledObject): void {
-  const targetY = Number(camera.properties[0].value);
-  if (engine.camPos().y !== targetY) {
-    smoothTransition({
-      engine,
-      startValue: engine.camPos().y,
-      endValue: targetY,
-      durationSeconds: 0.8,
-      onUpdate: (val) => engine.camPos(engine.camPos().x, val),
-      easingFunction: engine.easings.linear,
+export function PlayerCameraSystem({
+  engine,
+  map,
+  tiledMap,
+  initialCameraPos,
+  previousSceneExitName,
+}: Params): void {
+  engine.camScale(CAMERA_CONFIG.SCALE);
+
+  const bounds = calculateBounds(map, tiledMap);
+
+  const setInitialPosition = (): void => {
+    if (shouldUsePlayerPosition(previousSceneExitName)) {
+      const player = getPlayerFromEngine(engine);
+      setCameraPosition(engine, player.pos.x, player.pos.y);
+    } else {
+      setCameraPosition(engine, initialCameraPos.x, initialCameraPos.y);
+    }
+  };
+
+  const handleCameraFollow = (): void => {
+    if (isInBossFight()) return;
+
+    const player = getPlayerFromEngine(engine);
+    const targetX = clampCameraX(player.pos.x, bounds);
+    setCameraPosition(engine, targetX, engine.camPos().y);
+  };
+
+  const handleZoneCollision = (targetY: number): void => {
+    const currentY = engine.camPos().y;
+
+    if (shouldTransitionCamera(currentY, targetY)) {
+      applyCameraTransition(engine, targetY);
+    }
+  };
+
+  const setupCameraZones = (): void => {
+    const cameras = MapLayerHelper.getObjects(tiledMap, MapLayer.CAMERA);
+
+    cameras.forEach((camera) => {
+      const cameraZone = createCameraZone(engine, map, camera);
+      const targetY = getCameraTargetY(camera);
+
+      cameraZone.onCollide(TAGS.PLAYER, () => {
+        handleZoneCollision(targetY);
+      });
     });
-  }
+  };
+
+  setInitialPosition();
+  setupCameraZones();
+  engine.onUpdate(handleCameraFollow);
 }

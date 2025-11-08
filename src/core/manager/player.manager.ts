@@ -5,7 +5,7 @@ import { PlayerPositionResolver } from "../../helpers/player-position-resolver.h
 import {
   BaseEntityManager,
   type BaseManagerParams,
-} from "./base-entity.manager";
+} from "../../types/entity-manager.abstract";
 import type { EngineGameObj } from "../../types/engine.type";
 import { createPlayerStateMachine } from "../system/player/player-state-machine";
 import { SystemRegistryFactory } from "../../factories/system-registry-factory";

@@ -4,7 +4,7 @@ import type { Player } from "../../types/player.interface";
 import {
   BaseEntityManager,
   type BaseManagerParams,
-} from "./base-entity.manager";
+} from "../../types/entity-manager.abstract";
 import { TiledObjectHelper } from "../../helpers/tiled-object.helper";
 import { EntityFactory } from "../../factories/entity-factory";
 import type { Enemy } from "../../types/enemy.interface";
