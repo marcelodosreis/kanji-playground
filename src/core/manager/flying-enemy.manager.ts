@@ -3,10 +3,9 @@ import type { Engine } from "../../types/engine.interface";
 import type { Map } from "../../types/map.interface";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import type { Enemy } from "../../types/enemy.interface";
-import { FlyingEnemyEventHandlerSystem } from "../system/flying-enemy-event-handler.system";
-import { AIFlyingEnemySystem } from "../system/ai-flying-enemy.system";
 import { TAGS } from "../../types/tags.enum";
-import { FlyingEnemyPositionResetSystem } from "../system/flying-enemy-position-reset.system";
+import { FlyingEnemySystem } from "../system/ai-flying-enemy.system";
+
 
 type FlyingEnemyManagerParams = {
   engine: Engine;
@@ -14,38 +13,56 @@ type FlyingEnemyManagerParams = {
   tiledMap: TiledMap;
 };
 
+const ENEMY_LAYER_INDEX = 5;
+
 export class FlyingEnemyManager {
-  public static setup({
-    engine,
-    map,
-    tiledMap,
-  }: FlyingEnemyManagerParams): void {
-    const positions = this.getSpawnPositions(tiledMap);
-    this.spawn(engine, map, positions);
+  private readonly engine: Engine;
+  private readonly map: Map;
+  private readonly tiledMap: TiledMap;
+
+  private constructor(params: FlyingEnemyManagerParams) {
+    this.engine = params.engine;
+    this.map = params.map;
+    this.tiledMap = params.tiledMap;
   }
 
-  private static initSystems(engine: Engine, enemy: Enemy): void {
-    FlyingEnemyEventHandlerSystem({ engine, enemy });
-    AIFlyingEnemySystem({ engine, enemy });
-    FlyingEnemyPositionResetSystem({ enemy });
+  public static setup(params: FlyingEnemyManagerParams): void {
+    const manager = new FlyingEnemyManager(params);
+    manager.setupInstance();
   }
 
-  private static getSpawnPositions(tiledMap: TiledMap): TiledObject[] {
-    return tiledMap.layers[5].objects as TiledObject[];
+  private setupInstance(): void {
+    const positions = this.getSpawnPositions();
+    this.spawnEnemies(positions);
   }
 
-  private static spawn(
-    engine: Engine,
-    map: Map,
-    positions: TiledObject[]
-  ): void {
+  private getSpawnPositions(): TiledObject[] {
+    const layer = this.tiledMap.layers[ENEMY_LAYER_INDEX];
+    if (!layer || !layer.objects) {
+      return [];
+    }
+    return layer.objects as TiledObject[];
+  }
+
+  private spawnEnemies(positions: TiledObject[]): void {
     positions
-      .filter((pos) => pos.type === TAGS.FLY_ENEMY)
-      .forEach((pos) => {
-        const enemy = map.add<Enemy>(
-          FlyingEnemyEntity(engine, engine.vec2(pos.x, pos.y))
-        );
-        this.initSystems(engine, enemy);
-      });
+      .filter((pos) => this.isValidSpawnPosition(pos))
+      .forEach((pos) => this.createEnemy(pos));
+  }
+
+  private isValidSpawnPosition(position: TiledObject): boolean {
+    return position.type === TAGS.FLY_ENEMY;
+  }
+
+  private createEnemy(position: TiledObject): void {
+    const spawnPosition = this.engine.vec2(position.x, position.y);
+    const enemy = this.map.add<Enemy>(
+      FlyingEnemyEntity(this.engine, spawnPosition)
+    );
+    this.initializeSystems(enemy);
+  }
+
+  private initializeSystems(enemy: Enemy): void {
+    FlyingEnemySystem({ engine: this.engine, enemy });
   }
 }
