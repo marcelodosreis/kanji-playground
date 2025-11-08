@@ -3,7 +3,7 @@ import type { Enemy } from "../../../../types/enemy.interface";
 import type { Player } from "../../../../types/player.interface";
 import type { FlyingEnemyStateMachine } from "./flying-enemy-state-machine";
 import { FLYING_ENEMY_EVENTS } from "../../../../types/events.enum";
-import { isPaused } from "../../../../utils/wrap-with-pause-check";
+import { isPaused } from "../../../../utils/is-paused";
 
 type Params = {
   engine: Engine;

@@ -1,7 +1,7 @@
 import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
 import type { Engine } from "../../../types/engine.interface";
 import type { Player } from "../../../types/player.interface";
-import { isPaused } from "../../../utils/wrap-with-pause-check";
+import { isPaused } from "../../../utils/is-paused";
 import { type PlayerStateMachine } from "./player-state-machine";
 
 type Params = {

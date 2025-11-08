@@ -4,7 +4,7 @@ import type { Player } from "../../types/player.interface";
 import { BURNER_ANIMATIONS } from "../../types/animations.enum";
 import { BOSS_EVENTS } from "../../types/events.enum";
 import { HITBOX_TAGS, TAGS } from "../../types/tags.enum";
-import { isPaused } from "../../utils/wrap-with-pause-check";
+import { isPaused } from "../../utils/is-paused";
 import { GLOBAL_STATE_CONTROLLER } from "../global-state-controller";
 import { GLOBAL_STATE } from "../../types/state.interface";
 
