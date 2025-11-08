@@ -1,6 +1,8 @@
 import type { Engine } from "../../types/engine.interface";
-import type { FocusableButton } from "../../types/focusable-button.interface";
-import { createFocusableButton } from "../../utils/create-focusable-button";
+import {
+  createFocusableButton,
+  type FocusableButton,
+} from "../../utils/create-focusable-button";
 import { setBackgroundColor } from "../../utils/set-background-color";
 
 type MenuItem = {

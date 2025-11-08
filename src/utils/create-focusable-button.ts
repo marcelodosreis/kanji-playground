@@ -1,5 +1,10 @@
-import type { Engine } from "../types/engine.interface";
-import type { FocusableButton } from "../types/focusable-button.interface";
+import type { Engine, EngineGameObj } from "../types/engine.interface";
+export interface FocusableButton extends EngineGameObj {
+  focus: () => void;
+  blur: () => void;
+  select: () => void;
+  isFocused: () => boolean;
+}
 
 interface FocusableButtonOptions {
   label: string;
