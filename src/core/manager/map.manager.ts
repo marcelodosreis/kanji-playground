@@ -3,7 +3,6 @@ import type { Map } from "../../types/map.interface";
 import type { TiledMap } from "../../types/tiled-map.interface";
 import { MapSystem } from "../system/map/map.system";
 import { ExitSystem } from "../system/map/exit.system";
-import { HealthPickupSystem } from "../system/map/health-pickup.system";
 
 type SetupParams = {
   engine: Engine;
@@ -31,7 +30,6 @@ export class MapManager {
     const map = this.createMap(engine, mapSpriteName);
 
     MapSystem({ engine, map, tiledMap });
-    HealthPickupSystem({ engine, map, tiledMap });
     ExitSystem({
       engine,
       map,

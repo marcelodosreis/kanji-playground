@@ -6,6 +6,7 @@ import { UIManager } from "../../../core/manager/ui.manager";
 import { setBackgroundColor } from "../../../utils/set-background-color";
 import { LEVEL_SCENES } from "../../../types/scenes.enum";
 import { COLORS } from "../../../types/colors.enum";
+import { HealthPickupManager } from "../../../core/manager/health-pickup.manager";
 
 type Room002Params = {
   engine: Engine;
@@ -68,6 +69,12 @@ export class Room002Scene {
         exitName: this.previousSceneData.exitName,
       },
       initialCameraPos: this.config.INITIAL_CAMERA_POS,
+    });
+
+    HealthPickupManager.setup({
+      map,
+      engine: this.engine,
+      tiledMap: this.tiledMap,
     });
 
     UIManager.setup({

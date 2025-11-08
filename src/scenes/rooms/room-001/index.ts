@@ -9,6 +9,7 @@ import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import { LEVEL_SCENES } from "../../../types/scenes.enum";
 import type { TiledMap } from "../../../types/tiled-map.interface";
 import { setBackgroundColor } from "../../../utils/set-background-color";
+import { HealthPickupManager } from "../../../core/manager/health-pickup.manager";
 
 type Room001Params = {
   engine: Engine;
@@ -71,6 +72,12 @@ export class Room001Scene {
 
     FlyingEnemyManager.setup({
       map: map,
+      engine: this.engine,
+      tiledMap: this.tiledMap,
+    });
+  
+    HealthPickupManager.setup({
+      map,
       engine: this.engine,
       tiledMap: this.tiledMap,
     });

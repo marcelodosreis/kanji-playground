@@ -58,7 +58,6 @@ export class SystemRegistryFactory {
       engine: context.engine,
       map: context.map,
       tiledMap: context.tiledMap,
-      player: context.player,
       initialCameraPos: context.initialCameraPos,
       previousSceneExitName: context.previousSceneExitName,
     });

@@ -47,18 +47,17 @@ export class PlayerManager extends BaseEntityManager<Player> {
 
   public setup(): Player {
     const player = this.createEntity();
-    const positions = this.resolveSpawnPositions();
-    const startPosition = positions[0];
+    const [startPosition] = this.resolveSpawnPositions();
     if (startPosition) this.applyPosition(player, startPosition);
-    this.initializeSystems(player);
-    return player;
+
+    return this.initializeSystems(player);
   }
 
   private createEntity(): Player {
     return EntityFactory.createPlayer(this.engine, this.map);
   }
 
-  private initializeSystems(player: Player): void {
+  private initializeSystems(player: Player): Player {
     const stateMachine = createPlayerStateMachine({ player });
     SystemRegistryFactory.registerPlayerSystems({
       engine: this.engine,
@@ -72,6 +71,8 @@ export class PlayerManager extends BaseEntityManager<Player> {
       initialCameraPos: this.initialCameraPos,
       previousSceneExitName: this.previousSceneData?.exitName,
     });
+
+    return player;
   }
 
   private resolveSpawnPositions(): TiledObject[] {
