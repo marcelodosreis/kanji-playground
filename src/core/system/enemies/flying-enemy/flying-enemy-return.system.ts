@@ -14,9 +14,6 @@ type Params = {
 
 const RETURN_THRESHOLD_SQ = 20 * 20;
 const POSITION_RESET_DISTANCE_SQ = 400 * 400;
-const STUCK_CHECK_DURATION = 3;
-const POSITION_TOLERANCE = 5;
-const UNSTUCK_SPEED = 50;
 
 export function FlyingEnemyReturnSystem({
   engine,
@@ -24,14 +21,8 @@ export function FlyingEnemyReturnSystem({
   player,
   stateMachine,
 }: Params) {
-  let stuckCheckStartTime = 0;
-  let lastCheckedX = 0;
-  let isUnstucking = false;
-
   engine.onUpdate(() => {
     if (!stateMachine.isReturning() || isPaused()) {
-      stuckCheckStartTime = 0;
-      isUnstucking = false;
       return;
     }
 
@@ -58,8 +49,6 @@ export function FlyingEnemyReturnSystem({
 
     if (canReachPlayer) {
       stateMachine.dispatch(FLYING_ENEMY_EVENTS.ALERT);
-      stuckCheckStartTime = 0;
-      isUnstucking = false;
       return;
     }
 
@@ -72,30 +61,7 @@ export function FlyingEnemyReturnSystem({
 
     if (isAtInitialPosition) {
       stateMachine.dispatch(FLYING_ENEMY_EVENTS.PATROL_RIGHT);
-      stuckCheckStartTime = 0;
-      isUnstucking = false;
       return;
-    }
-
-    const now = engine.time();
-
-    if (stuckCheckStartTime === 0) {
-      stuckCheckStartTime = now;
-      lastCheckedX = enemyPos.x;
-    } else if (now - stuckCheckStartTime >= STUCK_CHECK_DURATION) {
-      if (Math.abs(enemyPos.x - lastCheckedX) <= POSITION_TOLERANCE) {
-        isUnstucking = true;
-      }
-      stuckCheckStartTime = now;
-      lastCheckedX = enemyPos.x;
-    }
-
-    if (isUnstucking) {
-      enemyPos.y -= UNSTUCK_SPEED * engine.dt();
-
-      if (Math.abs(enemyPos.x - lastCheckedX) > POSITION_TOLERANCE) {
-        isUnstucking = false;
-      }
     }
 
     enemy.flipX = initialPos.x <= enemyPos.x;

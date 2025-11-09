@@ -7,6 +7,7 @@ import { FlyingEnemyAttackSystem } from "../core/system/enemies/flying-enemy/fly
 import { FlyingEnemyCollisionSystem } from "../core/system/enemies/flying-enemy/flying-enemy-collision.system";
 import { FlyingEnemyPatrolSystem } from "../core/system/enemies/flying-enemy/flying-enemy-patrol.system";
 import { FlyingEnemyReturnSystem } from "../core/system/enemies/flying-enemy/flying-enemy-return.system";
+import { FlyingEnemyUnstuckSystem } from "../core/system/enemies/flying-enemy/flying-enemy-unstuck.system";
 
 import { PlayerAnimationSystem } from "../core/system/player/player-animation.system";
 import { PlayerAttackSystem } from "../core/system/player/player-attack.system";
@@ -102,6 +103,11 @@ export class SystemRegistryFactory {
     FlyingEnemyAnimationSystem({
       engine: context.engine,
       enemy: context.enemy,
+    });
+    FlyingEnemyUnstuckSystem({
+      engine: context.engine,
+      enemy: context.enemy,
+      stateMachine: context.stateMachine,
     });
   }
 

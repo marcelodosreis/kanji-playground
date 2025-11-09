@@ -12,7 +12,7 @@ export function PlayerEntity(engine: Engine): Player {
     engine.area({ shape: new engine.Rect(engine.vec2(0, 18), 12, 12) }),
     engine.anchor("center"),
     engine.body({ mass: 100, jumpForce: 320 }),
-    engine.doubleJump(1),
+    engine.doubleJump(10),
     engine.opacity(),
     engine.health(GLOBAL_STATE_CONTROLLER.current().playerHp),
     {

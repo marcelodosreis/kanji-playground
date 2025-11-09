@@ -20,6 +20,7 @@ export function FlyingEnemyPatrolSystem({
   stateMachine,
 }: Params) {
   const initialX = enemy.pos.x;
+  const initialY = enemy.pos.y;
 
   engine.onUpdate(() => {
     if (enemy.hp() <= 0 || isPaused()) return;
@@ -28,6 +29,13 @@ export function FlyingEnemyPatrolSystem({
     const isPlayerInRange = enemy.pos.dist(player.pos) < enemy.range;
     const behavior = enemy.behavior;
     const shouldReactToPlayer = behavior !== FLYING_ENEMY_SPRITES.ORANGE;
+
+    if (
+      currentState === FLYING_ENEMY_EVENTS.PATROL_RIGHT ||
+      currentState === FLYING_ENEMY_EVENTS.PATROL_LEFT
+    ) {
+      enemy.pos.y = initialY;
+    }
 
     if (currentState === FLYING_ENEMY_EVENTS.PATROL_RIGHT) {
       if (isPlayerInRange && shouldReactToPlayer) {

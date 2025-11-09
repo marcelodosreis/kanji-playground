@@ -32,7 +32,7 @@ export function FlyingEnemyEntity(
       collisionIgnore: [TAGS.FLY_ENEMY],
     }),
     engine.anchor("center"),
-    engine.body({ gravityScale: 0 }),
+    engine.body({ gravityScale: 0,  mass: 100 }),
     engine.offscreen({ distance: 400 }),
     engine.state(FLYING_ENEMY_EVENTS.PATROL_RIGHT, [
       ...Object.values(FLYING_ENEMY_EVENTS),
