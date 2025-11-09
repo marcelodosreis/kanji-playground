@@ -1,6 +1,6 @@
 import type { Engine } from "../../../../types/engine.type";
 import type { Enemy } from "../../../../types/enemy.interface";
-import { BAT_ANIMATIONS } from "../../../../types/animations.enum";
+import { FLYING_ANIMATIONS } from "../../../../types/animations.enum";
 import { ENGINE_DEFAULT_EVENTS } from "../../../../types/events.enum";
 
 type Params = {
@@ -11,19 +11,19 @@ type Params = {
 export function FlyingEnemyAnimationSystem({ engine, enemy }: Params) {
   engine.onUpdate(() => {
     if (!enemy.curAnim()) {
-      enemy.play(BAT_ANIMATIONS.FLYING);
+      enemy.play(FLYING_ANIMATIONS.FLYING);
     }
   });
 
   function onHurt(): void {
     if (enemy.hp() > 0) {
-      return enemy.play(BAT_ANIMATIONS.HURT);
+      return enemy.play(FLYING_ANIMATIONS.HURT);
     }
-    enemy.play(BAT_ANIMATIONS.EXPLODE);
+    enemy.play(FLYING_ANIMATIONS.EXPLODE);
   }
 
   function onAnimationEnd(anim: string): void {
-    if (anim === BAT_ANIMATIONS.EXPLODE) {
+    if (anim === FLYING_ANIMATIONS.EXPLODE) {
       engine.destroy(enemy);
     }
   }

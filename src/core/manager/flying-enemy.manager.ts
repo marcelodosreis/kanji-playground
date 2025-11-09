@@ -11,6 +11,7 @@ import { getPlayer } from "../../utils/get-player";
 import { createFlyingEnemyStateMachine } from "../system/enemies/flying-enemy/flying-enemy-state-machine";
 import { SystemRegistryFactory } from "../../factories/system-registry-factory";
 import { MapLayer, MapLayerHelper } from "../../helpers/map-layer-helper";
+import type { FLYING_ENEMY_SPRITES } from "../../types/sprites.enum";
 
 export type FlyingEnemyManagerParams = BaseManagerParams;
 
@@ -40,7 +41,6 @@ export class FlyingEnemyManager extends BaseEntityManager<Enemy[]> {
     if (!player) return [];
 
     return positions.map((pos) => {
-      console.log("[DEBUG]", pos);
       const enemy = this.createEntity(pos);
       this.initializeSystems(enemy, player);
       return enemy;
@@ -53,7 +53,7 @@ export class FlyingEnemyManager extends BaseEntityManager<Enemy[]> {
       this.map,
       position.x,
       position.y,
-      position.name
+      position.name as FLYING_ENEMY_SPRITES
     );
   }
 

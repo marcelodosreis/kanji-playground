@@ -8,7 +8,7 @@ export enum PLAYER_ANIMATIONS {
   HURT = "hurt",
 }
 
-export enum BAT_ANIMATIONS {
+export enum FLYING_ANIMATIONS {
   FLYING = "flying",
   HURT = "hurt",
   EXPLODE = "explode",

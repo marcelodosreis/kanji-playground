@@ -6,7 +6,7 @@ import type { Boss } from "../types/boss.interface";
 import { PlayerEntity } from "../core/entities/player.entity";
 import { FlyingEnemyEntity } from "../core/entities/flying-enemy.entity";
 import { BossEntity } from "../core/entities/boss.entity";
-import { FLY_ENEMY_SPRITES } from "../types/sprites.enum";
+import { FLYING_ENEMY_SPRITES } from "../types/sprites.enum";
 
 export class EntityFactory {
   static createPlayer(engine: Engine, map: Map): Player {
@@ -18,16 +18,9 @@ export class EntityFactory {
     map: Map,
     x: number,
     y: number,
-    name: string
+    sprite: FLYING_ENEMY_SPRITES
   ): Enemy {
     const pos = engine.vec2(x, y);
-    console.log(name);
-    const sprite =
-      name === FLY_ENEMY_SPRITES.PURPLE
-        ? FLY_ENEMY_SPRITES.PURPLE
-        : FLY_ENEMY_SPRITES.ORANGE;
-
-
     return map.add<Enemy>(FlyingEnemyEntity(engine, pos, sprite));
   }
 
