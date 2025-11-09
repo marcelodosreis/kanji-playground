@@ -12,8 +12,8 @@ type Params = {
   stateMachine: FlyingEnemyStateMachine;
 };
 
-const RETURN_THRESHOLD_SQ = 20 * 20;
-const POSITION_RESET_DISTANCE_SQ = 400 * 400;
+const RETURN_THRESHOLD_DISTANCE = 20;
+const TELEPORT_RESET_DISTANCE = 400;
 
 export function FlyingEnemyReturnSystem({
   engine,
@@ -21,63 +21,116 @@ export function FlyingEnemyReturnSystem({
   player,
   stateMachine,
 }: Params) {
-  engine.onUpdate(() => {
-    if (!stateMachine.isReturning() || isPaused()) {
-      return;
-    }
+  function shouldStopReturning(): boolean {
+    return !stateMachine.isReturning() || isPaused() || enemy.hp() <= 0;
+  }
 
-    if (enemy.hp() <= 0) return;
+  function getSquaredDistance(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number
+  ): number {
+    const dx = x1 - x2;
+    const dy = y1 - y2;
+    return dx * dx + dy * dy;
+  }
 
-    const enemyPos = enemy.pos;
-    const playerPos = player.pos;
-    const initialPos = enemy.initialPos;
+  function getDistanceToPlayer(): number {
+    return getSquaredDistance(
+      enemy.pos.x,
+      enemy.pos.y,
+      player.pos.x,
+      player.pos.y
+    );
+  }
 
-    const dxEnemyPlayer = enemyPos.x - playerPos.x;
-    const dyEnemyPlayer = enemyPos.y - playerPos.y;
-    const distanceToPlayerSq =
-      dxEnemyPlayer * dxEnemyPlayer + dyEnemyPlayer * dyEnemyPlayer;
+  function getPlayerDistanceFromInitialPosition(): number {
+    return getSquaredDistance(
+      player.pos.x,
+      player.pos.y,
+      enemy.initialPos.x,
+      enemy.initialPos.y
+    );
+  }
 
-    const dxPlayerInitial = playerPos.x - initialPos.x;
-    const dyPlayerInitial = playerPos.y - initialPos.y;
-    const distancePlayerFromInitialSq =
-      dxPlayerInitial * dxPlayerInitial + dyPlayerInitial * dyPlayerInitial;
+  function getDistanceToInitialPosition(): number {
+    return getSquaredDistance(
+      enemy.pos.x,
+      enemy.pos.y,
+      enemy.initialPos.x,
+      enemy.initialPos.y
+    );
+  }
 
-    const canReachPlayer =
-      distancePlayerFromInitialSq <=
-        enemy.maxPursuitDistance * enemy.maxPursuitDistance &&
-      distanceToPlayerSq < enemy.range * enemy.range;
+  function isPlayerWithinPursuitRange(): boolean {
+    const maxPursuitDistanceSq =
+      enemy.maxPursuitDistance * enemy.maxPursuitDistance;
+    return getPlayerDistanceFromInitialPosition() <= maxPursuitDistanceSq;
+  }
 
-    if (canReachPlayer) {
-      stateMachine.dispatch(FLYING_ENEMY_EVENTS.ALERT);
-      return;
-    }
+  function isPlayerInAttackRange(): boolean {
+    const attackRangeSq = enemy.range * enemy.range;
+    return getDistanceToPlayer() < attackRangeSq;
+  }
 
-    const dxEnemyInitial = enemyPos.x - initialPos.x;
-    const dyEnemyInitial = enemyPos.y - initialPos.y;
-    const distanceToInitialSq =
-      dxEnemyInitial * dxEnemyInitial + dyEnemyInitial * dyEnemyInitial;
+  function canReEngagePlayer(): boolean {
+    return isPlayerWithinPursuitRange() && isPlayerInAttackRange();
+  }
 
-    const isAtInitialPosition = distanceToInitialSq < RETURN_THRESHOLD_SQ;
+  function hasReachedInitialPosition(): boolean {
+    const thresholdSq = RETURN_THRESHOLD_DISTANCE * RETURN_THRESHOLD_DISTANCE;
+    return getDistanceToInitialPosition() < thresholdSq;
+  }
 
-    if (isAtInitialPosition) {
-      stateMachine.dispatch(FLYING_ENEMY_EVENTS.PATROL_RIGHT);
-      return;
-    }
+  function alertAndPursuePlayer(): void {
+    stateMachine.dispatch(FLYING_ENEMY_EVENTS.ALERT);
+  }
 
-    enemy.flipX = initialPos.x <= enemyPos.x;
-    enemy.moveTo(initialPos, enemy.speed);
-  });
+  function resumePatrol(): void {
+    stateMachine.dispatch(FLYING_ENEMY_EVENTS.PATROL_RIGHT);
+  }
 
-  function onExitScreen(): void {
-    const dx = enemy.pos.x - enemy.initialPos.x;
-    const dy = enemy.pos.y - enemy.initialPos.y;
-    const distSq = dx * dx + dy * dy;
+  function faceInitialPosition(): void {
+    enemy.flipX = enemy.initialPos.x <= enemy.pos.x;
+  }
 
-    if (distSq > POSITION_RESET_DISTANCE_SQ) {
-      enemy.pos.x = enemy.initialPos.x;
-      enemy.pos.y = enemy.initialPos.y;
+  function moveTowardsInitialPosition(): void {
+    faceInitialPosition();
+    enemy.moveTo(enemy.initialPos, enemy.speed);
+  }
+
+  function isTooFarFromHome(): boolean {
+    const maxDistanceSq = TELEPORT_RESET_DISTANCE * TELEPORT_RESET_DISTANCE;
+    return getDistanceToInitialPosition() > maxDistanceSq;
+  }
+
+  function teleportToInitialPosition(): void {
+    enemy.pos.x = enemy.initialPos.x;
+    enemy.pos.y = enemy.initialPos.y;
+  }
+
+  function handleExitScreen(): void {
+    if (isTooFarFromHome()) {
+      teleportToInitialPosition();
     }
   }
 
-  enemy.onExitScreen(onExitScreen);
+  engine.onUpdate(() => {
+    if (shouldStopReturning()) return;
+
+    if (canReEngagePlayer()) {
+      alertAndPursuePlayer();
+      return;
+    }
+
+    if (hasReachedInitialPosition()) {
+      resumePatrol();
+      return;
+    }
+
+    moveTowardsInitialPosition();
+  });
+
+  enemy.onExitScreen(handleExitScreen);
 }

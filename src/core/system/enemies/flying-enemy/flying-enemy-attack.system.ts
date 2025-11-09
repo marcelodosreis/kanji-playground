@@ -12,6 +12,9 @@ type Params = {
   stateMachine: FlyingEnemyStateMachine;
 };
 
+const MAX_ATTACK_DURATION_SECONDS = 2;
+const PLAYER_VERTICAL_OFFSET = 12;
+
 export function FlyingEnemyAttackSystem({
   engine,
   enemy,
@@ -19,40 +22,74 @@ export function FlyingEnemyAttackSystem({
   stateMachine,
 }: Params) {
   let attackTimer = 0;
-  const MAX_ATTACK_DURATION = 2;
+
+  function resetAttackTimer(): void {
+    attackTimer = 0;
+  }
+
+  function shouldStopAttacking(): boolean {
+    return !stateMachine.isAttacking() || isPaused();
+  }
+
+  function canContinueAttack(): boolean {
+    return enemy.hp() > 0 && !enemy.isKnockedBack;
+  }
+
+  function hasAttackTimedOut(): boolean {
+    return attackTimer >= MAX_ATTACK_DURATION_SECONDS;
+  }
+
+  function isFarFromInitialPosition(): boolean {
+    return enemy.pos.dist(enemy.initialPos) > enemy.patrolDistance;
+  }
+
+  function hasPursuitLimitExceeded(): boolean {
+    const maxDistanceFromHome = enemy.maxPursuitDistance + enemy.patrolDistance;
+    return enemy.pos.dist(enemy.initialPos) > maxDistanceFromHome;
+  }
+
+  function returnToInitialPosition(): void {
+    resetAttackTimer();
+    stateMachine.dispatch(FLYING_ENEMY_EVENTS.RETURN);
+  }
+
+  function facePlayer(): void {
+    enemy.flipX = player.pos.x <= enemy.pos.x;
+  }
+
+  function getPlayerTargetPosition() {
+    return engine.vec2(player.pos.x, player.pos.y + PLAYER_VERTICAL_OFFSET);
+  }
+
+  function pursuePlayer(): void {
+    facePlayer();
+    enemy.moveTo(getPlayerTargetPosition(), enemy.pursuitSpeed);
+  }
 
   engine.onUpdate(() => {
-    if (!stateMachine.isAttacking() || isPaused()) {
-      attackTimer = 0;
+    if (shouldStopAttacking()) {
+      resetAttackTimer();
       return;
     }
 
     attackTimer += engine.dt();
 
-    if (attackTimer >= MAX_ATTACK_DURATION) {
-      attackTimer = 0;
-      if (enemy.pos.dist(enemy.initialPos) > enemy.patrolDistance) {
-        stateMachine.dispatch(FLYING_ENEMY_EVENTS.RETURN);
+    if (hasAttackTimedOut()) {
+      if (isFarFromInitialPosition()) {
+        returnToInitialPosition();
+      } else {
+        resetAttackTimer();
       }
       return;
     }
 
-    if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
+    if (!canContinueAttack()) return;
 
-    const isBeyondPursuitLimit =
-      enemy.pos.dist(enemy.initialPos) >
-      enemy.maxPursuitDistance + enemy.patrolDistance;
-
-    if (isBeyondPursuitLimit) {
-      attackTimer = 0;
-      stateMachine.dispatch(FLYING_ENEMY_EVENTS.RETURN);
+    if (hasPursuitLimitExceeded()) {
+      returnToInitialPosition();
       return;
     }
 
-    enemy.flipX = player.pos.x <= enemy.pos.x;
-    enemy.moveTo(
-      engine.vec2(player.pos.x, player.pos.y + 12),
-      enemy.pursuitSpeed
-    );
+    pursuePlayer();
   });
 }

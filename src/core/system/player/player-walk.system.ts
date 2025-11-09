@@ -16,7 +16,7 @@ type MovementState = {
   isMoving: boolean;
 };
 
-const MOVEMENT_CONFIG = {
+const MOVEMENT = {
   KEYS: {
     LEFT: "left",
     RIGHT: "right",
@@ -28,99 +28,96 @@ const MOVEMENT_CONFIG = {
 } as const;
 
 const isMovementKey = (key: string): boolean =>
-  key === MOVEMENT_CONFIG.KEYS.LEFT || key === MOVEMENT_CONFIG.KEYS.RIGHT;
+  key === MOVEMENT.KEYS.LEFT || key === MOVEMENT.KEYS.RIGHT;
 
-const getDirectionFromKey = (key: string): Direction | null => {
-  if (key === MOVEMENT_CONFIG.KEYS.LEFT) return MOVEMENT_CONFIG.DIRECTION.LEFT;
-  if (key === MOVEMENT_CONFIG.KEYS.RIGHT)
-    return MOVEMENT_CONFIG.DIRECTION.RIGHT;
+const getDirection = (key: string): Direction | null => {
+  if (key === MOVEMENT.KEYS.LEFT) return MOVEMENT.DIRECTION.LEFT;
+  if (key === MOVEMENT.KEYS.RIGHT) return MOVEMENT.DIRECTION.RIGHT;
   return null;
 };
-
-const shouldFlipLeft = (direction: Direction): boolean =>
-  direction === MOVEMENT_CONFIG.DIRECTION.LEFT;
 
 const calculateVelocity = (direction: Direction, speed: number): number =>
   direction * speed;
 
-const isAnyMovementKeyPressed = (engine: Engine): boolean =>
-  engine.isKeyDown(MOVEMENT_CONFIG.KEYS.LEFT) ||
-  engine.isKeyDown(MOVEMENT_CONFIG.KEYS.RIGHT);
+const shouldFlipLeft = (direction: Direction): boolean =>
+  direction === MOVEMENT.DIRECTION.LEFT;
 
-const shouldTransitionToRun = (
+const isAnyMovementKeyPressed = (engine: Engine): boolean =>
+  engine.isKeyDown(MOVEMENT.KEYS.LEFT) || engine.isKeyDown(MOVEMENT.KEYS.RIGHT);
+
+const shouldRun = (
   player: Player,
   stateMachine: PlayerStateMachine
 ): boolean => {
-  const current = stateMachine.getState();
+  const state = stateMachine.getState();
   return (
     player.isGrounded() &&
-    current !== PLAYER_ANIMATIONS.RUN &&
-    current !== PLAYER_ANIMATIONS.ATTACK
+    state !== PLAYER_ANIMATIONS.RUN &&
+    state !== PLAYER_ANIMATIONS.ATTACK
   );
 };
 
-const shouldTransitionToIdle = (
+const shouldIdle = (
   player: Player,
   stateMachine: PlayerStateMachine
 ): boolean => {
-  const current = stateMachine.getState();
-  return current === PLAYER_ANIMATIONS.RUN && player.isGrounded();
+  const state = stateMachine.getState();
+  return state === PLAYER_ANIMATIONS.RUN && player.isGrounded();
 };
 
 export function PlayerWalkSystem({ engine, player, stateMachine }: Params) {
   player.controlHandlers = player.controlHandlers || [];
 
-  const movementState: MovementState = {
-    isMoving: false,
-  };
+  const movement: MovementState = { isMoving: false };
 
   const applyMovement = (direction: Direction): void => {
     const velocity = calculateVelocity(direction, player.speed);
     player.move(velocity, 0);
   };
 
-  const updatePlayerOrientation = (direction: Direction): void => {
+  const updateOrientation = (direction: Direction): void => {
     player.flipX = shouldFlipLeft(direction);
   };
 
   const move = (direction: Direction): void => {
     if (!stateMachine.canMove()) return;
 
-    movementState.isMoving = true;
+    movement.isMoving = true;
+    updateOrientation(direction);
+    applyMovement(direction);
 
-    if (stateMachine.isAttacking()) {
-      applyMovement(direction);
-      return;
-    }
-
-    if (shouldTransitionToRun(player, stateMachine)) {
+    if (!stateMachine.isAttacking() && shouldRun(player, stateMachine)) {
       stateMachine.dispatch("RUN");
     }
-
-    updatePlayerOrientation(direction);
-    applyMovement(direction);
   };
 
-  const handleMovementKeyDown = (key: string): void => {
+  const onKeyDown = (key: string): void => {
     if (isPaused() || !isMovementKey(key)) return;
-
-    const direction = getDirectionFromKey(key);
-    if (direction) {
-      move(direction);
-    }
+    const direction = getDirection(key);
+    if (direction) move(direction);
   };
 
   const handleMovementStop = (): void => {
-    if (!movementState.isMoving) return;
+    if (!movement.isMoving) return;
     if (isAnyMovementKeyPressed(engine)) return;
 
-    movementState.isMoving = false;
-
-    if (shouldTransitionToIdle(player, stateMachine)) {
+    movement.isMoving = false;
+    if (shouldIdle(player, stateMachine)) {
       stateMachine.dispatch("IDLE");
     }
   };
 
-  player.controlHandlers.push(engine.onKeyDown(handleMovementKeyDown));
-  engine.onUpdate(handleMovementStop);
+  const handleFallTransition = (): void => {
+    const state = stateMachine.getState();
+    if (state === PLAYER_ANIMATIONS.RUN && !player.isGrounded()) {
+      stateMachine.dispatch("FALL");
+    }
+  };
+
+  player.controlHandlers.push(engine.onKeyDown(onKeyDown));
+
+  engine.onUpdate(() => {
+    handleMovementStop();
+    handleFallTransition();
+  });
 }
