@@ -5,6 +5,7 @@ import type { FLYING_ENEMY_SPRITES } from "./sprites.enum";
 export interface Enemy extends EnemyEngineGameObj {
   speed: number;
   range: number;
+  patrolDistance: number;
   pursuitSpeed: number;
   maxPursuitDistance: number;
   initialPos: Vec2;

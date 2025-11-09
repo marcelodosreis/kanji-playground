@@ -29,9 +29,10 @@ export function FlyingEnemyEntity(
     engine.health(3),
     {
       speed: 90,
-      pursuitSpeed: 130,
       range: 90,
-      maxPursuitDistance: 300,
+      patrolDistance: 100,
+      pursuitSpeed: 130,
+      maxPursuitDistance: 150,
       initialPos: engine.vec2(initialPos.x, initialPos.y),
       isKnockedBack: false,
       behavior: sprite,

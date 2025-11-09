@@ -37,8 +37,9 @@ export function FlyingEnemyAttackSystem({
     if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
 
     const isBeyondPursuitLimit =
-      enemy.pos.dist(enemy.initialPos) > enemy.maxPursuitDistance;
-
+      enemy.pos.dist(enemy.initialPos) >
+      enemy.maxPursuitDistance + enemy.patrolDistance;
+      
     if (isBeyondPursuitLimit) {
       stateMachine.dispatch(FLYING_ENEMY_EVENTS.RETURN);
       return;
