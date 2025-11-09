@@ -48,13 +48,13 @@ export function BossCollisionSystem({ engine, boss, player, stateMachine }: Para
     boss.collisionIgnore = [TAGS.PLAYER];
     boss.unuse("body");
 
-    // const notification = engine.add(
-    //   createNotification(
-    //     engine,
-    //     "You unlocked a new ability!\nYou can now double jump."
-    //   )
-    // );
-    // engine.wait(3, () => notification.close());
+    const notification = engine.add(
+      createNotification(
+        engine,
+        "You unlocked a new ability!\nYou can now double jump."
+      )
+    );
+    engine.wait(3, () => notification.close());
   }
 
   boss.onCollide(TAGS.PLAYER, onPlayerCollision);

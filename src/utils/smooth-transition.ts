@@ -12,7 +12,7 @@ export interface smoothTransitionParams<V extends LerpValue> {
 
 export function smoothTransition<V extends LerpValue>(
   params: smoothTransitionParams<V>
-): any {
+) {
   const {
     engine,
     startValue,

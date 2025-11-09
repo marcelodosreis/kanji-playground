@@ -65,7 +65,7 @@ export class PlayerManager extends BaseEntityManager<Player> {
       stateMachine,
       boundValue: this.respawnConfig.bounds,
       destinationName: this.respawnConfig.roomName,
-      previousSceneData: { exitName: this.respawnConfig.exitName },
+      previousSceneData: this.previousSceneData,
       map: this.map,
       tiledMap: this.tiledMap,
       initialCameraPos: this.initialCameraPos,

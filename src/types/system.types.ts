@@ -1,4 +1,4 @@
-import type { Engine } from "./engine.type";
+import type { Engine, EngineGameObj } from "./engine.type";
 import type { Player } from "./player.interface";
 import type { Enemy } from "./enemy.interface";
 import type { TiledMap } from "./tiled-map.interface";
@@ -10,15 +10,13 @@ import type { PlayerStateMachine } from "../core/system/player/player-state-mach
 
 export type SystemInitializer<T = any> = (context: T) => void;
 
-
-
 export type PlayerSystemContext = {
   engine: Engine;
   player: Player;
   stateMachine: PlayerStateMachine;
   boundValue?: number;
   destinationName?: string;
-  previousSceneData?: any;
+  previousSceneData?: EngineGameObj;
   map: Map;
   tiledMap: TiledMap;
   initialCameraPos: { x: number; y: number };

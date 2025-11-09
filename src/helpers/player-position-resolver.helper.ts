@@ -1,4 +1,3 @@
-// src/helpers/player-position-resolver.helper.ts
 import type { EngineGameObj } from "../types/engine.type";
 import { TAGS } from "../types/tags.enum";
 import type { TiledMap, TiledObject } from "../types/tiled-map.interface";

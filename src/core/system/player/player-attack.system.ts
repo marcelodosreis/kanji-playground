@@ -1,5 +1,6 @@
+import { createTransientHitbox } from "../../../helpers/hitbox.helper";
 import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
-import type { Engine, EngineGameObj } from "../../../types/engine.type";
+import type { Engine } from "../../../types/engine.type";
 import type { Player } from "../../../types/player.interface";
 import { EXTRA_TAGS, HITBOX_TAGS } from "../../../types/tags.enum";
 import { applyKnockback } from "../../../utils/apply-knockback";
@@ -12,19 +13,8 @@ type Params = {
   stateMachine: PlayerStateMachine;
 };
 
-type SwordHitbox = EngineGameObj & {
-  destroy: () => void;
-};
-
-type HitboxConfig = {
-  width: number;
-  height: number;
-  offsetX: number;
-  offsetY: number;
-};
-
 type AttackState = {
-  currentHitbox: SwordHitbox | null;
+  currentHitboxDestroy: (() => void) | null;
   lastCheckedFrame: number;
 };
 
@@ -39,7 +29,7 @@ const ATTACK_CONFIG = {
   },
 };
 
-const createHitboxConfig = (isFlipped: boolean): HitboxConfig => ({
+const createHitboxConfig = (isFlipped: boolean) => ({
   width: ATTACK_CONFIG.HITBOX_DIMENSIONS.width,
   height: ATTACK_CONFIG.HITBOX_DIMENSIONS.height,
   offsetX: isFlipped ? -ATTACK_CONFIG.HITBOX_DIMENSIONS.width : 0,
@@ -62,46 +52,40 @@ export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
   player.controlHandlers = player.controlHandlers || [];
 
   const state: AttackState = {
-    currentHitbox: null,
+    currentHitboxDestroy: null,
     lastCheckedFrame: -1,
   };
 
-  const createSwordHitbox = (): SwordHitbox => {
+  const createSwordHitbox = () => {
     const config = createHitboxConfig(player.flipX);
-    const hitboxShape = new engine.Rect(
-      engine.vec2(0),
-      config.width,
-      config.height
-    );
 
-    const hitbox = player.add([
-      engine.pos(config.offsetX, config.offsetY),
-      engine.area({ shape: hitboxShape }),
-      HITBOX_TAGS.PLAYER_SWORD,
-    ]) as SwordHitbox;
-
-    hitbox.onCollide(EXTRA_TAGS.HITTABLE, (enemy: EngineGameObj) => {
-      applyKnockback({
-        engine,
-        target: player,
-        source: enemy,
-        strength: 0.4,
-      });
+    const { destroy } = createTransientHitbox({
+      engine,
+      owner: player,
+      width: config.width,
+      height: config.height,
+      offsetX: config.offsetX,
+      offsetY: config.offsetY,
+      tag: HITBOX_TAGS.PLAYER_SWORD,
+      collideWithTag: EXTRA_TAGS.HITTABLE,
+      onCollide: (enemy) => {
+        applyKnockback({
+          engine,
+          target: player,
+          source: enemy,
+          strength: 0.4,
+        });
+      },
     });
 
-    return hitbox;
+    state.currentHitboxDestroy = destroy;
   };
 
   const destroySwordHitbox = (): void => {
-    if (!state.currentHitbox) return;
-
-    if (typeof state.currentHitbox.destroy === "function") {
-      state.currentHitbox.destroy();
-    } else {
-      engine.destroy(state.currentHitbox as EngineGameObj);
+    if (state.currentHitboxDestroy) {
+      state.currentHitboxDestroy();
+      state.currentHitboxDestroy = null;
     }
-
-    state.currentHitbox = null;
   };
 
   const resetAttackState = (): void => {
@@ -110,11 +94,11 @@ export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
   };
 
   const handleHitboxLifecycle = (currentFrame: number): void => {
-    if (shouldCreateHitbox(currentFrame, state.currentHitbox !== null)) {
-      state.currentHitbox = createSwordHitbox();
+    if (shouldCreateHitbox(currentFrame, !!state.currentHitboxDestroy)) {
+      createSwordHitbox();
     }
 
-    if (shouldDestroyHitbox(currentFrame, state.currentHitbox !== null)) {
+    if (shouldDestroyHitbox(currentFrame, !!state.currentHitboxDestroy)) {
       destroySwordHitbox();
     }
   };

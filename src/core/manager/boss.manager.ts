@@ -1,4 +1,3 @@
-// src/managers/boss.manager.ts
 import type { TiledObject } from "../../types/tiled-map.interface";
 import { TAGS } from "../../types/tags.enum";
 import type { Boss } from "../../types/boss.interface";
