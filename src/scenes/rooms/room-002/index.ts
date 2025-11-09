@@ -1,10 +1,10 @@
-import type { Engine, EngineGameObj } from "../../../types/engine.type";
+import type { Engine } from "../../../types/engine.type";
 import type { TiledMap } from "../../../types/tiled-map.interface";
 import { MapManager } from "../../../core/manager/map.manager";
 import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
 import { setBackgroundColor } from "../../../utils/set-background-color";
-import { LEVEL_SCENES } from "../../../types/scenes.enum";
+import { LEVEL_SCENES, type SCENE_DATA } from "../../../types/scenes.enum";
 import { COLORS } from "../../../types/colors.enum";
 import { HealthPickupManager } from "../../../core/manager/health-pickup.manager";
 import { PauseManager } from "../../../core/manager/pause.manager";
@@ -12,7 +12,7 @@ import { PauseManager } from "../../../core/manager/pause.manager";
 type Room002Params = {
   engine: Engine;
   tiledMap: TiledMap;
-  previousSceneData: EngineGameObj;
+  previousSceneData: SCENE_DATA;
 };
 
 const CONFIG = {
@@ -34,7 +34,7 @@ const CONFIG = {
 export class Room002Scene {
   private engine: Engine;
   private tiledMap: TiledMap;
-  private previousSceneData: EngineGameObj;
+  private previousSceneData: SCENE_DATA;
   private config = CONFIG;
 
   constructor(params: Room002Params) {

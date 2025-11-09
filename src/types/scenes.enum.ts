@@ -8,3 +8,7 @@ export enum MENU_SCENES {
   CONTROLS = "menu-controls",
   FINAL = "final-exit",
 }
+
+export type SCENE_DATA = {
+  exitName?: string;
+};

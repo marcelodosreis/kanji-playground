@@ -6,13 +6,14 @@ import type { TiledMap, TiledObject } from "../../../types/tiled-map.interface";
 import { smoothTransition } from "../../../utils/smooth-transition";
 import { GLOBAL_STATE_CONTROLLER } from "../../global-state-controller";
 import { MapLayer, MapLayerHelper } from "../../../utils/map-layer-helper";
+import type { SCENE_DATA } from "../../../types/scenes.enum";
 
 type Params = {
   engine: Engine;
   map: Map;
   tiledMap: TiledMap;
   initialCameraPos: { x: number; y: number };
-  previousSceneExitName?: string | null;
+  previousSceneData?: SCENE_DATA;
 };
 
 type CameraZone = EngineGameObj & {
@@ -94,14 +95,14 @@ export function PlayerCameraSystem({
   map,
   tiledMap,
   initialCameraPos,
-  previousSceneExitName,
+  previousSceneData,
 }: Params): void {
   engine.camScale(CAMERA_CONFIG.SCALE);
 
   const bounds = calculateBounds(map, tiledMap);
 
   const setInitialPosition = (): void => {
-    if (shouldUsePlayerPosition(previousSceneExitName)) {
+    if (shouldUsePlayerPosition(previousSceneData?.exitName)) {
       const player = getPlayerFromEngine(engine);
       setCameraPosition(engine, player.pos.x, player.pos.y);
     } else {

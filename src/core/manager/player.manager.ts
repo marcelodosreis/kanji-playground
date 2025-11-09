@@ -6,15 +6,15 @@ import {
   BaseEntityManager,
   type BaseManagerParams,
 } from "../../types/entity-manager.abstract";
-import type { EngineGameObj } from "../../types/engine.type";
 import { createPlayerStateMachine } from "../system/player/player-state-machine";
 import { SystemRegistryFactory } from "../../factories/system-registry-factory";
+import type { SCENE_DATA } from "../../types/scenes.enum";
 
 type PositionOffset = { x: number; y: number };
 type RespawnConfig = { bounds: number; roomName: string; exitName?: string };
 
 export type PlayerManagerParams = BaseManagerParams & {
-  previousSceneData: EngineGameObj;
+  previousSceneData: SCENE_DATA;
   playerStartNames: string[];
   entranceExitMapping: Record<string, string>;
   positionOffset?: PositionOffset;
@@ -23,7 +23,7 @@ export type PlayerManagerParams = BaseManagerParams & {
 };
 
 export class PlayerManager extends BaseEntityManager<Player> {
-  private readonly previousSceneData: EngineGameObj;
+  private readonly previousSceneData: SCENE_DATA;
   private readonly playerStartNames: string[];
   private readonly entranceExitMapping: Record<string, string>;
   private readonly positionOffset: PositionOffset;
@@ -69,7 +69,6 @@ export class PlayerManager extends BaseEntityManager<Player> {
       map: this.map,
       tiledMap: this.tiledMap,
       initialCameraPos: this.initialCameraPos,
-      previousSceneExitName: this.previousSceneData?.exitName,
     });
 
     return player;

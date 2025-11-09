@@ -1,4 +1,4 @@
-import type { EngineGameObj } from "../types/engine.type";
+import type { SCENE_DATA } from "../types/scenes.enum";
 import { TAGS } from "../types/tags.enum";
 import type { TiledMap, TiledObject } from "../types/tiled-map.interface";
 import { MapLayer, MapLayerHelper } from "../utils/map-layer-helper";
@@ -6,7 +6,7 @@ import { MapLayer, MapLayerHelper } from "../utils/map-layer-helper";
 export class PlayerPositionResolver {
   static resolveStart(
     tiledMap: TiledMap,
-    previousSceneData: EngineGameObj,
+    previousSceneData: SCENE_DATA,
     playerStartNames: string[],
     entranceExitMapping: Record<string, string>
   ): TiledObject | undefined {
@@ -25,7 +25,7 @@ export class PlayerPositionResolver {
 
   private static findMatchingStart(
     pinObjects: TiledObject[],
-    previousSceneData: EngineGameObj,
+    previousSceneData: SCENE_DATA,
     playerStartNames: string[],
     entranceExitMapping: Record<string, string>
   ): TiledObject | undefined {
@@ -43,7 +43,7 @@ export class PlayerPositionResolver {
 
   private static isDefaultStart(
     object: TiledObject,
-    previousSceneData: EngineGameObj,
+    previousSceneData: SCENE_DATA,
     playerStartNames: string[]
   ): boolean {
     const isTaggedAsPlayer = object.name === TAGS.PLAYER;
@@ -54,7 +54,7 @@ export class PlayerPositionResolver {
 
   private static isEntranceExitMatch(
     object: TiledObject,
-    previousSceneData: EngineGameObj,
+    previousSceneData: SCENE_DATA,
     playerStartNames: string[],
     entranceExitMapping: Record<string, string>
   ): boolean {

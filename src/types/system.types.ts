@@ -1,4 +1,4 @@
-import type { Engine, EngineGameObj } from "./engine.type";
+import type { Engine } from "./engine.type";
 import type { Player } from "./player.interface";
 import type { Enemy } from "./enemy.interface";
 import type { TiledMap } from "./tiled-map.interface";
@@ -7,6 +7,7 @@ import type { Boss } from "./boss.interface";
 import type { BossStateMachine } from "../core/system/enemies/boss/boss-state-machine";
 import type { FlyingEnemyStateMachine } from "../core/system/enemies/flying-enemy/flying-enemy-state-machine";
 import type { PlayerStateMachine } from "../core/system/player/player-state-machine";
+import type { SCENE_DATA } from "./scenes.enum";
 
 export type SystemInitializer<T = any> = (context: T) => void;
 
@@ -16,11 +17,10 @@ export type PlayerSystemContext = {
   stateMachine: PlayerStateMachine;
   boundValue?: number;
   destinationName?: string;
-  previousSceneData?: EngineGameObj;
+  previousSceneData?: SCENE_DATA;
   map: Map;
   tiledMap: TiledMap;
   initialCameraPos: { x: number; y: number };
-  previousSceneExitName: string | null;
 };
 export type EnemySystemContext = {
   engine: Engine;
