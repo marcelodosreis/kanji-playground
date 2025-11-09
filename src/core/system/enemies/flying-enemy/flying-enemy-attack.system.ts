@@ -20,6 +20,9 @@ export function FlyingEnemyAttackSystem({
   player,
   stateMachine,
 }: Params) {
+  let attackTimer = 0;
+  const MAX_ATTACK_DURATION = 2; // 2 segundos
+
   async function onPlayerCollision(): Promise<void> {
     if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
     player.hurt(1, enemy);
@@ -32,15 +35,29 @@ export function FlyingEnemyAttackSystem({
   }
 
   engine.onUpdate(() => {
-    if (!stateMachine.isAttacking() || isPaused()) return;
+    if (!stateMachine.isAttacking() || isPaused()) {
+      attackTimer = 0;
+      return;
+    }
+
+    attackTimer += engine.dt();
+
+    if (attackTimer >= MAX_ATTACK_DURATION) {
+      attackTimer = 0;
+      if (enemy.pos.dist(enemy.initialPos) > enemy.patrolDistance) {
+        stateMachine.dispatch(FLYING_ENEMY_EVENTS.RETURN);
+      }
+      return;
+    }
 
     if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
 
     const isBeyondPursuitLimit =
       enemy.pos.dist(enemy.initialPos) >
       enemy.maxPursuitDistance + enemy.patrolDistance;
-      
+
     if (isBeyondPursuitLimit) {
+      attackTimer = 0;
       stateMachine.dispatch(FLYING_ENEMY_EVENTS.RETURN);
       return;
     }

@@ -12,8 +12,11 @@ type Params = {
   stateMachine: FlyingEnemyStateMachine;
 };
 
-const RETURN_THRESHOLD = 20;
-const POSITION_RESET_DISTANCE = 400;
+const RETURN_THRESHOLD_SQ = 20 * 20;
+const POSITION_RESET_DISTANCE_SQ = 400 * 400;
+const STUCK_CHECK_DURATION = 3;
+const POSITION_TOLERANCE = 5;
+const UNSTUCK_SPEED = 50;
 
 export function FlyingEnemyReturnSystem({
   engine,
@@ -21,36 +24,90 @@ export function FlyingEnemyReturnSystem({
   player,
   stateMachine,
 }: Params) {
+  let stuckCheckStartTime = 0;
+  let lastCheckedX = 0;
+  let isUnstucking = false;
+
   engine.onUpdate(() => {
-    if (!stateMachine.isReturning() || isPaused()) return;
+    if (!stateMachine.isReturning() || isPaused()) {
+      stuckCheckStartTime = 0;
+      isUnstucking = false;
+      return;
+    }
 
     if (enemy.hp() <= 0) return;
 
-    const distanceToPlayer = enemy.pos.dist(player.pos);
-    const distancePlayerFromInitial = player.pos.dist(enemy.initialPos);
+    const enemyPos = enemy.pos;
+    const playerPos = player.pos;
+    const initialPos = enemy.initialPos;
+
+    const dxEnemyPlayer = enemyPos.x - playerPos.x;
+    const dyEnemyPlayer = enemyPos.y - playerPos.y;
+    const distanceToPlayerSq =
+      dxEnemyPlayer * dxEnemyPlayer + dyEnemyPlayer * dyEnemyPlayer;
+
+    const dxPlayerInitial = playerPos.x - initialPos.x;
+    const dyPlayerInitial = playerPos.y - initialPos.y;
+    const distancePlayerFromInitialSq =
+      dxPlayerInitial * dxPlayerInitial + dyPlayerInitial * dyPlayerInitial;
+
     const canReachPlayer =
-      distancePlayerFromInitial <= enemy.maxPursuitDistance &&
-      distanceToPlayer < enemy.range;
+      distancePlayerFromInitialSq <=
+        enemy.maxPursuitDistance * enemy.maxPursuitDistance &&
+      distanceToPlayerSq < enemy.range * enemy.range;
 
     if (canReachPlayer) {
       stateMachine.dispatch(FLYING_ENEMY_EVENTS.ALERT);
+      stuckCheckStartTime = 0;
+      isUnstucking = false;
       return;
     }
 
-    const isAtInitialPosition =
-      enemy.pos.dist(enemy.initialPos) < RETURN_THRESHOLD;
+    const dxEnemyInitial = enemyPos.x - initialPos.x;
+    const dyEnemyInitial = enemyPos.y - initialPos.y;
+    const distanceToInitialSq =
+      dxEnemyInitial * dxEnemyInitial + dyEnemyInitial * dyEnemyInitial;
+
+    const isAtInitialPosition = distanceToInitialSq < RETURN_THRESHOLD_SQ;
 
     if (isAtInitialPosition) {
       stateMachine.dispatch(FLYING_ENEMY_EVENTS.PATROL_RIGHT);
+      stuckCheckStartTime = 0;
+      isUnstucking = false;
       return;
     }
 
-    enemy.flipX = enemy.initialPos.x <= enemy.pos.x;
-    enemy.moveTo(enemy.initialPos, enemy.speed);
+    const now = engine.time();
+
+    if (stuckCheckStartTime === 0) {
+      stuckCheckStartTime = now;
+      lastCheckedX = enemyPos.x;
+    } else if (now - stuckCheckStartTime >= STUCK_CHECK_DURATION) {
+      if (Math.abs(enemyPos.x - lastCheckedX) <= POSITION_TOLERANCE) {
+        isUnstucking = true;
+      }
+      stuckCheckStartTime = now;
+      lastCheckedX = enemyPos.x;
+    }
+
+    if (isUnstucking) {
+      enemyPos.y -= UNSTUCK_SPEED * engine.dt();
+
+      if (Math.abs(enemyPos.x - lastCheckedX) > POSITION_TOLERANCE) {
+        isUnstucking = false;
+      }
+    }
+
+    enemy.flipX = initialPos.x <= enemyPos.x;
+    enemy.moveTo(initialPos, enemy.speed);
   });
 
   function onExitScreen(): void {
-    if (enemy.pos.dist(enemy.initialPos) > POSITION_RESET_DISTANCE) {
+    const dx = enemy.pos.x - enemy.initialPos.x;
+    const dy = enemy.pos.y - enemy.initialPos.y;
+    const distSq = dx * dx + dy * dy;
+
+    if (distSq > POSITION_RESET_DISTANCE_SQ) {
       enemy.pos.x = enemy.initialPos.x;
       enemy.pos.y = enemy.initialPos.y;
     }

@@ -32,7 +32,7 @@ export function FlyingEnemyEntity(
       range: 90,
       patrolDistance: 100,
       pursuitSpeed: 130,
-      maxPursuitDistance: 150,
+      maxPursuitDistance: 110,
       initialPos: engine.vec2(initialPos.x, initialPos.y),
       isKnockedBack: false,
       behavior: sprite,
