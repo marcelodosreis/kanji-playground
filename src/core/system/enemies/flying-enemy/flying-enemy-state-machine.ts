@@ -2,6 +2,7 @@ import type { Enemy } from "../../../../types/enemy.interface";
 import type { Engine } from "../../../../types/engine.type";
 import { FLYING_ENEMY_EVENTS } from "../../../../types/events.enum";
 import type { Player } from "../../../../types/player.interface";
+import { FLYING_ENEMY_SPRITES } from "../../../../types/sprites.enum";
 import { StateMachine, type StateMachineConfig } from "../../../state-machine";
 
 type FlyingEnemyContext = {
@@ -84,7 +85,7 @@ class FlyingEnemyStateMachine extends StateMachine<FlyingEnemyContextWithMachine
     StatePredicates.canMove(this.getState() as FlyingEnemyState);
 }
 
-const createStateMachineConfig =
+const createFullStateMachineConfig =
   (): StateMachineConfig<FlyingEnemyContextWithMachine> => {
     const handlers = createStateHandlers();
 
@@ -141,11 +142,45 @@ const createStateMachineConfig =
     };
   };
 
+const createSimplePatrolConfig =
+  (): StateMachineConfig<FlyingEnemyContextWithMachine> => {
+    const handlers = createStateHandlers();
+
+    return {
+      initial: FLYING_ENEMY_EVENTS.PATROL_RIGHT,
+      states: {
+        [FLYING_ENEMY_EVENTS.PATROL_RIGHT]: {
+          onEnter: handlers[FLYING_ENEMY_EVENTS.PATROL_RIGHT],
+          transitions: {
+            [FLYING_ENEMY_EVENTS.PATROL_LEFT]: FLYING_ENEMY_EVENTS.PATROL_LEFT,
+            [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
+          },
+        },
+        [FLYING_ENEMY_EVENTS.PATROL_LEFT]: {
+          onEnter: handlers[FLYING_ENEMY_EVENTS.PATROL_LEFT],
+          transitions: {
+            [FLYING_ENEMY_EVENTS.PATROL_RIGHT]:
+              FLYING_ENEMY_EVENTS.PATROL_RIGHT,
+            [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
+          },
+        },
+        [FLYING_ENEMY_EVENTS.EXPLODE]: {
+          onEnter: handlers[FLYING_ENEMY_EVENTS.EXPLODE],
+          transitions: {},
+        },
+      },
+    };
+  };
+
 export function createFlyingEnemyStateMachine(
   context: FlyingEnemyContext
 ): FlyingEnemyStateMachine {
-  const config = createStateMachineConfig();
   const ctx = { ...context } as FlyingEnemyContextWithMachine;
+
+  const config =
+    ctx.enemy.behavior === FLYING_ENEMY_SPRITES.ORANGE
+      ? createSimplePatrolConfig()
+      : createFullStateMachineConfig();
 
   const stateMachine = new FlyingEnemyStateMachine(config, ctx);
   ctx.stateMachine = stateMachine;

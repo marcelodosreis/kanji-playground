@@ -154,17 +154,6 @@
                  "y":288
                 }, 
                 {
-                 "height":96,
-                 "id":8,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":32,
-                 "x":208,
-                 "y":224
-                }, 
-                {
                  "height":32,
                  "id":12,
                  "name":"",
@@ -279,7 +268,7 @@
                  "type":"fly_enemy",
                  "visible":true,
                  "width":0,
-                 "x":272,
+                 "x":256,
                  "y":272
                 }, 
                 {
@@ -364,7 +353,7 @@
                  "visible":true,
                  "width":0,
                  "x":464,
-                 "y":256
+                 "y":272
                 }],
          "opacity":1,
          "type":"objectgroup",

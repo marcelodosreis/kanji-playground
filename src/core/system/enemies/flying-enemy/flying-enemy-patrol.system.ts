@@ -4,6 +4,7 @@ import type { Player } from "../../../../types/player.interface";
 import type { FlyingEnemyStateMachine } from "./flying-enemy-state-machine";
 import { FLYING_ENEMY_EVENTS } from "../../../../types/events.enum";
 import { isPaused } from "../../../../utils/is-paused";
+import { FLYING_ENEMY_SPRITES } from "../../../../types/sprites.enum";
 
 type Params = {
   engine: Engine;
@@ -26,10 +27,14 @@ export function FlyingEnemyPatrolSystem({
     if (enemy.hp() <= 0 || isPaused()) return;
 
     const currentState = stateMachine.getState();
+
     const isPlayerInRange = enemy.pos.dist(player.pos) < enemy.range;
 
+    const behavior = enemy.behavior;
+    const shouldReactToPlayer = behavior !== FLYING_ENEMY_SPRITES.ORANGE;
+
     if (currentState === FLYING_ENEMY_EVENTS.PATROL_RIGHT) {
-      if (isPlayerInRange) {
+      if (isPlayerInRange && shouldReactToPlayer) {
         stateMachine.dispatch(FLYING_ENEMY_EVENTS.ALERT);
         patrolTimer = 0;
         return;
@@ -46,7 +51,7 @@ export function FlyingEnemyPatrolSystem({
     }
 
     if (currentState === FLYING_ENEMY_EVENTS.PATROL_LEFT) {
-      if (isPlayerInRange) {
+      if (isPlayerInRange && shouldReactToPlayer) {
         stateMachine.dispatch(FLYING_ENEMY_EVENTS.ALERT);
         patrolTimer = 0;
         return;
