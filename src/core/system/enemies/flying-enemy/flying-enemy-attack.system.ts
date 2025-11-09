@@ -21,7 +21,7 @@ export function FlyingEnemyAttackSystem({
   stateMachine,
 }: Params) {
   let attackTimer = 0;
-  const MAX_ATTACK_DURATION = 2; // 2 segundos
+  const MAX_ATTACK_DURATION = 2;
 
   async function onPlayerCollision(): Promise<void> {
     if (enemy.hp() <= 0 || enemy.isKnockedBack) return;

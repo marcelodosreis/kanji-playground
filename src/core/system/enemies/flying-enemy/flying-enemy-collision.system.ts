@@ -7,6 +7,7 @@ import {
 } from "../../../../types/events.enum";
 import { HITBOX_TAGS, TAGS } from "../../../../types/tags.enum";
 import { applyKnockback } from "../../../../utils/apply-knockback";
+import { FLYING_ENEMY_SPRITES } from "../../../../types/sprites.enum";
 
 type Params = {
   engine: Engine;
@@ -29,6 +30,7 @@ export function FlyingEnemyCollisionSystem({ engine, enemy, player }: Params) {
       target: enemy,
       source: player,
       strength: 2,
+      verticalPower: enemy.behavior === FLYING_ENEMY_SPRITES.PURPLE ? 40 : 0,
     });
   }
 

@@ -4,13 +4,24 @@ import type { Enemy } from "../../types/enemy.interface";
 import type { Engine } from "../../types/engine.type";
 import { FLYING_ENEMY_EVENTS } from "../../types/events.enum";
 import { EXTRA_TAGS, TAGS } from "../../types/tags.enum";
-import type { FLYING_ENEMY_SPRITES } from "../../types/sprites.enum";
+import { FLYING_ENEMY_SPRITES } from "../../types/sprites.enum";
 
 export function FlyingEnemyEntity(
   engine: Engine,
   initialPos: Vec2,
   sprite: FLYING_ENEMY_SPRITES
 ): Enemy {
+  let speed = 90
+
+  switch (sprite) {
+    case FLYING_ENEMY_SPRITES.ORANGE:
+      speed = 75
+      break
+    case FLYING_ENEMY_SPRITES.PURPLE:
+      speed = 90
+      break
+  }
+
   return engine.make([
     TAGS.FLY_ENEMY,
     EXTRA_TAGS.HITTABLE,
@@ -28,7 +39,7 @@ export function FlyingEnemyEntity(
     ]),
     engine.health(3),
     {
-      speed: 90,
+      speed,
       range: 90,
       patrolDistance: 100,
       pursuitSpeed: 130,
@@ -37,5 +48,5 @@ export function FlyingEnemyEntity(
       isKnockedBack: false,
       behavior: sprite,
     },
-  ]);
+  ])
 }
