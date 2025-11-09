@@ -17,7 +17,7 @@ type Params = {
 
 export function FlyingEnemyCollisionSystem({ engine, enemy, player }: Params) {
   let lastCollisionTime = 0;
-  const collisionCooldown = 0.6; // 600ms de cooldown
+  const collisionCooldown = 0.6;
 
   function onSwordHitboxCollision(): void {
     enemy.hurt(1);
@@ -26,7 +26,6 @@ export function FlyingEnemyCollisionSystem({ engine, enemy, player }: Params) {
   async function onPlayerCollision(): Promise<void> {
     const now = performance.now() / 1000;
     
-    // Se colidiu recentemente, ignora
     if (now - lastCollisionTime < collisionCooldown) return;
     if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
     
