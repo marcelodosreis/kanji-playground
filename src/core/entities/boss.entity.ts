@@ -21,6 +21,7 @@ export function BossEntity(engine: Engine, initialPos: Vec2): Boss {
       pursuitSpeed: 100,
       fireRange: 40,
       fireDuration: 1,
+      isKnockedBack: false,
     },
   ]);
 }

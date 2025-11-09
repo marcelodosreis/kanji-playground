@@ -1,46 +1,73 @@
-import { BossEntity } from "../entities/boss.entity";
-import type { Engine } from "../../types/engine.type";
-import type { Map } from "../../types/map.interface";
-import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
-import type { Boss } from "../../types/boss.interface";
+// src/managers/boss.manager.ts
+import type { TiledObject } from "../../types/tiled-map.interface";
 import { TAGS } from "../../types/tags.enum";
-import { AIBossSystem } from "../system/ai-boss.system";
-import { BossEventHandlerSystem } from "../system/boss-event-handler.system";import { MapLayer, MapLayerHelper } from "../../utils/map-layer-helper";
-;
+import type { Boss } from "../../types/boss.interface";
+import type { Player } from "../../types/player.interface";
+import {
+  BaseEntityManager,
+  type BaseManagerParams,
+} from "../../types/entity-manager.abstract";
+import { TiledObjectHelper } from "../../helpers/tiled-object.helper";
+import { EntityFactory } from "../../factories/entity-factory";
+import { getPlayer } from "../../utils/get-player";
+import { SystemRegistryFactory } from "../../factories/system-registry-factory";
+import { createBossStateMachine } from "../system/enemies/boss/boss-state-machine";
 
-type BossManagerParams = {
-  engine: Engine;
-  map: Map;
-  tiledMap: TiledMap;
-  isBossDefeated: boolean;
-};
+export type BossManagerParams = BaseManagerParams;
 
-export class BossManager {
-  public static setup({
-    engine,
-    map,
-    tiledMap,
-    isBossDefeated,
-  }: BossManagerParams): void {
-    if (isBossDefeated) return;
+export class BossManager extends BaseEntityManager<Boss[]> {
+  private constructor(params: BossManagerParams) {
+    super(params);
+  }
 
-    const bossPosition = this.getBossPosition(tiledMap);
-    if (!bossPosition) return;
+  public static setup(params: BossManagerParams): Boss[] {
+    const instance = new BossManager(params);
+    return instance.setup();
+  }
 
-    const boss = map.add<Boss>(
-      BossEntity(engine, engine.vec2(bossPosition.x, bossPosition.y))
+  public setup(): Boss[] {
+    const spawnPoints = this.resolveSpawnPositions();
+    return this.spawnEntities(spawnPoints);
+  }
+
+  private resolveSpawnPositions(): TiledObject[] {
+    const bossObj = TiledObjectHelper.findByName(this.tiledMap, TAGS.BOSS);
+    return bossObj ? [bossObj] : [];
+  }
+
+  private spawnEntities(spawnPoints: TiledObject[]): Boss[] {
+    const player = getPlayer({ engine: this.engine });
+    if (!player) return [];
+
+    return spawnPoints.map((point) => {
+      const boss = this.createEntity(point);
+      this.initializeSystems(boss, player);
+      return boss;
+    });
+  }
+
+  private createEntity(position: TiledObject): Boss {
+    const boss = EntityFactory.createBoss(
+      this.engine,
+      this.map,
+      position.x,
+      position.y
     );
-
-    this.initSystems(engine, boss);
+    return boss;
   }
 
-  private static initSystems(engine: Engine, boss: Boss): void {
-    AIBossSystem({ engine, boss });
-    BossEventHandlerSystem({ engine, boss });
-  }
+  private initializeSystems(boss: Boss, player: Player): void {
+    const stateMachine = createBossStateMachine({
+      engine: this.engine,
+      boss,
+      player,
+    });
 
-  private static getBossPosition(tiledMap: TiledMap): TiledObject | undefined {
-    const objects = MapLayerHelper.getObjects(tiledMap, MapLayer.PIN);
-    return objects.find((pos) => pos.name === TAGS.BOSS);
+    SystemRegistryFactory.registerBossSystems({
+      engine: this.engine,
+      boss,
+      player,
+      stateMachine,
+    });
   }
 }

@@ -3,7 +3,6 @@ import { FlyingEnemyManager } from "../../../core/manager/flying-enemy.manager";
 import { MapManager } from "../../../core/manager/map.manager";
 import { PlayerManager } from "../../../core/manager/player.manager";
 import { UIManager } from "../../../core/manager/ui.manager";
-import { GLOBAL_STATE_CONTROLLER } from "../../../core/global-state-controller";
 import { COLORS } from "../../../types/colors.enum";
 import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import { LEVEL_SCENES } from "../../../types/scenes.enum";
@@ -72,7 +71,7 @@ export class Room001Scene {
     });
 
     FlyingEnemyManager.setup({
-      map: map,
+      map,
       engine: this.engine,
       tiledMap: this.tiledMap,
     });
@@ -86,10 +85,9 @@ export class Room001Scene {
     PauseManager.setup({ engine: this.engine });
 
     BossManager.setup({
-      map: map,
+      map,
       engine: this.engine,
       tiledMap: this.tiledMap,
-      isBossDefeated: GLOBAL_STATE_CONTROLLER.current().isBossDefeated,
     });
 
     UIManager.setup({

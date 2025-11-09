@@ -1,9 +1,13 @@
+import { BossAnimationSystem } from "../core/system/enemies/boss/boss-animation.system";
+import { BossAttackSystem } from "../core/system/enemies/boss/boss-attack.system";
+import { BossCollisionSystem } from "../core/system/enemies/boss/boss-colision.system";
 import { FlyingEnemyAlertSystem } from "../core/system/enemies/flying-enemy/flying-enemy-alert.system";
 import { FlyingEnemyAnimationSystem } from "../core/system/enemies/flying-enemy/flying-enemy-animation.system";
 import { FlyingEnemyAttackSystem } from "../core/system/enemies/flying-enemy/flying-enemy-attack.system";
 import { FlyingEnemyCollisionSystem } from "../core/system/enemies/flying-enemy/flying-enemy-collision.system";
 import { FlyingEnemyPatrolSystem } from "../core/system/enemies/flying-enemy/flying-enemy-patrol.system";
 import { FlyingEnemyReturnSystem } from "../core/system/enemies/flying-enemy/flying-enemy-return.system";
+
 import { PlayerAnimationSystem } from "../core/system/player/player-animation.system";
 import { PlayerAttackSystem } from "../core/system/player/player-attack.system";
 import { PlayerBoundarySystem } from "../core/system/player/player-boundary.system";
@@ -12,9 +16,11 @@ import { PlayerHealthSystem } from "../core/system/player/player-health.system";
 import { PlayerJumpSystem } from "../core/system/player/player-jump.system";
 import { PlayerPassthroughSystem } from "../core/system/player/player-passthrough.system";
 import { PlayerWalkSystem } from "../core/system/player/player-walk.system";
+
 import type {
   PlayerSystemContext,
   EnemySystemContext,
+  BossSystemContext,
 } from "../types/system.types";
 
 export class SystemRegistryFactory {
@@ -96,6 +102,28 @@ export class SystemRegistryFactory {
     FlyingEnemyAnimationSystem({
       engine: context.engine,
       enemy: context.enemy,
+    });
+  }
+
+  static registerBossSystems(context: BossSystemContext): void {
+    BossAttackSystem({
+      engine: context.engine,
+      boss: context.boss,
+      player: context.player,
+      stateMachine: context.stateMachine,
+    });
+
+    BossAnimationSystem({
+      engine: context.engine,
+      boss: context.boss,
+      stateMachine: context.stateMachine,
+    });
+
+    BossCollisionSystem({
+      engine: context.engine,
+      boss: context.boss,
+      player: context.player,
+      stateMachine: context.stateMachine,
     });
   }
 }
