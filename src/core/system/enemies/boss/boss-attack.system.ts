@@ -94,25 +94,20 @@ export function BossAttackSystem({
 
   engine.onUpdate(() => {
     if (boss.hp() <= 0 || isPaused()) return;
-
     const state = stateMachine.getState();
-
+    
     if (state !== prevState) {
       if (state === BOSS_EVENTS.FIRE) {
         createFireHitbox();
         scheduleShutFire();
-      }
-
-      if (prevState === BOSS_EVENTS.FIRE && state !== BOSS_EVENTS.FIRE) {
+      } else if (state === BOSS_EVENTS.SHUT_FIRE || state === BOSS_EVENTS.RUN) {
+        destroyFireHitboxes();
+      } else if (state === BOSS_EVENTS.EXPLODE) {
+        destroyFireHitboxes();
         fireTimerScheduled = false;
       }
 
-      if (state === BOSS_EVENTS.SHUT_FIRE) {
-        destroyFireHitboxes();
-      }
-
-      if (state === BOSS_EVENTS.EXPLODE) {
-        destroyFireHitboxes();
+      if (prevState === BOSS_EVENTS.FIRE && state !== BOSS_EVENTS.FIRE) {
         fireTimerScheduled = false;
       }
 

@@ -59,15 +59,12 @@ export function BossAnimationSystem({ engine, boss, stateMachine }: Params) {
   function onAnimationEnd(anim: string) {
     switch (anim) {
       case BURNER_ANIMATIONS.OPEN_FIRE:
-
         stateMachine.dispatch(BOSS_EVENTS.FIRE);
         break;
       case BURNER_ANIMATIONS.SHUT_FIRE:
-
         stateMachine.dispatch(BOSS_EVENTS.RUN);
         break;
       case BURNER_ANIMATIONS.EXPLODE:
-
         engine.destroy(boss);
         break;
       default:
