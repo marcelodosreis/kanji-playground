@@ -1,3 +1,4 @@
+// jump-logic-system.ts
 import type { Player } from "../../../../types/player.interface";
 import { GLOBAL_STATE } from "../../../../types/global-state.enum";
 import { GLOBAL_STATE_CONTROLLER } from "../../../global-state-controller";
@@ -8,6 +9,7 @@ type JumpLogicParams = {
 };
 
 const MAX_JUMPS = 2;
+const COYOTE_TIME_MS = 50;
 
 export function PlayerJumpLogicSystem({
   player,
@@ -15,6 +17,7 @@ export function PlayerJumpLogicSystem({
 }: JumpLogicParams) {
   let jumpsPerformed = 0;
   let wasGrounded = player.isGrounded();
+  let leftGroundTimestamp = wasGrounded ? -Infinity : Date.now();
 
   const syncDoubleJumpUnlock = (): void => {
     const isUnlocked =
@@ -24,10 +27,32 @@ export function PlayerJumpLogicSystem({
     }
   };
 
-  const executeJump = (): boolean => {
+  const updateGroundedTimestamps = (): void => {
+    const isGrounded = player.isGrounded();
+
+    if (!isGrounded && wasGrounded) {
+      leftGroundTimestamp = Date.now();
+    }
+
+    if (isGrounded && !wasGrounded) {
+      jumpsPerformed = 0;
+    }
+
+    wasGrounded = isGrounded;
+  };
+
+  const isWithinCoyoteTime = (): boolean => {
     if (player.isGrounded()) {
+      return true;
+    }
+    const now = Date.now();
+    return now - leftGroundTimestamp <= COYOTE_TIME_MS;
+  };
+
+  const executeJump = (): boolean => {
+    if (isWithinCoyoteTime()) {
       player.doubleJump();
-      jumpsPerformed = 1;
+      jumpsPerformed = Math.max(jumpsPerformed, 1);
       return true;
     }
 
@@ -43,17 +68,14 @@ export function PlayerJumpLogicSystem({
 
   const handleJumpRequest = (): void => {
     syncDoubleJumpUnlock();
-    if (executeJump()) {
+    const jumped = executeJump();
+    if (jumped) {
       onJumpExecuted();
     }
   };
 
   const resetJumpsOnLanding = (): void => {
-    const isGrounded = player.isGrounded();
-    if (isGrounded && !wasGrounded) {
-      jumpsPerformed = 0;
-    }
-    wasGrounded = isGrounded;
+    updateGroundedTimestamps();
   };
 
   return {
