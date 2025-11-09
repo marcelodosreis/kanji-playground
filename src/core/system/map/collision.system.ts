@@ -1,7 +1,7 @@
 import type { Engine } from "../../../types/engine.type";
 import type { Map } from "../../../types/map.interface";
 import type { TiledMap, TiledObject } from "../../../types/tiled-map.interface";
-import { MapLayer, MapLayerHelper } from "../../../utils/map-layer-helper";
+import { MapLayer, MapLayerHelper } from "../../../helpers/map-layer-helper";
 import { MAP_TAGS } from "../../../types/tags.enum";
 
 type Params = {

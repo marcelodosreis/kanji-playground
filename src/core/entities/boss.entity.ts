@@ -1,9 +1,10 @@
 import type { Vec2 } from "kaplay";
-import { SPRITES, BURNER_ANIMATIONS } from "../../types/animations.enum";
+import { BURNER_ANIMATIONS } from "../../types/animations.enum";
 import type { Boss } from "../../types/boss.interface";
 import type { Engine } from "../../types/engine.type";
 import { BOSS_EVENTS } from "../../types/events.enum";
 import { EXTRA_TAGS, TAGS } from "../../types/tags.enum";
+import { SPRITES } from "../../types/sprites.enum";
 
 export function BossEntity(engine: Engine, initialPos: Vec2): Boss {
   return engine.make([

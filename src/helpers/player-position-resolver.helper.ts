@@ -1,7 +1,7 @@
 import type { SCENE_DATA } from "../types/scenes.enum";
 import { TAGS } from "../types/tags.enum";
 import type { TiledMap, TiledObject } from "../types/tiled-map.interface";
-import { MapLayer, MapLayerHelper } from "../utils/map-layer-helper";
+import { MapLayer, MapLayerHelper } from "./map-layer-helper";
 
 export class PlayerPositionResolver {
   static resolveStart(

@@ -5,12 +5,12 @@ import {
   BaseEntityManager,
   type BaseManagerParams,
 } from "../../types/entity-manager.abstract";
-import { TiledObjectHelper } from "../../helpers/tiled-object.helper";
 import { EntityFactory } from "../../factories/entity-factory";
 import type { Enemy } from "../../types/enemy.interface";
 import { getPlayer } from "../../utils/get-player";
 import { createFlyingEnemyStateMachine } from "../system/enemies/flying-enemy/flying-enemy-state-machine";
 import { SystemRegistryFactory } from "../../factories/system-registry-factory";
+import { MapLayer, MapLayerHelper } from "../../helpers/map-layer-helper";
 
 export type FlyingEnemyManagerParams = BaseManagerParams;
 
@@ -30,7 +30,9 @@ export class FlyingEnemyManager extends BaseEntityManager<Enemy[]> {
   }
 
   private resolveSpawnPositions(): TiledObject[] {
-    return TiledObjectHelper.findByType(this.tiledMap, TAGS.FLY_ENEMY);
+    return MapLayerHelper.getObjects(this.tiledMap, MapLayer.PIN).filter(
+      (obj) => obj.type === TAGS.FLY_ENEMY
+    );
   }
 
   private spawnEntities(positions: TiledObject[]): Enemy[] {
@@ -38,6 +40,7 @@ export class FlyingEnemyManager extends BaseEntityManager<Enemy[]> {
     if (!player) return [];
 
     return positions.map((pos) => {
+      console.log("[DEBUG]", pos);
       const enemy = this.createEntity(pos);
       this.initializeSystems(enemy, player);
       return enemy;
@@ -49,7 +52,8 @@ export class FlyingEnemyManager extends BaseEntityManager<Enemy[]> {
       this.engine,
       this.map,
       position.x,
-      position.y
+      position.y,
+      position.name
     );
   }
 

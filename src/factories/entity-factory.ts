@@ -6,15 +6,29 @@ import type { Boss } from "../types/boss.interface";
 import { PlayerEntity } from "../core/entities/player.entity";
 import { FlyingEnemyEntity } from "../core/entities/flying-enemy.entity";
 import { BossEntity } from "../core/entities/boss.entity";
+import { FLY_ENEMY_SPRITES } from "../types/sprites.enum";
 
 export class EntityFactory {
   static createPlayer(engine: Engine, map: Map): Player {
     return map.add<Player>(PlayerEntity(engine));
   }
 
-  static createFlyingEnemy(engine: Engine, map: Map, x: number, y: number): Enemy {
+  static createFlyingEnemy(
+    engine: Engine,
+    map: Map,
+    x: number,
+    y: number,
+    name: string
+  ): Enemy {
     const pos = engine.vec2(x, y);
-    return map.add<Enemy>(FlyingEnemyEntity(engine, pos));
+    console.log(name);
+    const sprite =
+      name === FLY_ENEMY_SPRITES.PURPLE
+        ? FLY_ENEMY_SPRITES.PURPLE
+        : FLY_ENEMY_SPRITES.ORANGE;
+
+
+    return map.add<Enemy>(FlyingEnemyEntity(engine, pos, sprite));
   }
 
   static createBoss(engine: Engine, map: Map, x: number, y: number): Boss {

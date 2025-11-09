@@ -2,8 +2,8 @@ import {
   BURNER_ANIMATIONS,
   BAT_ANIMATIONS,
   PLAYER_ANIMATIONS,
-  SPRITES,
 } from "../../types/animations.enum";
+import { FLY_ENEMY_SPRITES, SPRITES } from "../../types/sprites.enum";
 import { engine } from "../engine";
 
 export function sprites(): void {
@@ -29,15 +29,34 @@ export function sprites(): void {
     },
   });
 
-  engine.loadSprite(SPRITES.BAT, "./v2/assets/sprites/bat.png", {
-    sliceX: 5,
-    sliceY: 3,
-    anims: {
-      [BAT_ANIMATIONS.EXPLODE]: { from: 6, to: 7 },
-      [BAT_ANIMATIONS.HURT]: { from: 6, to: 7, speed: 16 },
-      [BAT_ANIMATIONS.FLYING]: { from: 10, to: 14, loop: true },
-    },
-  });
+  engine.loadSprite(
+    FLY_ENEMY_SPRITES.PURPLE,
+    "./v2/assets/sprites/enemies/purple-bat.png",
+    {
+      sliceX: 5,
+      sliceY: 3,
+      anims: {
+        [BAT_ANIMATIONS.EXPLODE]: { from: 6, to: 7 },
+        [BAT_ANIMATIONS.HURT]: { from: 6, to: 7, speed: 16 },
+        [BAT_ANIMATIONS.FLYING]: { from: 10, to: 14, loop: true },
+      },
+    }
+  );
+
+    engine.loadSprite(
+    FLY_ENEMY_SPRITES.ORANGE,
+    "./v2/assets/sprites/enemies/orange-bat.png",
+    {
+      sliceX: 5,
+      sliceY: 3,
+      anims: {
+        [BAT_ANIMATIONS.EXPLODE]: { from: 6, to: 7 },
+        [BAT_ANIMATIONS.HURT]: { from: 6, to: 7, speed: 16 },
+        [BAT_ANIMATIONS.FLYING]: { from: 10, to: 14, loop: true },
+      },
+    }
+  );
+
 
   engine.loadSprite(SPRITES.BURNER, "./assets/sprites/burner.png", {
     sliceX: 5,

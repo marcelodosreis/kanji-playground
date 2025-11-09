@@ -1,7 +1,7 @@
 import type { TiledObject } from "../../types/tiled-map.interface";
 import { TAGS } from "../../types/tags.enum";
 
-import { MapLayer, MapLayerHelper } from "../../utils/map-layer-helper";
+import { MapLayer, MapLayerHelper } from "../../helpers/map-layer-helper";
 import type { EngineGameObj } from "../../types/engine.type";
 import type { Player } from "../../types/player.interface";
 import { HealthPickupEntity } from "../entities/health-pickup.entity";

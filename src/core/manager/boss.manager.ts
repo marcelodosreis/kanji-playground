@@ -6,11 +6,11 @@ import {
   BaseEntityManager,
   type BaseManagerParams,
 } from "../../types/entity-manager.abstract";
-import { TiledObjectHelper } from "../../helpers/tiled-object.helper";
 import { EntityFactory } from "../../factories/entity-factory";
 import { getPlayer } from "../../utils/get-player";
 import { SystemRegistryFactory } from "../../factories/system-registry-factory";
 import { createBossStateMachine } from "../system/enemies/boss/boss-state-machine";
+import { MapLayer, MapLayerHelper } from "../../helpers/map-layer-helper";
 
 export type BossManagerParams = BaseManagerParams;
 
@@ -30,8 +30,10 @@ export class BossManager extends BaseEntityManager<Boss[]> {
   }
 
   private resolveSpawnPositions(): TiledObject[] {
-    const bossObj = TiledObjectHelper.findByName(this.tiledMap, TAGS.BOSS);
-    return bossObj ? [bossObj] : [];
+    const boss = MapLayerHelper.getObjects(this.tiledMap, MapLayer.PIN).find(
+      (obj) => obj.name === TAGS.BOSS
+    );
+    return boss ? [boss] : [];
   }
 
   private spawnEntities(spawnPoints: TiledObject[]): Boss[] {

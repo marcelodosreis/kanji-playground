@@ -176,15 +176,15 @@
                  "y":288
                 }, 
                 {
-                 "height":8.09090909090909,
+                 "height":8.09091,
                  "id":15,
                  "name":"",
                  "rotation":0,
                  "type":"passthrough",
                  "visible":true,
-                 "width":30.9090909090909,
-                 "x":151.909090909091,
-                 "y":255.909090909091
+                 "width":30.9091,
+                 "x":151.909,
+                 "y":255.909
                 }, 
                 {
                  "height":288,
@@ -197,7 +197,7 @@
                          "value":"1000"
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"collider",
                  "visible":true,
                  "width":16,
                  "x":832,
@@ -264,7 +264,7 @@
                  "name":"player",
                  "point":true,
                  "rotation":0,
-                 "type":"",
+                 "type":"player",
                  "visible":true,
                  "width":0,
                  "x":48,
@@ -273,13 +273,13 @@
                 {
                  "height":0,
                  "id":17,
-                 "name":"fly_enemy",
+                 "name":"orange_fly_enemy",
                  "point":true,
                  "rotation":0,
                  "type":"fly_enemy",
                  "visible":true,
                  "width":0,
-                 "x":256,
+                 "x":272,
                  "y":272
                 }, 
                 {
@@ -288,7 +288,7 @@
                  "name":"boss",
                  "point":true,
                  "rotation":0,
-                 "type":"",
+                 "type":"boss",
                  "visible":true,
                  "width":0,
                  "x":1072,
@@ -348,11 +348,23 @@
                  "name":"entrance-1",
                  "point":true,
                  "rotation":0,
-                 "type":"entrance-1",
+                 "type":"entrance",
                  "visible":true,
                  "width":0,
                  "x":1088,
                  "y":80
+                }, 
+                {
+                 "height":0,
+                 "id":51,
+                 "name":"purple_fly_enemy",
+                 "point":true,
+                 "rotation":0,
+                 "type":"fly_enemy",
+                 "visible":true,
+                 "width":0,
+                 "x":464,
+                 "y":256
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -449,7 +461,7 @@
                  "id":33,
                  "name":"exit-1",
                  "rotation":0,
-                 "type":"",
+                 "type":"exit",
                  "visible":true,
                  "width":16,
                  "x":1104,
@@ -462,7 +474,7 @@
          "y":0
         }],
  "nextlayerid":10,
- "nextobjectid":51,
+ "nextobjectid":52,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
