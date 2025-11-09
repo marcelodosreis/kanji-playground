@@ -4,6 +4,8 @@ import type { Player } from "../../../../types/player.interface";
 import type { FlyingEnemyStateMachine } from "./flying-enemy-state-machine";
 import { FLYING_ENEMY_EVENTS } from "../../../../types/events.enum";
 import { isPaused } from "../../../../utils/is-paused";
+import { TAGS } from "../../../../types/tags.enum";
+import { applyKnockback } from "../../../../utils/apply-knockback";
 
 type Params = {
   engine: Engine;
@@ -18,6 +20,17 @@ export function FlyingEnemyAttackSystem({
   player,
   stateMachine,
 }: Params) {
+  async function onPlayerCollision(): Promise<void> {
+    if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
+    player.hurt(1, enemy);
+    await applyKnockback({
+      engine,
+      target: enemy,
+      source: player,
+      strength: 5,
+    });
+  }
+
   engine.onUpdate(() => {
     if (!stateMachine.isAttacking() || isPaused()) return;
 
@@ -37,4 +50,6 @@ export function FlyingEnemyAttackSystem({
       enemy.pursuitSpeed
     );
   });
+
+  enemy.onCollide(TAGS.PLAYER, onPlayerCollision);
 }

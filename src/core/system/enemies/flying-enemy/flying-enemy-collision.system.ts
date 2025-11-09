@@ -15,17 +15,6 @@ type Params = {
 };
 
 export function FlyingEnemyCollisionSystem({ engine, enemy, player }: Params) {
-  async function onPlayerCollision(): Promise<void> {
-    if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
-    player.hurt(1, enemy);
-    await applyKnockback({
-      engine,
-      target: enemy,
-      source: player,
-      strength: 5,
-    });
-  }
-
   function onSwordHitboxCollision(): void {
     enemy.hurt(1);
   }
@@ -48,7 +37,6 @@ export function FlyingEnemyCollisionSystem({ engine, enemy, player }: Params) {
     enemy.unuse("body");
   }
 
-  enemy.onCollide(TAGS.PLAYER, onPlayerCollision);
   enemy.onCollide(HITBOX_TAGS.PLAYER_SWORD, onSwordHitboxCollision);
   enemy.on(FLYING_ENEMY_EVENTS.EXPLODE, onExplode);
   enemy.on(ENGINE_DEFAULT_EVENTS.HURT, onHurt);

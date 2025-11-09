@@ -47,6 +47,7 @@ export class SystemRegistryFactory {
       player: context.player,
       boundValue: context.boundValue,
     });
+    console.log(context.previousSceneData);
     PlayerHealthSystem({
       engine: context.engine,
       player: context.player,
@@ -123,7 +124,6 @@ export class SystemRegistryFactory {
       engine: context.engine,
       boss: context.boss,
       player: context.player,
-      stateMachine: context.stateMachine,
     });
   }
 }
