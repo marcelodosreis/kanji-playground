@@ -6,8 +6,8 @@ type FirstJumpParams = {
 };
 
 const COYOTE_TIME_MS = 80;
-const HOLD_TIME_MS = 300;
-const HOLD_GRAVITY_SCALE = 0.34;
+const HOLD_TIME_MS = 380;
+const HOLD_GRAVITY_SCALE = 0.38;
 const SHORT_HOP_MULTIPLIER = 0.11;
 const JUMP_BUFFER_MS = 50;
 
@@ -104,7 +104,7 @@ export function PlayerFirstJumpSystem({
 
     player.jump();
     lastJumpTimestamp = Date.now();
-    hasReleasedAfterLastJump = false; // Marca que precisa soltar antes do próximo pulo
+    hasReleasedAfterLastJump = false;
     startHold();
     onJumpExecuted();
     return true;
@@ -112,7 +112,7 @@ export function PlayerFirstJumpSystem({
 
   const handleJumpRelease = (): void => {
     lastReleaseTimestamp = Date.now();
-    hasReleasedAfterLastJump = true; // Marca que soltou a tecla
+    hasReleasedAfterLastJump = true;
     endHold(true);
   };
 

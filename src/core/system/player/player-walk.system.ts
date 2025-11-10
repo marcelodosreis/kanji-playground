@@ -76,7 +76,9 @@ export function PlayerWalkSystem({ engine, player, stateMachine }: Params) {
   };
 
   const updateOrientation = (direction: Direction): void => {
-    player.flipX = shouldFlipLeft(direction);
+    if (!stateMachine.isAttacking()) {
+      player.flipX = shouldFlipLeft(direction);
+    }
   };
 
   const move = (direction: Direction): void => {

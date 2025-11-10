@@ -14,18 +14,27 @@ export function PlayerAnimationSystem({
   player,
   stateMachine,
 }: Params) {
-  let lastApplied: PLAYER_ANIMATIONS = PLAYER_ANIMATIONS.IDLE;
+  let lastState: PLAYER_ANIMATIONS | null = null;
+
+  const playAnimation = (state: PLAYER_ANIMATIONS): void => {
+    player.play(state);
+  };
+
+  const shouldSkipAnimationChange = (state: PLAYER_ANIMATIONS): boolean => {
+    if (state === PLAYER_ANIMATIONS.RUN && !player.isGrounded()) {
+      return true;
+    }
+    return false;
+  };
 
   engine.onUpdate(() => {
-    if (stateMachine.isAttacking()) return;
+    const currentState = stateMachine.getState() as PLAYER_ANIMATIONS;
 
-    const state = stateMachine.getState() as PLAYER_ANIMATIONS;
+    if (currentState === lastState) return;
 
-    if (state === PLAYER_ANIMATIONS.RUN && !player.isGrounded()) return;
+    if (shouldSkipAnimationChange(currentState)) return;
 
-    if (state !== lastApplied) {
-      player.play(state);
-      lastApplied = state;
-    }
+    playAnimation(currentState);
+    lastState = currentState;
   });
 }

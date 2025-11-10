@@ -33,21 +33,25 @@ export class SystemRegistryFactory {
       player: context.player,
       stateMachine: context.stateMachine,
     });
+
     PlayerWalkSystem({
       engine: context.engine,
       player: context.player,
       stateMachine: context.stateMachine,
     });
+
     PlayerAttackSystem({
       engine: context.engine,
       player: context.player,
       stateMachine: context.stateMachine,
     });
+
     PlayerBoundarySystem({
       engine: context.engine,
       player: context.player,
       boundValue: context.boundValue,
     });
+
     PlayerHealthSystem({
       engine: context.engine,
       player: context.player,
@@ -55,12 +59,15 @@ export class SystemRegistryFactory {
       previousSceneData: context.previousSceneData!,
       stateMachine: context.stateMachine,
     });
+
     PlayerAnimationSystem({
       engine: context.engine,
       player: context.player,
       stateMachine: context.stateMachine,
     });
+
     PlayerPassthroughSystem({ player: context.player });
+
     PlayerCameraSystem({
       engine: context.engine,
       map: context.map,
@@ -77,33 +84,39 @@ export class SystemRegistryFactory {
       player: context.player,
       stateMachine: context.stateMachine,
     });
+
     FlyingEnemyAlertSystem({
       engine: context.engine,
       enemy: context.enemy,
       player: context.player,
       stateMachine: context.stateMachine,
     });
+
     FlyingEnemyAttackSystem({
       engine: context.engine,
       enemy: context.enemy,
       player: context.player,
       stateMachine: context.stateMachine,
     });
+
     FlyingEnemyReturnSystem({
       engine: context.engine,
       enemy: context.enemy,
       player: context.player,
       stateMachine: context.stateMachine,
     });
+
     FlyingEnemyCollisionSystem({
       engine: context.engine,
       enemy: context.enemy,
       player: context.player,
     });
+
     FlyingEnemyAnimationSystem({
       engine: context.engine,
       enemy: context.enemy,
     });
+
     FlyingEnemyUnstuckSystem({
       engine: context.engine,
       enemy: context.enemy,
