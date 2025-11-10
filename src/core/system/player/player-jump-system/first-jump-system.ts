@@ -1,42 +1,28 @@
 import type { Player } from "../../../../types/player.interface";
-import { GLOBAL_STATE } from "../../../../types/global-state.enum";
-import { GLOBAL_STATE_CONTROLLER } from "../../../global-state-controller";
 
-type JumpLogicParams = {
+type FirstJumpParams = {
   player: Player;
   onJumpExecuted: () => void;
 };
 
-const MAX_JUMPS = 2;
 const COYOTE_TIME_MS = 160;
-const HOLD_TIME_MS = 280;
+const HOLD_TIME_MS = 260;
 const HOLD_GRAVITY_SCALE = 0.38;
 const SHORT_HOP_MULTIPLIER = 0.25;
 const JUMP_BUFFER_MS = 50;
-const DOUBLE_JUMP_FORCE = 320;
 
-export function PlayerJumpLogicSystem({
+export function PlayerFirstJumpSystem({
   player,
   onJumpExecuted,
-}: JumpLogicParams) {
-  let jumpsPerformed = 0;
+}: FirstJumpParams) {
   let wasGrounded = player.isGrounded();
   let leftGroundTimestamp = wasGrounded ? -Infinity : Date.now();
   let lastJumpTimestamp = -Infinity;
   let lastReleaseTimestamp = -Infinity;
-  let lastPressTimestamp = -Infinity;
 
   let holdActive = false;
   let holdStartTimestamp = 0;
   let savedGravityScale = player.gravityScale;
-
-  const syncDoubleJumpUnlock = (): void => {
-    const isUnlocked =
-      GLOBAL_STATE_CONTROLLER.current()[GLOBAL_STATE.IS_DOUBLE_JUMP_UNLOCKED];
-    if (isUnlocked && player.numJumps !== MAX_JUMPS) {
-      player.numJumps = MAX_JUMPS;
-    }
-  };
 
   const updateGroundedState = (): void => {
     const grounded = player.isGrounded();
@@ -49,7 +35,6 @@ export function PlayerJumpLogicSystem({
     if (grounded && !wasGrounded) {
       const timeSinceLastJump = now - lastJumpTimestamp;
       if (timeSinceLastJump > JUMP_BUFFER_MS) {
-        jumpsPerformed = 0;
         lastJumpTimestamp = -Infinity;
         endHold(false);
       }
@@ -92,56 +77,31 @@ export function PlayerJumpLogicSystem({
     }
   };
 
-  const executeJumpNow = (): boolean => {
+  const canExecuteFirstJump = (): boolean => {
     const now = Date.now();
     const timeSinceLastJump = now - lastJumpTimestamp;
 
-    const isFirstJump = isWithinCoyoteTime() && jumpsPerformed === 0;
-    const isDoubleJump = jumpsPerformed === 1 && player.numJumps >= 2;
-
-    if (isFirstJump && timeSinceLastJump < JUMP_BUFFER_MS) {
+    if (!isWithinCoyoteTime()) {
       return false;
     }
 
-    if (isFirstJump) {
-      player.jump();
-      jumpsPerformed = 1;
-      lastJumpTimestamp = now;
-      startHold();
-      return true;
+    if (timeSinceLastJump < JUMP_BUFFER_MS) {
+      return false;
     }
 
-    if (isDoubleJump) {
-      const hadReleaseAfterJump = lastReleaseTimestamp > lastJumpTimestamp;
-
-      if (!hadReleaseAfterJump) {
-        return false;
-      }
-
-      if (holdActive) {
-        endHold(false);
-      }
-
-      const velBefore = player.vel.y;
-      player.doubleJump(DOUBLE_JUMP_FORCE);
-      jumpsPerformed = 2;
-      lastJumpTimestamp = now;
-
-      if (Math.abs(player.vel.y - velBefore) < 1) {
-      }
-      return true;
-    }
-
-    return false;
+    return true;
   };
 
-  const handleJumpPress = (): void => {
-    lastPressTimestamp = Date.now();
-    syncDoubleJumpUnlock();
-    const didJump = executeJumpNow();
-    if (didJump) {
-      onJumpExecuted();
+  const executeFirstJump = (): boolean => {
+    if (!canExecuteFirstJump()) {
+      return false;
     }
+
+    player.jump();
+    lastJumpTimestamp = Date.now();
+    startHold();
+    onJumpExecuted();
+    return true;
   };
 
   const handleJumpRelease = (): void => {
@@ -162,9 +122,14 @@ export function PlayerJumpLogicSystem({
     }
   };
 
+  const getLastJumpTimestamp = (): number => lastJumpTimestamp;
+  const getLastReleaseTimestamp = (): number => lastReleaseTimestamp;
+
   return {
-    handleJumpPress,
+    executeFirstJump,
     handleJumpRelease,
     resetEachFrame,
+    getLastJumpTimestamp,
+    getLastReleaseTimestamp,
   };
 }
