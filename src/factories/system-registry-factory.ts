@@ -14,6 +14,7 @@ import { PlayerAttackSystem } from "../core/system/player/player-attack.system";
 import { PlayerBoundarySystem } from "../core/system/player/player-boundary.system";
 import { PlayerCameraSystem } from "../core/system/player/player-camera.system";
 import { PlayerHealthSystem } from "../core/system/player/player-health.system";
+import { PlayerRespawnSystem } from "../core/system/player/player-respawn.system";
 import { PlayerJumpSystem } from "../core/system/player/player-jump-system/player-jump.system";
 import { PlayerPassthroughSystem } from "../core/system/player/player-passthrough.system";
 import { PlayerWalkSystem } from "../core/system/player/player-walk.system";
@@ -55,9 +56,14 @@ export class SystemRegistryFactory {
     PlayerHealthSystem({
       engine: context.engine,
       player: context.player,
+      stateMachine: context.stateMachine,
+    });
+
+    PlayerRespawnSystem({
+      engine: context.engine,
+      player: context.player,
       destinationName: context.destinationName!,
       previousSceneData: context.previousSceneData!,
-      stateMachine: context.stateMachine,
     });
 
     PlayerAnimationSystem({

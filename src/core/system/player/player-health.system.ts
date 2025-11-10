@@ -2,11 +2,9 @@ import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
 import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import { ENGINE_DEFAULT_EVENTS } from "../../../types/events.enum";
 import type { Player } from "../../../types/player.interface";
-import { LEVEL_SCENES } from "../../../types/scenes.enum";
 import { GLOBAL_STATE } from "../../../types/global-state.enum";
 import { applyKnockback } from "../../../utils/apply-knockback";
 import { createBlink } from "../../../utils/create-blink";
-import { screenFadeIn } from "../../../utils/screen-fade-in";
 import { GLOBAL_STATE_CONTROLLER } from "../../global-state-controller";
 import { type PlayerStateMachine } from "./player-state-machine";
 
@@ -14,8 +12,6 @@ type Params = {
   engine: Engine;
   player: Player;
   stateMachine: PlayerStateMachine;
-  destinationName: string;
-  previousSceneData: { exitName?: string };
 };
 
 type HurtParams = {
@@ -35,7 +31,6 @@ type HurtLockState = {
 const HEALTH_CONFIG = {
   KNOCKBACK_STRENGTH: 1,
   BLINK_COUNT: 3,
-  MIN_HP_FOR_RESPAWN: 1,
   HURT_LOCK_DURATION_MS: 300,
 };
 
@@ -50,14 +45,8 @@ const setPlayerHP = (hp: number): void => {
 
 const isDead = (hp: number): boolean => hp <= 0;
 
-const isExplodeAnimation = (anim: string): boolean =>
-  anim === PLAYER_ANIMATIONS.EXPLODE;
-
 const isHurtAnimation = (anim: string): boolean =>
   anim === PLAYER_ANIMATIONS.HURT;
-
-const shouldRespawnWithFullLife = (currentHp: number): boolean =>
-  currentHp <= HEALTH_CONFIG.MIN_HP_FOR_RESPAWN;
 
 const calculateDamage = (current: number, amount: number): number =>
   current - amount;
@@ -75,25 +64,13 @@ const applyBlinkEffect = async (
   }
 };
 
-export function PlayerHealthSystem({
-  engine,
-  player,
-  stateMachine,
-  destinationName,
-  previousSceneData,
-}: Params) {
+export function PlayerHealthSystem({ engine, player, stateMachine }: Params) {
   const hurtLock: HurtLockState = {
     isLocked: false,
   };
 
   const syncPlayerHealth = (): void => {
     setPlayerHP(player.hp());
-  };
-
-  const respawnPlayerFullLife = (maxHp: number): void => {
-    setPlayerHP(maxHp);
-    GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, false);
-    engine.go(LEVEL_SCENES.ROOM_001, { exitName: null });
   };
 
   const handleDeath = (): void => {
@@ -150,39 +127,12 @@ export function PlayerHealthSystem({
     }
   };
 
-  const handleOutOfBounds = (): void => {
-    const { current, max } = getHealthState();
-
-    if (shouldRespawnWithFullLife(current)) {
-      respawnPlayerFullLife(max);
-    } else {
-      setPlayerHP(current - 1);
-      engine.go(destinationName, previousSceneData);
-    }
-  };
-
   const handleAnimationEnd = async (anim: string): Promise<void> => {
-    const LAST_EXPLODE_PLAYER_FRAME = 109;
-    if (
-      isExplodeAnimation(anim) &&
-      player.animFrame === LAST_EXPLODE_PLAYER_FRAME
-    ) {
-      const { max } = getHealthState();
-      await engine.wait(2);
-      await screenFadeIn({
-        engine,
-        durationSeconds: 0.4,
-      });
-      respawnPlayerFullLife(max);
-      return;
-    }
-
     if (isHurtAnimation(anim) && !hurtLock.isLocked) {
       stateMachine.dispatch("IDLE");
     }
   };
 
-  player.on("outOfBounds", handleOutOfBounds);
   player.onAnimEnd(handleAnimationEnd);
   player.on(ENGINE_DEFAULT_EVENTS.HEAL, syncPlayerHealth);
   player.on(ENGINE_DEFAULT_EVENTS.HURT, handleHurt);
