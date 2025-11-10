@@ -34,7 +34,7 @@ export function BossCollisionSystem({ engine, boss, player }: Params) {
 
   function updateGlobalStateOnBossDefeat(): void {
     GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_BOSS_DEFEATED, true);
-    GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_DOUBLE_JUMB_UNLOCKED, true);
+    GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_DOUBLE_JUMP_UNLOCKED, true);
   }
 
   function disableBossCollisions(boss: Boss): void {

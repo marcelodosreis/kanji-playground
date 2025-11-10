@@ -1,13 +1,13 @@
 import type { Engine } from "../../../../types/engine.type";
 import type { Player } from "../../../../types/player.interface";
 import { type PlayerStateMachine } from "../player-state-machine";
-import { isPaused } from "../../../../utils/is-paused";
 
 type JumpInputParams = {
   engine: Engine;
   player: Player;
   stateMachine: PlayerStateMachine;
-  onJumpRequested: () => void;
+  onJumpPressed: () => void;
+  onJumpReleased: () => void;
 };
 
 const JUMP_KEY = "x";
@@ -16,17 +16,27 @@ export function PlayerJumpInputSystem({
   engine,
   player,
   stateMachine,
-  onJumpRequested,
+  onJumpPressed,
+  onJumpReleased,
 }: JumpInputParams) {
-  const isJumpKey = (key: string): boolean => key === JUMP_KEY;
-
-  const canInitiateJump = (): boolean => !isPaused() && stateMachine.canMove();
-
-  const handleJumpKey = async (key: string): Promise<void> => {
-    if (isJumpKey(key) && canInitiateJump()) {
-      onJumpRequested();
-    }
+  const isJumpKey = (key: string): boolean => {
+    return key === JUMP_KEY;
   };
 
-  player.controlHandlers.push(engine.onKeyPress(handleJumpKey));
+  const handleKeyDown = (key: string): void => {
+    if (!isJumpKey(key)) {
+      return;
+    }
+    onJumpPressed();
+  };
+
+  const handleKeyRelease = (key: string): void => {
+    if (!isJumpKey(key)) {
+      return;
+    }
+    onJumpReleased();
+  };
+
+  player.controlHandlers.push(engine.onKeyDown(handleKeyDown));
+  player.controlHandlers.push(engine.onKeyRelease(handleKeyRelease));
 }

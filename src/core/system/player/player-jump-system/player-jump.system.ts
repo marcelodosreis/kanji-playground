@@ -19,9 +19,8 @@ export function PlayerJumpSystem({
 }: JumpSystemParams) {
   player.controlHandlers = player.controlHandlers || [];
 
-
-  PlayerJumpPhysicsSystem({ player });
   const animationSystem = PlayerJumpAnimationSystem({ player, stateMachine });
+  PlayerJumpPhysicsSystem({ player });
 
   const logicSystem = PlayerJumpLogicSystem({
     player,
@@ -34,11 +33,12 @@ export function PlayerJumpSystem({
     engine,
     player,
     stateMachine,
-    onJumpRequested: logicSystem.handleJumpRequest,
+    onJumpPressed: logicSystem.handleJumpPress,
+    onJumpReleased: logicSystem.handleJumpRelease,
   });
 
   engine.onUpdate(() => {
-    logicSystem.resetJumpsOnLanding();
+    logicSystem.resetEachFrame();
     animationSystem.updateAnimationState();
   });
 }
