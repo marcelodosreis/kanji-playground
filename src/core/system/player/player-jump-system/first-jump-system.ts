@@ -5,10 +5,10 @@ type FirstJumpParams = {
   onJumpExecuted: () => void;
 };
 
-const COYOTE_TIME_MS = 160;
-const HOLD_TIME_MS = 260;
-const HOLD_GRAVITY_SCALE = 0.38;
-const SHORT_HOP_MULTIPLIER = 0.25;
+const COYOTE_TIME_MS = 80;
+const HOLD_TIME_MS = 320;
+const HOLD_GRAVITY_SCALE = 0.56;
+const SHORT_HOP_MULTIPLIER = 0.06;
 const JUMP_BUFFER_MS = 50;
 
 export function PlayerFirstJumpSystem({

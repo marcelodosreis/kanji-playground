@@ -11,8 +11,8 @@ export function PlayerEntity(engine: Engine): Player {
     engine.sprite(TAGS.PLAYER),
     engine.area({ shape: new engine.Rect(engine.vec2(0, 18), 12, 12) }),
     engine.anchor("center"),
-    engine.body({ mass: 80, jumpForce: 200 }),
-    engine.doubleJump(2),
+    engine.body({ mass: 80, jumpForce: 218 }),
+    engine.doubleJump(1),
     engine.opacity(),
     engine.health(GLOBAL_STATE_CONTROLLER.current().playerHp),
     {
