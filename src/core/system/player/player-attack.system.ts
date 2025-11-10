@@ -16,6 +16,7 @@ type Params = {
 type AttackState = {
   currentHitboxDestroy: (() => void) | null;
   lastCheckedFrame: number;
+  lockedFlipX: boolean | null;
 };
 
 const ATTACK_CONFIG = {
@@ -54,6 +55,7 @@ export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
   const state: AttackState = {
     currentHitboxDestroy: null,
     lastCheckedFrame: -1,
+    lockedFlipX: null,
   };
 
   const createSwordHitbox = () => {
@@ -91,6 +93,7 @@ export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
   const resetAttackState = (): void => {
     destroySwordHitbox();
     state.lastCheckedFrame = -1;
+    state.lockedFlipX = null;
   };
 
   const handleHitboxLifecycle = (currentFrame: number): void => {
@@ -106,6 +109,10 @@ export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
   const checkAnimationFrame = (): void => {
     if (!isAttackAnimation(player.curAnim() as PLAYER_ANIMATIONS)) return;
 
+    if (state.lockedFlipX !== null) {
+      player.flipX = state.lockedFlipX;
+    }
+
     const currentFrame = player.animFrame;
     if (currentFrame === state.lastCheckedFrame) return;
 
@@ -116,8 +123,10 @@ export function PlayerAttackSystem({ engine, player, stateMachine }: Params) {
   const handleKeyPress = async (key: string): Promise<void> => {
     if (!canAttack(key, stateMachine)) return;
 
+    state.lockedFlipX = player.flipX;
     stateMachine.dispatch("ATTACK");
     resetAttackState();
+    state.lockedFlipX = player.flipX;
   };
 
   const onAttackAnimationEnd = (anim: string): void => {
