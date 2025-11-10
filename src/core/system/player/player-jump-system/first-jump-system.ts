@@ -6,8 +6,8 @@ type FirstJumpParams = {
 };
 
 const COYOTE_TIME_MS = 80;
-const HOLD_TIME_MS = 380;
-const HOLD_GRAVITY_SCALE = 0.38;
+const HOLD_TIME_MS = 300;
+const HOLD_GRAVITY_SCALE = 0.34;
 const SHORT_HOP_MULTIPLIER = 0.11;
 const JUMP_BUFFER_MS = 50;
 
