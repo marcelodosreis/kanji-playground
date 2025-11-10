@@ -24,10 +24,17 @@ import type {
   EnemySystemContext,
   BossSystemContext,
 } from "../types/system.types";
+import { PlayerOrientationSystem } from "../core/system/player/player-orientation.system";
 
 export class SystemRegistryFactory {
   static registerPlayerSystems(context: PlayerSystemContext): void {
     if (!context.boundValue) return;
+
+    const orientationSystem = PlayerOrientationSystem({
+      engine: context.engine,
+      player: context.player,
+      stateMachine: context.stateMachine,
+    });
 
     PlayerJumpSystem({
       engine: context.engine,
@@ -39,12 +46,14 @@ export class SystemRegistryFactory {
       engine: context.engine,
       player: context.player,
       stateMachine: context.stateMachine,
+      orientationSystem,
     });
 
     PlayerAttackSystem({
       engine: context.engine,
       player: context.player,
       stateMachine: context.stateMachine,
+      orientationSystem,
     });
 
     PlayerBoundarySystem({

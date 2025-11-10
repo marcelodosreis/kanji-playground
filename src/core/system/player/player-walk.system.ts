@@ -8,6 +8,9 @@ type Params = {
   engine: Engine;
   player: Player;
   stateMachine: PlayerStateMachine;
+  orientationSystem: {
+    requestOrientation: (direction: "left" | "right") => void;
+  };
 };
 
 type Direction = -1 | 1;
@@ -36,11 +39,11 @@ const getDirection = (key: string): Direction | null => {
   return null;
 };
 
+const getOrientationDirection = (direction: Direction): "left" | "right" =>
+  direction === MOVEMENT.DIRECTION.LEFT ? "left" : "right";
+
 const calculateVelocity = (direction: Direction, speed: number): number =>
   direction * speed;
-
-const shouldFlipLeft = (direction: Direction): boolean =>
-  direction === MOVEMENT.DIRECTION.LEFT;
 
 const isAnyMovementKeyPressed = (engine: Engine): boolean =>
   engine.isKeyDown(MOVEMENT.KEYS.LEFT) || engine.isKeyDown(MOVEMENT.KEYS.RIGHT);
@@ -65,7 +68,12 @@ const shouldIdle = (
   return state === PLAYER_ANIMATIONS.RUN && player.isGrounded();
 };
 
-export function PlayerWalkSystem({ engine, player, stateMachine }: Params) {
+export function PlayerWalkSystem({
+  engine,
+  player,
+  stateMachine,
+  orientationSystem,
+}: Params) {
   player.controlHandlers = player.controlHandlers || [];
 
   const movement: MovementState = { isMoving: false };
@@ -76,9 +84,7 @@ export function PlayerWalkSystem({ engine, player, stateMachine }: Params) {
   };
 
   const updateOrientation = (direction: Direction): void => {
-    if (!stateMachine.isAttacking()) {
-      player.flipX = shouldFlipLeft(direction);
-    }
+    orientationSystem.requestOrientation(getOrientationDirection(direction));
   };
 
   const move = (direction: Direction): void => {
