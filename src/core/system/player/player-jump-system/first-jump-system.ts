@@ -6,9 +6,9 @@ type FirstJumpParams = {
 };
 
 const COYOTE_TIME_MS = 80;
-const HOLD_TIME_MS = 320;
-const HOLD_GRAVITY_SCALE = 0.56;
-const SHORT_HOP_MULTIPLIER = 0.06;
+const HOLD_TIME_MS = 360;
+const HOLD_GRAVITY_SCALE = 0.39;
+const SHORT_HOP_MULTIPLIER = 0.26;
 const JUMP_BUFFER_MS = 50;
 
 export function PlayerFirstJumpSystem({
