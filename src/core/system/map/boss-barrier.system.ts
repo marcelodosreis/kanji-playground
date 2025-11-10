@@ -16,6 +16,8 @@ type Params = {
 };
 
 export function BossBarrierSystem({ engine, map, tiledMap }: Params): void {
+  if (GLOBAL_STATE_CONTROLLER.current()[GLOBAL_STATE.IS_BOSS_DEFEATED]) return;
+  
   const colliders = MapLayerHelper.getObjects(tiledMap, MapLayer.COLLIDERS);
   const barriers = colliders.filter(isBossBarrier);
 
@@ -34,7 +36,7 @@ function createBarrier(
   map: Map,
   collider: TiledObject
 ): BossBarrier {
-  return map.add(BossBarrierEntity(engine, collider)) as unknown as BossBarrier;
+  return map.add(BossBarrierEntity(engine, collider)) as BossBarrier;
 }
 
 function attachBarrierLogic(

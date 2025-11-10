@@ -24,7 +24,6 @@ export function PlayerJumpLogicSystem({
   let leftGroundTimestamp = wasGrounded ? -Infinity : Date.now();
   let lastJumpTimestamp = -Infinity;
   let lastReleaseTimestamp = -Infinity;
-  let lastPressTimestamp = -Infinity;
 
   let holdActive = false;
   let holdStartTimestamp = 0;
@@ -136,7 +135,6 @@ export function PlayerJumpLogicSystem({
   };
 
   const handleJumpPress = (): void => {
-    lastPressTimestamp = Date.now();
     syncDoubleJumpUnlock();
     const didJump = executeJumpNow();
     if (didJump) {

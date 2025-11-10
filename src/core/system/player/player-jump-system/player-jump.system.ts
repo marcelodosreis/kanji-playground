@@ -32,7 +32,6 @@ export function PlayerJumpSystem({
   PlayerJumpInputSystem({
     engine,
     player,
-    stateMachine,
     onJumpPressed: coordinatorSystem.handleJumpPress,
     onJumpReleased: coordinatorSystem.handleJumpRelease,
   });
