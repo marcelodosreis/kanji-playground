@@ -10,8 +10,10 @@ type Params = {
   tiledMap: TiledMap;
 };
 
-export function CollisionSystem({ engine, map, tiledMap }: Params): void {
+export function CollisionSystem({ engine, map, tiledMap }: Params) {
   const colliders = MapLayerHelper.getObjects(tiledMap, MapLayer.COLLIDERS);
+  // @ts-ignore
+  const navMesh = new NavMesh();
 
   for (const obj of colliders) {
     if (isBossBarrier(obj)) continue;
@@ -26,7 +28,24 @@ export function CollisionSystem({ engine, map, tiledMap }: Params): void {
     const position = engine.pos(obj.x, obj.y);
 
     map.add([position, shape, body, MAP_TAGS.COLLIDER, obj.type]);
+
+    if (isPolygon(obj)) {
+      const points = obj.polygon!.map((p) =>
+        engine.vec2(obj.x + p.x, obj.y + p.y)
+      );
+      navMesh.addPolygon(points);
+    } else {
+      const rectPoints = [
+        engine.vec2(obj.x, obj.y),
+        engine.vec2(obj.x + obj.width, obj.y),
+        engine.vec2(obj.x + obj.width, obj.y + obj.height),
+        engine.vec2(obj.x, obj.y + obj.height),
+      ];
+      navMesh.addPolygon(rectPoints);
+    }
   }
+
+  return navMesh;
 }
 
 function isPolygon(obj: TiledObject): boolean {
@@ -40,7 +59,6 @@ function isBossBarrier(obj: TiledObject): boolean {
 function createPolygonShape(engine: Engine, obj: TiledObject) {
   const points = obj.polygon?.map((p) => engine.vec2(p.x, p.y));
   if (!points?.length) return null;
-
   return engine.area({
     shape: new engine.Polygon(points),
     collisionIgnore: [MAP_TAGS.COLLIDER],

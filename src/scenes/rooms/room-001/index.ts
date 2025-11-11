@@ -48,13 +48,15 @@ export class Room001Scene {
   public initialize(): void {
     setBackgroundColor(this.engine, this.config.BACKGROUND_COLOR);
 
-    const map = MapManager.setup({
+    const { map, navMesh } = MapManager.setup({
       engine: this.engine,
       tiledMap: this.tiledMap,
       gravity: this.config.GRAVITY,
       mapSpriteName: this.config.MAP_SPRITE_NAME,
       exitRoomName: this.config.EXIT_ROOM_NAME,
     });
+
+    console.log('[DEBUG]', navMesh);
 
     PlayerManager.setup({
       map: map,

@@ -43,8 +43,8 @@ export function FlyingEnemyDetectionSystem({ enemy, player }: DetectionParams) {
     const distSq = getSquaredDistance(
       enemy.pos.x,
       enemy.pos.y,
-      player.pos.x,
-      player.pos.y
+      enemy.initialPos.x,
+      enemy.initialPos.y
     );
     return distSq <= maxPursuitDistanceSq;
   }
