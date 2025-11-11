@@ -48,7 +48,7 @@ export class Room002Scene {
   public initialize(): void {
     setBackgroundColor(this.engine, this.config.BACKGROUND_COLOR);
 
-    const map = MapManager.setup({
+    const { map } = MapManager.setup({
       engine: this.engine,
       tiledMap: this.tiledMap,
       gravity: this.config.GRAVITY,
