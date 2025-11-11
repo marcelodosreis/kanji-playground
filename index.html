@@ -12,10 +12,24 @@
       <canvas id="game" tabindex="0"></canvas>
       <div id="ui"></div>
     </div>
+
     <script type="module" src="./src/main.ts"></script>
     <script type="module" src="./src/ui/index.tsx"></script>
+
     <script>
       const canvas = document.getElementById("game");
+      const app = document.getElementById("app");
+
+      const updateCanvasVars = () => {
+        const rect = canvas.getBoundingClientRect();
+        document.documentElement.style.setProperty("--canvas-width", `${rect.width}px`);
+        document.documentElement.style.setProperty("--canvas-height", `${rect.height}px`);
+      };
+
+      new ResizeObserver(updateCanvasVars).observe(app);
+      window.addEventListener("load", updateCanvasVars);
+      window.addEventListener("resize", updateCanvasVars);
+
       window.addEventListener("load", () => canvas.focus());
       window.addEventListener("focus", () => canvas.focus());
       document.addEventListener("click", () => canvas.focus());

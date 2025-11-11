@@ -1,13 +1,12 @@
-import type { Engine, EngineGameObj } from "../../types/engine.type";
+import type { Engine } from "../../types/engine.type";
 import { GLOBAL_STATE } from "../../types/global-state.enum";
-import { createNotification } from "../../utils/create-notification";
+import { isPausedAtom, store } from "../../store";
 import { GLOBAL_STATE_CONTROLLER } from "../global-state-controller";
 
 type PauseManagerParams = { engine: Engine };
 
 export class PauseManager {
   private readonly engine: Engine;
-  private pauseNotification: EngineGameObj | null = null;
 
   private constructor(params: PauseManagerParams) {
     this.engine = params.engine;
@@ -33,22 +32,6 @@ export class PauseManager {
     const current = GLOBAL_STATE_CONTROLLER.current().isPaused;
     GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_PAUSED, !current);
 
-    if (!current) this.showNotification();
-    else this.hideNotification();
-  }
-
-  private showNotification(): void {
-    if (this.pauseNotification) return;
-    const notification = createNotification(
-      this.engine,
-      "PAUSED\n\nPress ESC to resume"
-    );
-    this.pauseNotification = this.engine.add(notification);
-  }
-
-  private hideNotification(): void {
-    if (!this.pauseNotification) return;
-    this.engine.destroy(this.pauseNotification);
-    this.pauseNotification = null;
+    store.set(isPausedAtom, (prev) => !prev);
   }
 }
