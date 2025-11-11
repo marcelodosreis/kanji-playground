@@ -9,10 +9,11 @@
   </head>
   <body>
     <div id="app">
-      <div id="ui"></div>
       <canvas id="game" tabindex="0"></canvas>
+      <div id="ui"></div>
     </div>
     <script type="module" src="./src/main.ts"></script>
+    <script type="module" src="./src/ui/index.tsx"></script>
     <script>
       const canvas = document.getElementById("game");
       window.addEventListener("load", () => canvas.focus());
