@@ -1,4 +1,3 @@
-import type { NavMesh } from "kaplay";
 import type { Engine } from "../../types/engine.type";
 import type { Map } from "../../types/map.interface";
 import type { TiledMap } from "../../types/tiled-map.interface";
@@ -15,7 +14,7 @@ type SetupParams = {
 };
 
 export class MapManager {
-  public static setup(params: SetupParams): { map: Map; navMesh: NavMesh } {
+  public static setup(params: SetupParams): { map: Map } {
     const manager = new MapManager();
     return manager.setupInstance(params);
   }
@@ -26,14 +25,15 @@ export class MapManager {
     gravity,
     mapSpriteName,
     exitRoomName,
-  }: SetupParams): { map: Map; navMesh: NavMesh } {
+  }: SetupParams): { map: Map } {
     this.configureEngine(engine, gravity);
     const map = this.createMap(engine, mapSpriteName);
-    const navMesh: NavMesh = CollisionSystem({ engine, map, tiledMap });
 
+    CollisionSystem({ engine, map, tiledMap });
     BossBarrierSystem({ engine, map, tiledMap });
     ExitSystem({ engine, map, tiledMap, exitRoomName });
-    return { map, navMesh };
+
+    return { map };
   }
 
   private configureEngine(engine: Engine, gravity: number): void {
