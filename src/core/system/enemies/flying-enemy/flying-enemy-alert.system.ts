@@ -33,8 +33,8 @@ export function FlyingEnemyAlertSystem({
   }
 
   function decideNextState(): void {
-    const isPlayerInRange = detection.isPlayerInRange();
-    const isWithinLimit = detection.isWithinPursuitLimit();
+    const isPlayerInRange = detection.isPlayerWithinCurrentRange();
+    const isWithinLimit = detection.isWithinCurrentPursuitLimit();
 
     if (isPlayerInRange && isWithinLimit) {
       stateMachine.dispatch(FLYING_ENEMY_EVENTS.ATTACK);

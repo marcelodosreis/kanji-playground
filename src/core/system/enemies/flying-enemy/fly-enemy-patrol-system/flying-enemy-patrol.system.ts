@@ -43,7 +43,7 @@ export function FlyingEnemyPatrolSystem({
 
   function tryAlertPlayer(): boolean {
     if (!isPatrolling()) return false;
-    if (!detection.isPlayerInRange()) return false;
+    if (!detection.isPlayerWithinCurrentRange()) return false;
     if (!shouldReactToPlayer()) return false;
 
     stateMachine.dispatch(FLYING_ENEMY_EVENTS.ALERT);

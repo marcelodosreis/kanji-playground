@@ -6,7 +6,7 @@ export function getPlayer({
   engine,
 }: {
   engine: Engine;
-}): Player | undefined {
+}): Player {
   const [player] = engine.get(TAGS.PLAYER, {
     recursive: true,
   }) as Player[];

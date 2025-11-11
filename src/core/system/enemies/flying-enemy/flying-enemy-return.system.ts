@@ -29,10 +29,7 @@ export function FlyingEnemyReturnSystem({
   }
 
   function canReEngagePlayer(): boolean {
-    return (
-      detection.isPlayerWithinPursuitRange() &&
-      detection.isPlayerInAttackRange()
-    );
+    return detection.isPlayerWithinCurrentRange();
   }
 
   function alertAndPursuePlayer(): void {

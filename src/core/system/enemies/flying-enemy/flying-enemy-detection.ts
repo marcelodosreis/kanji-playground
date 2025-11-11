@@ -26,11 +26,7 @@ export function FlyingEnemyDetectionSystem({ enemy, player }: DetectionParams) {
     return dx * dx + dy * dy;
   }
 
-  function isPlayerInRange(): boolean {
-    return getDistanceToPlayer() < enemy.range;
-  }
-
-  function isPlayerInAttackRange(): boolean {
+  function isPlayerWithinCurrentRange(): boolean {
     const attackRangeSq = enemy.range * enemy.range;
     const distSq = getSquaredDistance(
       enemy.pos.x,
@@ -38,21 +34,17 @@ export function FlyingEnemyDetectionSystem({ enemy, player }: DetectionParams) {
       player.pos.x,
       player.pos.y
     );
-    return distSq < attackRangeSq;
+    return distSq <= attackRangeSq;
   }
 
-  function isWithinPursuitLimit(): boolean {
-    return getDistanceToInitialPos() <= enemy.maxPursuitDistance;
-  }
-
-  function isPlayerWithinPursuitRange(): boolean {
+  function isWithinCurrentPursuitLimit(): boolean {
     const maxPursuitDistanceSq =
       enemy.maxPursuitDistance * enemy.maxPursuitDistance;
     const distSq = getSquaredDistance(
+      enemy.pos.x,
+      enemy.pos.y,
       player.pos.x,
-      player.pos.y,
-      enemy.initialPos.x,
-      enemy.initialPos.y
+      player.pos.y
     );
     return distSq <= maxPursuitDistanceSq;
   }
@@ -91,10 +83,8 @@ export function FlyingEnemyDetectionSystem({ enemy, player }: DetectionParams) {
   return {
     getDistanceToPlayer,
     getDistanceToInitialPos,
-    isPlayerInRange,
-    isPlayerInAttackRange,
-    isWithinPursuitLimit,
-    isPlayerWithinPursuitRange,
+    isPlayerWithinCurrentRange,
+    isWithinCurrentPursuitLimit,
     isFarFromInitialPosition,
     hasPursuitLimitExceeded,
     hasReachedInitialPosition,

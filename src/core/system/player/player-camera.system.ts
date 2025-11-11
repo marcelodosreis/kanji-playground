@@ -1,16 +1,17 @@
 import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import type { Map } from "../../../types/map.interface";
-import type { Player } from "../../../types/player.interface";
 import { MAP_TAGS, TAGS } from "../../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../../types/tiled-map.interface";
 import { smoothTransition } from "../../../utils/smooth-transition";
 import { GLOBAL_STATE_CONTROLLER } from "../../global-state-controller";
 import { MapLayer, MapLayerHelper } from "../../../helpers/map-layer-helper";
 import type { SCENE_DATA } from "../../../types/scenes.enum";
+import type { Player } from "../../../types/player.interface";
 
 type Params = {
   engine: Engine;
   map: Map;
+  player: Player,
   tiledMap: TiledMap;
   initialCameraPos: { x: number; y: number };
   previousSceneData?: SCENE_DATA;
@@ -30,9 +31,6 @@ const CAMERA_CONFIG = {
   HORIZONTAL_OFFSET: 160,
   TRANSITION_DURATION: 0.8,
 } as const;
-
-const getPlayerFromEngine = (engine: Engine): Player =>
-  engine.get(TAGS.PLAYER, { recursive: true })[0] as Player;
 
 const setCameraPosition = (engine: Engine, x: number, y: number): void => {
   engine.camPos(x, y);
@@ -92,6 +90,7 @@ const applyCameraTransition = (engine: Engine, targetY: number): void => {
 
 export function PlayerCameraSystem({
   engine,
+  player,
   map,
   tiledMap,
   initialCameraPos,
@@ -103,7 +102,6 @@ export function PlayerCameraSystem({
 
   const setInitialPosition = (): void => {
     if (shouldUsePlayerPosition(previousSceneData?.exitName)) {
-      const player = getPlayerFromEngine(engine);
       setCameraPosition(engine, player.pos.x, player.pos.y);
     } else {
       setCameraPosition(engine, initialCameraPos.x, initialCameraPos.y);
@@ -113,7 +111,6 @@ export function PlayerCameraSystem({
   const handleCameraFollow = (): void => {
     if (isInBossFight()) return;
 
-    const player = getPlayerFromEngine(engine);
     const targetX = clampCameraX(player.pos.x, bounds);
     setCameraPosition(engine, targetX, engine.camPos().y);
   };
