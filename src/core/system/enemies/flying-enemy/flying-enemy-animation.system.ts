@@ -3,12 +3,12 @@ import type { Enemy } from "../../../../types/enemy.interface";
 import { FLYING_ANIMATIONS } from "../../../../types/animations.enum";
 import { ENGINE_DEFAULT_EVENTS } from "../../../../types/events.enum";
 
-type Params = {
+type AnimationParams = {
   engine: Engine;
   enemy: Enemy;
 };
 
-export function FlyingEnemyAnimationSystem({ engine, enemy }: Params) {
+export function FlyingEnemyAnimationSystem({ engine, enemy }: AnimationParams) {
   engine.onUpdate(() => {
     if (!enemy.curAnim()) {
       enemy.play(FLYING_ANIMATIONS.FLYING);

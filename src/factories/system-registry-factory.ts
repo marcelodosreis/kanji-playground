@@ -1,13 +1,19 @@
+import { FlyingEnemyMovementSystem } from "../core/system/enemies/flying-enemy/flying-enemy-movement";
+import { FlyingEnemyDetectionSystem } from "../core/system/enemies/flying-enemy/flying-enemy-detection";
+import { FlyingEnemyPatrolDirectionSystem } from "../core/system/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol-direction";
+import { FlyingEnemyPatrolHeightSystem } from "../core/system/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol-height.system";
+
+import { FlyingEnemyPatrolSystem } from "../core/system/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol.system";
+import { FlyingEnemyAlertSystem } from "../core/system/enemies/flying-enemy/flying-enemy-alert.system";
+import { FlyingEnemyAttackSystem } from "../core/system/enemies/flying-enemy/flying-enemy-attack.system";
+import { FlyingEnemyReturnSystem } from "../core/system/enemies/flying-enemy/flying-enemy-return.system";
+import { FlyingEnemyUnstuckSystem } from "../core/system/enemies/flying-enemy/flying-enemy-unstuck.system";
+import { FlyingEnemyCollisionSystem } from "../core/system/enemies/flying-enemy/flying-enemy-collision.system";
+import { FlyingEnemyAnimationSystem } from "../core/system/enemies/flying-enemy/flying-enemy-animation.system";
+
 import { BossAnimationSystem } from "../core/system/enemies/boss/boss-animation.system";
 import { BossAttackSystem } from "../core/system/enemies/boss/boss-attack.system";
 import { BossCollisionSystem } from "../core/system/enemies/boss/boss-colision.system";
-import { FlyingEnemyAlertSystem } from "../core/system/enemies/flying-enemy/flying-enemy-alert.system";
-import { FlyingEnemyAnimationSystem } from "../core/system/enemies/flying-enemy/flying-enemy-animation.system";
-import { FlyingEnemyAttackSystem } from "../core/system/enemies/flying-enemy/flying-enemy-attack.system";
-import { FlyingEnemyCollisionSystem } from "../core/system/enemies/flying-enemy/flying-enemy-collision.system";
-import { FlyingEnemyPatrolSystem } from "../core/system/enemies/flying-enemy/flying-enemy-patrol.system";
-import { FlyingEnemyReturnSystem } from "../core/system/enemies/flying-enemy/flying-enemy-return.system";
-import { FlyingEnemyUnstuckSystem } from "../core/system/enemies/flying-enemy/flying-enemy-unstuck.system";
 
 import { PlayerAnimationSystem } from "../core/system/player/player-animation.system";
 import { PlayerAttackSystem } from "../core/system/player/player-attack.system";
@@ -18,13 +24,13 @@ import { PlayerRespawnSystem } from "../core/system/player/player-respawn.system
 import { PlayerJumpSystem } from "../core/system/player/player-jump-system/player-jump.system";
 import { PlayerPassthroughSystem } from "../core/system/player/player-passthrough.system";
 import { PlayerWalkSystem } from "../core/system/player/player-walk.system";
+import { PlayerOrientationSystem } from "../core/system/player/player-orientation.system";
 
 import type {
   PlayerSystemContext,
   EnemySystemContext,
   BossSystemContext,
 } from "../types/system.types";
-import { PlayerOrientationSystem } from "../core/system/player/player-orientation.system";
 
 export class SystemRegistryFactory {
   static registerPlayerSystems(context: PlayerSystemContext): void {
@@ -93,11 +99,35 @@ export class SystemRegistryFactory {
   }
 
   static registerFlyingEnemySystems(context: EnemySystemContext): void {
+    const movement = FlyingEnemyMovementSystem({
+      engine: context.engine,
+      enemy: context.enemy,
+    });
+
+    const detection = FlyingEnemyDetectionSystem({
+      enemy: context.enemy,
+      player: context.player,
+    });
+
+    const patrolDirection = FlyingEnemyPatrolDirectionSystem({
+      enemy: context.enemy,
+      stateMachine: context.stateMachine,
+    });
+
+    FlyingEnemyPatrolHeightSystem({
+      engine: context.engine,
+      enemy: context.enemy,
+      stateMachine: context.stateMachine,
+      movement,
+    });
+
     FlyingEnemyPatrolSystem({
       engine: context.engine,
       enemy: context.enemy,
-      player: context.player,
       stateMachine: context.stateMachine,
+      movement,
+      detection,
+      patrolDirection,
     });
 
     FlyingEnemyAlertSystem({
@@ -105,6 +135,8 @@ export class SystemRegistryFactory {
       enemy: context.enemy,
       player: context.player,
       stateMachine: context.stateMachine,
+      movement,
+      detection,
     });
 
     FlyingEnemyAttackSystem({
@@ -112,12 +144,22 @@ export class SystemRegistryFactory {
       enemy: context.enemy,
       player: context.player,
       stateMachine: context.stateMachine,
+      movement,
+      detection,
     });
 
     FlyingEnemyReturnSystem({
       engine: context.engine,
       enemy: context.enemy,
-      player: context.player,
+      stateMachine: context.stateMachine,
+      movement,
+      detection,
+    });
+
+    FlyingEnemyUnstuckSystem({
+      engine: context.engine,
+      enemy: context.enemy,
+      detection,
       stateMachine: context.stateMachine,
     });
 
@@ -130,12 +172,6 @@ export class SystemRegistryFactory {
     FlyingEnemyAnimationSystem({
       engine: context.engine,
       enemy: context.enemy,
-    });
-
-    FlyingEnemyUnstuckSystem({
-      engine: context.engine,
-      enemy: context.enemy,
-      stateMachine: context.stateMachine,
     });
   }
 

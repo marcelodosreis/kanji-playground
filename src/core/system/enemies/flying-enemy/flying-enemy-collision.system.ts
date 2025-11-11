@@ -9,13 +9,17 @@ import { HITBOX_TAGS, TAGS } from "../../../../types/tags.enum";
 import { applyKnockback } from "../../../../utils/apply-knockback";
 import { FLYING_ENEMY_SPRITES } from "../../../../types/sprites.enum";
 
-type Params = {
+type CollisionParams = {
   engine: Engine;
   enemy: Enemy;
   player: Player;
 };
 
-export function FlyingEnemyCollisionSystem({ engine, enemy, player }: Params) {
+export function FlyingEnemyCollisionSystem({
+  engine,
+  enemy,
+  player,
+}: CollisionParams) {
   let lastCollisionTime = 0;
   const collisionCooldown = 0.6;
 
@@ -25,12 +29,12 @@ export function FlyingEnemyCollisionSystem({ engine, enemy, player }: Params) {
 
   async function onPlayerCollision(): Promise<void> {
     const now = performance.now() / 1000;
-    
+
     if (now - lastCollisionTime < collisionCooldown) return;
     if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
-    
+
     lastCollisionTime = now;
-    
+
     player.hurt(1, enemy);
     await applyKnockback({
       engine,
@@ -44,6 +48,7 @@ export function FlyingEnemyCollisionSystem({ engine, enemy, player }: Params) {
     if (enemy.hp() === 0) {
       return enemy.enterState(FLYING_ENEMY_EVENTS.EXPLODE);
     }
+
     await applyKnockback({
       engine,
       target: enemy,

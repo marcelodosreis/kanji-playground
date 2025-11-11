@@ -279,7 +279,7 @@
                  "type":"fly_enemy",
                  "visible":true,
                  "width":0,
-                 "x":112,
+                 "x":176,
                  "y":208
                 }, 
                 {
@@ -363,7 +363,7 @@
                  "type":"fly_enemy",
                  "visible":true,
                  "width":0,
-                 "x":400,
+                 "x":304,
                  "y":272
                 }, 
                 {
@@ -375,8 +375,8 @@
                  "type":"fly_enemy",
                  "visible":true,
                  "width":0,
-                 "x":288,
-                 "y":240
+                 "x":272,
+                 "y":256
                 }],
          "opacity":1,
          "type":"objectgroup",

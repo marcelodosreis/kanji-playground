@@ -11,15 +11,15 @@ export function FlyingEnemyEntity(
   initialPos: Vec2,
   sprite: FLYING_ENEMY_SPRITES
 ): Enemy {
-  let speed = 90
+  let speed = 90;
 
   switch (sprite) {
     case FLYING_ENEMY_SPRITES.ORANGE:
-      speed = 75
-      break
+      speed = 75;
+      break;
     case FLYING_ENEMY_SPRITES.PURPLE:
-      speed = 90
-      break
+      speed = 90;
+      break;
   }
 
   return engine.make([
@@ -29,10 +29,9 @@ export function FlyingEnemyEntity(
     engine.sprite(sprite, { anim: FLYING_ANIMATIONS.FLYING }),
     engine.area({
       shape: new engine.Rect(engine.vec2(0, 0), 6, 6),
-      collisionIgnore: [TAGS.FLY_ENEMY],
     }),
     engine.anchor("center"),
-    engine.body({ gravityScale: 0,  mass: 100 }),
+    engine.body({ gravityScale: 0, mass: 100 }),
     engine.offscreen({ distance: 400 }),
     engine.state(FLYING_ENEMY_EVENTS.PATROL_RIGHT, [
       ...Object.values(FLYING_ENEMY_EVENTS),
@@ -48,5 +47,5 @@ export function FlyingEnemyEntity(
       isKnockedBack: false,
       behavior: sprite,
     },
-  ])
+  ]);
 }

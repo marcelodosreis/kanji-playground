@@ -2,62 +2,89 @@ import type { Engine } from "../../../../types/engine.type";
 import type { Enemy } from "../../../../types/enemy.interface";
 import type { FlyingEnemyStateMachine } from "./flying-enemy-state-machine";
 import { isPaused } from "../../../../utils/is-paused";
+import type { FlyingEnemyDetectionSystem } from "./flying-enemy-detection";
 
-type Params = {
+type UnstuckParams = {
   engine: Engine;
   enemy: Enemy;
   stateMachine: FlyingEnemyStateMachine;
+  detection: ReturnType<typeof FlyingEnemyDetectionSystem>;
 };
 
 const STUCK_CHECK_DURATION = 1;
-const POSITION_TOLERANCE = 5;
+const POSITION_TOLERANCE = 30;
 const UNSTUCK_SPEED = 50;
 
 export function FlyingEnemyUnstuckSystem({
   engine,
   enemy,
+  detection,
   stateMachine,
-}: Params) {
+}: UnstuckParams) {
   let stuckCheckStartTime = 0;
   let lastCheckedX = 0;
   let isUnstucking = false;
 
-  engine.onUpdate(() => {
-    if (!stateMachine.isReturning() || isPaused()) {
-      stuckCheckStartTime = 0;
-      isUnstucking = false;
-      return;
-    }
+  function shouldResetUnstuckState(): boolean {
+    return (
+      detection.hasReachedInitialPosition(POSITION_TOLERANCE) ||
+      !stateMachine.isReturning() ||
+      isPaused() ||
+      enemy.hp() <= 0
+    );
+  }
 
-    if (enemy.hp() <= 0) {
-      stuckCheckStartTime = 0;
-      isUnstucking = false;
-      return;
-    }
+  function resetUnstuckState(): void {
+    stuckCheckStartTime = 0;
+    isUnstucking = false;
+  }
 
-    const enemyPos = enemy.pos;
+  function initializeStuckCheck(): void {
+    const now = engine.time();
+    stuckCheckStartTime = now;
+    lastCheckedX = enemy.pos.x;
+  }
+
+  function checkIfStuck(): void {
     const now = engine.time();
 
-    if (stuckCheckStartTime === 0) {
+    if (now - stuckCheckStartTime >= STUCK_CHECK_DURATION) {
+      const hasMovedEnough =
+        Math.abs(enemy.pos.x - lastCheckedX) > POSITION_TOLERANCE;
+
+      if (!hasMovedEnough) {
+        isUnstucking = true;
+      }
+
       stuckCheckStartTime = now;
-      lastCheckedX = enemyPos.x;
+      lastCheckedX = enemy.pos.x;
+    }
+  }
+
+  function applyUnstuckMovement(): void {
+    if (!isUnstucking) return;
+
+    enemy.pos.y -= UNSTUCK_SPEED * engine.dt();
+
+    const hasMovedEnough =
+      Math.abs(enemy.pos.x - lastCheckedX) > POSITION_TOLERANCE;
+    if (hasMovedEnough) {
+      isUnstucking = false;
+    }
+  }
+
+  engine.onUpdate(() => {
+    if (shouldResetUnstuckState()) {
+      resetUnstuckState();
       return;
     }
 
-    if (now - stuckCheckStartTime >= STUCK_CHECK_DURATION) {
-      if (Math.abs(enemyPos.x - lastCheckedX) <= POSITION_TOLERANCE) {
-        isUnstucking = true;
-      }
-      stuckCheckStartTime = now;
-      lastCheckedX = enemyPos.x;
+    if (stuckCheckStartTime === 0) {
+      initializeStuckCheck();
+      return;
     }
 
-    if (isUnstucking) {
-      enemyPos.y -= UNSTUCK_SPEED * engine.dt();
-
-      if (Math.abs(enemyPos.x - lastCheckedX) > POSITION_TOLERANCE) {
-        isUnstucking = false;
-      }
-    }
+    checkIfStuck();
+    applyUnstuckMovement();
   });
 }

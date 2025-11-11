@@ -4,12 +4,16 @@ import type { Player } from "../../../../types/player.interface";
 import type { FlyingEnemyStateMachine } from "./flying-enemy-state-machine";
 import { FLYING_ENEMY_EVENTS } from "../../../../types/events.enum";
 import { isPaused } from "../../../../utils/is-paused";
+import type { FlyingEnemyMovementSystem } from "./flying-enemy-movement";
+import type { FlyingEnemyDetectionSystem } from "./flying-enemy-detection";
 
-type Params = {
+type AlertParams = {
   engine: Engine;
   enemy: Enemy;
   player: Player;
   stateMachine: FlyingEnemyStateMachine;
+  movement: ReturnType<typeof FlyingEnemyMovementSystem>;
+  detection: ReturnType<typeof FlyingEnemyDetectionSystem>;
 };
 
 const ALERT_DURATION = 0.5;
@@ -19,28 +23,38 @@ export function FlyingEnemyAlertSystem({
   enemy,
   player,
   stateMachine,
-}: Params) {
+  movement,
+  detection,
+}: AlertParams) {
   let alertTimer = 0;
 
+  function shouldStopAlert(): boolean {
+    return !stateMachine.isAlert() || isPaused() || enemy.hp() <= 0;
+  }
+
+  function decideNextState(): void {
+    const isPlayerInRange = detection.isPlayerInRange();
+    const isWithinLimit = detection.isWithinPursuitLimit();
+
+    if (isPlayerInRange && isWithinLimit) {
+      stateMachine.dispatch(FLYING_ENEMY_EVENTS.ATTACK);
+    } else {
+      stateMachine.dispatch(FLYING_ENEMY_EVENTS.RETURN);
+    }
+  }
+
   engine.onUpdate(() => {
-    if (!stateMachine.isAlert() || isPaused()) return;
-    if (enemy.hp() <= 0) return;
-    
-    enemy.flipX = player.pos.x < enemy.pos.x;
+    if (shouldStopAlert()) {
+      alertTimer = 0;
+      return;
+    }
+
+    movement.faceDirection(player.pos.x);
 
     alertTimer += engine.dt();
 
     if (alertTimer >= ALERT_DURATION) {
-      const isPlayerInRange = enemy.pos.dist(player.pos) < enemy.range;
-      const isWithinPursuitLimit =
-        enemy.pos.dist(enemy.initialPos) <= enemy.maxPursuitDistance;
-
-      if (isPlayerInRange && isWithinPursuitLimit) {
-        stateMachine.dispatch(FLYING_ENEMY_EVENTS.ATTACK);
-      } else {
-        stateMachine.dispatch(FLYING_ENEMY_EVENTS.RETURN);
-      }
-
+      decideNextState();
       alertTimer = 0;
     }
   });
