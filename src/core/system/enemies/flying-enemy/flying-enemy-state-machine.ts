@@ -172,6 +172,44 @@ const createSimplePatrolConfig =
     };
   };
 
+const createBlueStateMachineConfig =
+  (): StateMachineConfig<FlyingEnemyContextWithMachine> => {
+    const handlers = createStateHandlers();
+
+    return {
+      initial: FLYING_ENEMY_EVENTS.ALERT,
+      states: {
+        [FLYING_ENEMY_EVENTS.ALERT]: {
+          onEnter: handlers[FLYING_ENEMY_EVENTS.ALERT],
+          transitions: {
+            [FLYING_ENEMY_EVENTS.ATTACK]: FLYING_ENEMY_EVENTS.ATTACK,
+            [FLYING_ENEMY_EVENTS.RETURN]: FLYING_ENEMY_EVENTS.RETURN,
+            [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
+          },
+        },
+        [FLYING_ENEMY_EVENTS.ATTACK]: {
+          onEnter: handlers[FLYING_ENEMY_EVENTS.ATTACK],
+          transitions: {
+            [FLYING_ENEMY_EVENTS.RETURN]: FLYING_ENEMY_EVENTS.RETURN,
+            [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
+            [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
+          },
+        },
+        [FLYING_ENEMY_EVENTS.RETURN]: {
+          onEnter: handlers[FLYING_ENEMY_EVENTS.RETURN],
+          transitions: {
+            [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
+            [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
+          },
+        },
+        [FLYING_ENEMY_EVENTS.EXPLODE]: {
+          onEnter: handlers[FLYING_ENEMY_EVENTS.EXPLODE],
+          transitions: {},
+        },
+      },
+    };
+  };
+
 export function createFlyingEnemyStateMachine(
   context: FlyingEnemyContext
 ): FlyingEnemyStateMachine {
@@ -180,6 +218,8 @@ export function createFlyingEnemyStateMachine(
   const config =
     ctx.enemy.behavior === FLYING_ENEMY_SPRITES.ORANGE
       ? createSimplePatrolConfig()
+      : ctx.enemy.behavior === FLYING_ENEMY_SPRITES.BLUE
+      ? createBlueStateMachineConfig()
       : createFullStateMachineConfig();
 
   const stateMachine = new FlyingEnemyStateMachine(config, ctx);

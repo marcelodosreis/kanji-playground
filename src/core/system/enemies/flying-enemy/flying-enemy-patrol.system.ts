@@ -21,6 +21,11 @@ export function FlyingEnemyPatrolSystem({
 }: Params) {
   const initialX = enemy.pos.x;
   const initialY = enemy.pos.y;
+  
+  let lastX = enemy.pos.x;
+  let stuckFrames = 0;
+  const STUCK_THRESHOLD = 10; // frames parados antes de considerar preso
+  const MIN_MOVEMENT = 0.5; // movimento mínimo esperado por frame
 
   function shouldStopPatrolling(): boolean {
     return enemy.hp() <= 0 || isPaused();
@@ -51,11 +56,26 @@ export function FlyingEnemyPatrolSystem({
     return false;
   }
 
+  function isStuck(): boolean {
+    const movement = Math.abs(enemy.pos.x - lastX);
+    
+    if (movement < MIN_MOVEMENT) {
+      stuckFrames++;
+    } else {
+      stuckFrames = 0;
+    }
+    
+    lastX = enemy.pos.x;
+    
+    return stuckFrames >= STUCK_THRESHOLD;
+  }
+
   function patrolRight(): void {
     enemy.flipX = false;
     enemy.move(enemy.speed, 0);
 
-    if (enemy.pos.x >= initialX + enemy.patrolDistance) {
+    if (enemy.pos.x >= initialX + enemy.patrolDistance || isStuck()) {
+      stuckFrames = 0; // reset ao mudar direção
       stateMachine.dispatch(FLYING_ENEMY_EVENTS.PATROL_LEFT);
     }
   }
@@ -64,7 +84,8 @@ export function FlyingEnemyPatrolSystem({
     enemy.flipX = true;
     enemy.move(-enemy.speed, 0);
 
-    if (enemy.pos.x <= initialX - enemy.patrolDistance) {
+    if (enemy.pos.x <= initialX - enemy.patrolDistance || isStuck()) {
+      stuckFrames = 0; // reset ao mudar direção
       stateMachine.dispatch(FLYING_ENEMY_EVENTS.PATROL_RIGHT);
     }
   }
