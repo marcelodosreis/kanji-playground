@@ -14,6 +14,7 @@ import type {
   StateComp,
   RectComp,
   ColorComp,
+  GameObjRaw,
 } from "kaplay";
 
 export type Engine = KAPLAYCtx;
@@ -51,15 +52,14 @@ export type BossEngineGameObj = GameObj<
 >;
 
 export type BossBarrierEngineGameObj = GameObj<
-  | RectComp
-  | ColorComp
-  | PosComp
-  | AreaComp
-  | OpacityComp
+  RectComp | ColorComp | PosComp | AreaComp | OpacityComp
 >;
 
 export type MapEngineGameObj = GameObj<PosComp | SpriteComp>;
 
-export type EngineGameObj = GameObj
+export type CollidersEngineGameObj = GameObj<PosComp | AreaComp | BodyComp>;
+
+export type EngineGameObj = GameObj;
+export type EngineGameObjRaw = GameObjRaw;
 
 export type EngineEventCtrl = KEventController;

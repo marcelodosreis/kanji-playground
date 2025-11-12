@@ -1,12 +1,19 @@
 import type { Enemy } from "../../../../types/enemy.interface";
+import type { CollidersEngineGameObj } from "../../../../types/engine.type";
 import type { Player } from "../../../../types/player.interface";
+import { hasObstacleBetweenObjects } from "../../../../utils/raycast";
 
 type DetectionParams = {
   enemy: Enemy;
   player: Player;
+  colliders: CollidersEngineGameObj[];
 };
 
-export function FlyingEnemyDetectionSystem({ enemy, player }: DetectionParams) {
+export function FlyingEnemyDetectionSystem({
+  enemy,
+  player,
+  colliders,
+}: DetectionParams) {
   function getDistanceToPlayer(): number {
     return enemy.pos.dist(player.pos);
   }
@@ -15,18 +22,19 @@ export function FlyingEnemyDetectionSystem({ enemy, player }: DetectionParams) {
     return enemy.pos.dist(enemy.initialPos);
   }
 
-  function getSquaredDistance(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number
-  ): number {
+  function getSquaredDistance(x1: number, y1: number, x2: number, y2: number) {
     const dx = x1 - x2;
     const dy = y1 - y2;
     return dx * dx + dy * dy;
   }
 
   function isPlayerWithinCurrentRange(): boolean {
+    if (
+      hasObstacleBetweenObjects({ origin: enemy, target: player, colliders })
+    ) {
+      return false;
+    }
+
     const attackRangeSq = enemy.range * enemy.range;
     const distSq = getSquaredDistance(
       enemy.pos.x,

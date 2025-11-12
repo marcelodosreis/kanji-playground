@@ -1,4 +1,4 @@
-import type { Engine } from "./engine.type";
+import type { CollidersEngineGameObj, Engine } from "./engine.type";
 import type { Player } from "./player.interface";
 import type { Enemy } from "./enemy.interface";
 import type { TiledMap } from "./tiled-map.interface";
@@ -26,6 +26,7 @@ export type EnemySystemContext = {
   engine: Engine;
   enemy: Enemy;
   player: Player;
+  colliders: CollidersEngineGameObj[];
   stateMachine: FlyingEnemyStateMachine;
 };
 

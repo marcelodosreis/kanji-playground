@@ -1,4 +1,4 @@
-import type { Engine } from "../../types/engine.type";
+import type { CollidersEngineGameObj, Engine } from "../../types/engine.type";
 import type { Map } from "../../types/map.interface";
 import type { TiledMap } from "../../types/tiled-map.interface";
 import { BossBarrierSystem } from "../system/map/boss-barrier.system";
@@ -14,7 +14,10 @@ type SetupParams = {
 };
 
 export class MapManager {
-  public static setup(params: SetupParams): { map: Map } {
+  public static setup(params: SetupParams): {
+    map: Map;
+    colliders: CollidersEngineGameObj[];
+  } {
     const manager = new MapManager();
     return manager.setupInstance(params);
   }
@@ -25,15 +28,15 @@ export class MapManager {
     gravity,
     mapSpriteName,
     exitRoomName,
-  }: SetupParams): { map: Map } {
+  }: SetupParams): { map: Map; colliders: CollidersEngineGameObj[] } {
     this.configureEngine(engine, gravity);
     const map = this.createMap(engine, mapSpriteName);
 
-    CollisionSystem({ engine, map, tiledMap });
+    const colliders = CollisionSystem({ engine, map, tiledMap });
     BossBarrierSystem({ engine, map, tiledMap });
     ExitSystem({ engine, map, tiledMap, exitRoomName });
 
-    return { map };
+    return { map, colliders };
   }
 
   private configureEngine(engine: Engine, gravity: number): void {

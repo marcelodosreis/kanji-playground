@@ -12,12 +12,17 @@ import { createFlyingEnemyStateMachine } from "../system/enemies/flying-enemy/fl
 import { SystemRegistryFactory } from "../../factories/system-registry-factory";
 import { MapLayer, MapLayerHelper } from "../../helpers/map-layer-helper";
 import type { FLYING_ENEMY_SPRITES } from "../../types/sprites.enum";
+import type { CollidersEngineGameObj } from "../../types/engine.type";
 
-export type FlyingEnemyManagerParams = BaseManagerParams;
+export type FlyingEnemyManagerParams = BaseManagerParams & {
+  colliders: CollidersEngineGameObj[];
+};
 
 export class FlyingEnemyManager extends BaseEntityManager<Enemy[]> {
+  private colliders: CollidersEngineGameObj[];
   private constructor(params: FlyingEnemyManagerParams) {
     super(params);
+    this.colliders = params.colliders;
   }
 
   public static setup(params: FlyingEnemyManagerParams): Enemy[] {
@@ -67,6 +72,7 @@ export class FlyingEnemyManager extends BaseEntityManager<Enemy[]> {
       engine: this.engine,
       enemy,
       player,
+      colliders: this.colliders,
       stateMachine,
     });
   }

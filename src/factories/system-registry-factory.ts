@@ -108,6 +108,7 @@ export class SystemRegistryFactory {
     const detection = FlyingEnemyDetectionSystem({
       enemy: context.enemy,
       player: context.player,
+      colliders: context.colliders,
     });
 
     const patrolDirection = FlyingEnemyPatrolDirectionSystem({
