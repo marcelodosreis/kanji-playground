@@ -146,6 +146,7 @@ export class SystemRegistryFactory {
       enemy: context.enemy,
       player: context.player,
       stateMachine: context.stateMachine,
+      colliders: context.colliders,
       movement,
       detection,
     });

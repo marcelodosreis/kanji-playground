@@ -14,7 +14,7 @@ type ReturnParams = {
   detection: ReturnType<typeof FlyingEnemyDetectionSystem>;
 };
 
-const RETURN_THRESHOLD_DISTANCE = 20;
+const RETURN_THRESHOLD_DISTANCE = 5;
 const TELEPORT_RESET_DISTANCE = 400;
 
 export function FlyingEnemyReturnSystem({

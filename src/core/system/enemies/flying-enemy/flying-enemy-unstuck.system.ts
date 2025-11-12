@@ -12,7 +12,7 @@ type UnstuckParams = {
 };
 
 const STUCK_CHECK_DURATION = 1;
-const POSITION_TOLERANCE = 30;
+const POSITION_TOLERANCE = 10;
 const UNSTUCK_SPEED = 50;
 
 export function FlyingEnemyUnstuckSystem({
