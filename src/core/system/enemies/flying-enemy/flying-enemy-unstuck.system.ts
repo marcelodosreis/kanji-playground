@@ -11,7 +11,7 @@ type UnstuckParams = {
   detection: ReturnType<typeof FlyingEnemyDetectionSystem>;
 };
 
-const STUCK_CHECK_DURATION = 1;
+const STUCK_CHECK_DURATION = 1_000;
 const POSITION_TOLERANCE = 10;
 const UNSTUCK_SPEED = 50;
 
@@ -40,13 +40,12 @@ export function FlyingEnemyUnstuckSystem({
   }
 
   function initializeStuckCheck(): void {
-    const now = engine.time();
-    stuckCheckStartTime = now;
+    stuckCheckStartTime = performance.now();
     lastCheckedX = enemy.pos.x;
   }
 
   function checkIfStuck(): void {
-    const now = engine.time();
+    const now = performance.now();
 
     if (now - stuckCheckStartTime >= STUCK_CHECK_DURATION) {
       const hasMovedEnough =

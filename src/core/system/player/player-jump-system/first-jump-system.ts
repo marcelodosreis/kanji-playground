@@ -16,7 +16,7 @@ export function PlayerFirstJumpSystem({
   onJumpExecuted,
 }: FirstJumpParams) {
   let wasGrounded = player.isGrounded();
-  let leftGroundTimestamp = wasGrounded ? -Infinity : Date.now();
+  let leftGroundTimestamp = wasGrounded ? -Infinity : performance.now();
   let lastJumpTimestamp = -Infinity;
   let lastReleaseTimestamp = -Infinity;
   let hasReleasedAfterLastJump = true;
@@ -27,7 +27,7 @@ export function PlayerFirstJumpSystem({
 
   const updateGroundedState = (): void => {
     const grounded = player.isGrounded();
-    const now = Date.now();
+    const now = performance.now();
 
     if (!grounded && wasGrounded) {
       leftGroundTimestamp = now;
@@ -48,29 +48,25 @@ export function PlayerFirstJumpSystem({
     if (player.isGrounded()) {
       return true;
     }
-    const now = Date.now();
+    const now = performance.now();
     return now - leftGroundTimestamp <= COYOTE_TIME_MS;
   };
 
   const startHold = (): void => {
-    if (holdActive) {
-      return;
-    }
+    if (holdActive) return;
     holdActive = true;
-    holdStartTimestamp = Date.now();
+    holdStartTimestamp = performance.now();
     savedGravityScale = player.gravityScale;
     player.gravityScale = HOLD_GRAVITY_SCALE;
   };
 
   const endHold = (applyShortHop: boolean): void => {
-    if (!holdActive) {
-      return;
-    }
+    if (!holdActive) return;
     holdActive = false;
     player.gravityScale = savedGravityScale;
 
     if (applyShortHop && player.vel.y < 0) {
-      const now = Date.now();
+      const now = performance.now();
       const holdDuration = Math.max(0, now - holdStartTimestamp);
       const t = Math.min(1, holdDuration / HOLD_TIME_MS);
       const multiplier = SHORT_HOP_MULTIPLIER + (1 - SHORT_HOP_MULTIPLIER) * t;
@@ -79,31 +75,21 @@ export function PlayerFirstJumpSystem({
   };
 
   const canExecuteFirstJump = (): boolean => {
-    const now = Date.now();
+    const now = performance.now();
     const timeSinceLastJump = now - lastJumpTimestamp;
 
-    if (!isWithinCoyoteTime()) {
-      return false;
-    }
-
-    if (timeSinceLastJump < JUMP_BUFFER_MS) {
-      return false;
-    }
-
-    if (!hasReleasedAfterLastJump) {
-      return false;
-    }
+    if (!isWithinCoyoteTime()) return false;
+    if (timeSinceLastJump < JUMP_BUFFER_MS) return false;
+    if (!hasReleasedAfterLastJump) return false;
 
     return true;
   };
 
   const executeFirstJump = (): boolean => {
-    if (!canExecuteFirstJump()) {
-      return false;
-    }
+    if (!canExecuteFirstJump()) return false;
 
     player.jump();
-    lastJumpTimestamp = Date.now();
+    lastJumpTimestamp = performance.now();
     hasReleasedAfterLastJump = false;
     startHold();
     onJumpExecuted();
@@ -111,7 +97,7 @@ export function PlayerFirstJumpSystem({
   };
 
   const handleJumpRelease = (): void => {
-    lastReleaseTimestamp = Date.now();
+    lastReleaseTimestamp = performance.now();
     hasReleasedAfterLastJump = true;
     endHold(true);
   };
@@ -120,7 +106,7 @@ export function PlayerFirstJumpSystem({
     updateGroundedState();
 
     if (holdActive) {
-      const now = Date.now();
+      const now = performance.now();
       if (now - holdStartTimestamp >= HOLD_TIME_MS) {
         endHold(false);
       } else if (player.vel.y >= 0) {
