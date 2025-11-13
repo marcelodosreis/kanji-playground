@@ -3,9 +3,9 @@ import type { Map } from "../types/map.interface";
 import type { Player } from "../types/player.interface";
 import type { Enemy } from "../types/enemy.interface";
 import type { Boss } from "../types/boss.interface";
-import { PlayerEntity } from "../core/entities/player.entity";
-import { FlyingEnemyEntity } from "../core/entities/flying-enemy.entity";
-import { BossEntity } from "../core/entities/boss.entity";
+import { PlayerEntity } from "../entities/player.entity";
+import { FlyingEnemyEntity } from "../entities/flying-enemy.entity";
+import { BossEntity } from "../entities/boss.entity";
 import { FLYING_ENEMY_SPRITES } from "../types/sprites.enum";
 
 export class EntityFactory {

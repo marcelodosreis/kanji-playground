@@ -1,13 +1,13 @@
 import type { Engine } from "../../../types/engine.type";
 import type { TiledMap } from "../../../types/tiled-map.interface";
-import { MapManager } from "../../../core/manager/map.manager";
-import { PlayerManager } from "../../../core/manager/player.manager";
-import { UIManager } from "../../../core/manager/ui.manager";
+import { MapManager } from "../../../managers/map.manager";
+import { PlayerManager } from "../../../managers/player.manager";
+import { UIManager } from "../../../managers/ui.manager";
 import { setBackgroundColor } from "../../../utils/set-background-color";
 import { LEVEL_SCENES, type SCENE_DATA } from "../../../types/scenes.enum";
 import { COLORS } from "../../../types/colors.enum";
-import { HealthPickupManager } from "../../../core/manager/health-pickup.manager";
-import { PauseManager } from "../../../core/manager/pause.manager";
+import { HealthPickupManager } from "../../../managers/health-pickup.manager";
+import { PauseManager } from "../../../managers/pause.manager";
 
 type Room002Params = {
   engine: Engine;

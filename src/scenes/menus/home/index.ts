@@ -1,5 +1,5 @@
 import type { Engine } from "../../../types/engine.type";
-import { MenuManager } from "../../../core/manager/menu.manager";
+import { MenuManager } from "../../../managers/menu.manager";
 import { setBackgroundColor } from "../../../utils/set-background-color";
 import { LEVEL_SCENES, MENU_SCENES } from "../../../types/scenes.enum";
 import { COLORS } from "../../../types/colors.enum";

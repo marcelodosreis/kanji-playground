@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useAtom } from "jotai";
-import { isPausedAtom } from "../../store";
+import { isPausedAtom } from "../../stores";
 
 const variants = {
   open: { opacity: 1, scale: 1 },

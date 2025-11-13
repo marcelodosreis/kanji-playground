@@ -1,37 +1,37 @@
-import { FlyingEnemyMovementSystem } from "../core/system/enemies/flying-enemy/flying-enemy-movement";
-import { FlyingEnemyDetectionSystem } from "../core/system/enemies/flying-enemy/flying-enemy-detection";
-import { FlyingEnemyPatrolDirectionSystem } from "../core/system/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol-direction";
-import { FlyingEnemyPatrolHeightSystem } from "../core/system/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol-height.system";
+import { FlyingEnemyMovementSystem } from "../systems/enemies/flying-enemy/flying-enemy-movement";
+import { FlyingEnemyDetectionSystem } from "../systems/enemies/flying-enemy/flying-enemy-detection";
+import { FlyingEnemyPatrolDirectionSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol-direction";
+import { FlyingEnemyPatrolHeightSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol-height.system";
 
-import { FlyingEnemyPatrolSystem } from "../core/system/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol.system";
-import { FlyingEnemyAlertSystem } from "../core/system/enemies/flying-enemy/flying-enemy-alert.system";
-import { FlyingEnemyAttackSystem } from "../core/system/enemies/flying-enemy/flying-enemy-attack.system";
-import { FlyingEnemyReturnSystem } from "../core/system/enemies/flying-enemy/flying-enemy-return.system";
-import { FlyingEnemyUnstuckSystem } from "../core/system/enemies/flying-enemy/flying-enemy-unstuck.system";
-import { FlyingEnemyCollisionSystem } from "../core/system/enemies/flying-enemy/flying-enemy-collision.system";
-import { FlyingEnemyAnimationSystem } from "../core/system/enemies/flying-enemy/flying-enemy-animation.system";
+import { FlyingEnemyPatrolSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol.system";
+import { FlyingEnemyAlertSystem } from "../systems/enemies/flying-enemy/flying-enemy-alert.system";
+import { FlyingEnemyAttackSystem } from "../systems/enemies/flying-enemy/flying-enemy-attack.system";
+import { FlyingEnemyReturnSystem } from "../systems/enemies/flying-enemy/flying-enemy-return.system";
+import { FlyingEnemyUnstuckSystem } from "../systems/enemies/flying-enemy/flying-enemy-unstuck.system";
+import { FlyingEnemyCollisionSystem } from "../systems/enemies/flying-enemy/flying-enemy-collision.system";
+import { FlyingEnemyAnimationSystem } from "../systems/enemies/flying-enemy/flying-enemy-animation.system";
 
-import { BossAnimationSystem } from "../core/system/enemies/boss/boss-animation.system";
-import { BossAttackSystem } from "../core/system/enemies/boss/boss-attack.system";
-import { BossCollisionSystem } from "../core/system/enemies/boss/boss-colision.system";
+import { BossAnimationSystem } from "../systems/enemies/boss/boss-animation.system";
+import { BossAttackSystem } from "../systems/enemies/boss/boss-attack.system";
+import { BossCollisionSystem } from "../systems/enemies/boss/boss-colision.system";
 
-import { PlayerAnimationSystem } from "../core/system/player/player-animation.system";
-import { PlayerAttackSystem } from "../core/system/player/player-attack.system";
-import { PlayerBoundarySystem } from "../core/system/player/player-boundary.system";
-import { PlayerCameraSystem } from "../core/system/player/player-camera.system";
-import { PlayerHealthSystem } from "../core/system/player/player-health.system";
-import { PlayerRespawnSystem } from "../core/system/player/player-respawn.system";
-import { PlayerJumpSystem } from "../core/system/player/player-jump-system/player-jump.system";
-import { PlayerPassthroughSystem } from "../core/system/player/player-passthrough.system";
-import { PlayerWalkSystem } from "../core/system/player/player-walk.system";
-import { PlayerOrientationSystem } from "../core/system/player/player-orientation.system";
+import { PlayerAnimationSystem } from "../systems/player/player-animation.system";
+import { PlayerAttackSystem } from "../systems/player/player-attack.system";
+import { PlayerBoundarySystem } from "../systems/player/player-boundary.system";
+import { PlayerCameraSystem } from "../systems/player/player-camera.system";
+import { PlayerHealthSystem } from "../systems/player/player-health.system";
+import { PlayerRespawnSystem } from "../systems/player/player-respawn.system";
+import { PlayerJumpSystem } from "../systems/player/player-jump-system/player-jump.system";
+import { PlayerPassthroughSystem } from "../systems/player/player-passthrough.system";
+import { PlayerWalkSystem } from "../systems/player/player-walk.system";
+import { PlayerOrientationSystem } from "../systems/player/player-orientation.system";
 
 import type {
   PlayerSystemContext,
   EnemySystemContext,
   BossSystemContext,
 } from "../types/system.types";
-import { FlyingEnemyIdleSystem } from "../core/system/enemies/flying-enemy/flying-enemy-idle.system";
+import { FlyingEnemyIdleSystem } from "../systems/enemies/flying-enemy/flying-enemy-idle.system";
 
 export class SystemRegistryFactory {
   static registerPlayerSystems(context: PlayerSystemContext): void {

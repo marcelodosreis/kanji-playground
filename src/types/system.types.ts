@@ -4,9 +4,9 @@ import type { Enemy } from "./enemy.interface";
 import type { TiledMap } from "./tiled-map.interface";
 import type { Map } from "./map.interface";
 import type { Boss } from "./boss.interface";
-import type { BossStateMachine } from "../core/system/enemies/boss/boss-state-machine";
-import type { FlyingEnemyStateMachine } from "../core/system/enemies/flying-enemy/fly-enemy-state-machine-system";
-import type { PlayerStateMachine } from "../core/system/player/player-state-machine";
+import type { BossStateMachine } from "../systems/enemies/boss/boss-state-machine";
+import type { FlyingEnemyStateMachine } from "../systems/enemies/flying-enemy/fly-enemy-state-machine-system";
+import type { PlayerStateMachine } from "../systems/player/player-state-machine";
 import type { SCENE_DATA } from "./scenes.enum";
 
 export type SystemInitializer<T = any> = (context: T) => void;

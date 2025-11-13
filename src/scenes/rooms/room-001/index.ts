@@ -1,15 +1,15 @@
-import { BossManager } from "../../../core/manager/boss.manager";
-import { FlyingEnemyManager } from "../../../core/manager/flying-enemy.manager";
-import { MapManager } from "../../../core/manager/map.manager";
-import { PlayerManager } from "../../../core/manager/player.manager";
-import { UIManager } from "../../../core/manager/ui.manager";
+import { BossManager } from "../../../managers/boss.manager";
+import { FlyingEnemyManager } from "../../../managers/flying-enemy.manager";
+import { MapManager } from "../../../managers/map.manager";
+import { PlayerManager } from "../../../managers/player.manager";
+import { UIManager } from "../../../managers/ui.manager";
 import { COLORS } from "../../../types/colors.enum";
 import type { Engine } from "../../../types/engine.type";
 import { LEVEL_SCENES, type SCENE_DATA } from "../../../types/scenes.enum";
 import type { TiledMap } from "../../../types/tiled-map.interface";
 import { setBackgroundColor } from "../../../utils/set-background-color";
-import { HealthPickupManager } from "../../../core/manager/health-pickup.manager";
-import { PauseManager } from "../../../core/manager/pause.manager";
+import { HealthPickupManager } from "../../../managers/health-pickup.manager";
+import { PauseManager } from "../../../managers/pause.manager";
 
 type Room001Params = {
   engine: Engine;
