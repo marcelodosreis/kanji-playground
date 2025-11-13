@@ -7,11 +7,20 @@ export function createBlackFlyingEnemyStateMachine(): StateMachineConfig<FlyingE
   const handlers = createStateHandlers();
 
   return {
-    initial: FLYING_ENEMY_EVENTS.IDLE,
+    initial: FLYING_ENEMY_EVENTS.PATROL_RIGHT,
     states: {
-      [FLYING_ENEMY_EVENTS.IDLE]: {
-        onEnter: handlers[FLYING_ENEMY_EVENTS.IDLE],
+      [FLYING_ENEMY_EVENTS.PATROL_RIGHT]: {
+        onEnter: handlers[FLYING_ENEMY_EVENTS.PATROL_RIGHT],
         transitions: {
+          [FLYING_ENEMY_EVENTS.PATROL_LEFT]: FLYING_ENEMY_EVENTS.PATROL_LEFT,
+          [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
+          [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
+        },
+      },
+      [FLYING_ENEMY_EVENTS.PATROL_LEFT]: {
+        onEnter: handlers[FLYING_ENEMY_EVENTS.PATROL_LEFT],
+        transitions: {
+          [FLYING_ENEMY_EVENTS.PATROL_RIGHT]: FLYING_ENEMY_EVENTS.PATROL_RIGHT,
           [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
           [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
         },
@@ -35,7 +44,8 @@ export function createBlackFlyingEnemyStateMachine(): StateMachineConfig<FlyingE
       [FLYING_ENEMY_EVENTS.RETURN]: {
         onEnter: handlers[FLYING_ENEMY_EVENTS.RETURN],
         transitions: {
-          [FLYING_ENEMY_EVENTS.IDLE]: FLYING_ENEMY_EVENTS.IDLE,
+          [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
+          [FLYING_ENEMY_EVENTS.PATROL_RIGHT]: FLYING_ENEMY_EVENTS.PATROL_RIGHT,
           [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
         },
       },

@@ -33,9 +33,7 @@ export function FlyingEnemyAttackSystem({
 }: AttackParams) {
   const PLAYER_VERTICAL_OFFSET = 12;
   const MIN_ATTACK_DURATION = 1.0;
-  const GREEN_SINGLE_ATTACK_DURATION = 2.0;
   let attackTimer = 0;
-  let hasGreenAttackedOnce = false;
 
   function shouldStopAttacking(): boolean {
     return (
@@ -66,10 +64,6 @@ export function FlyingEnemyAttackSystem({
   function handleObstacles(): boolean {
     if (attackTimer < MIN_ATTACK_DURATION) return false;
 
-    if (enemy.behavior === FLYING_ENEMY_SPRITES.RED) {
-      return false;
-    }
-
     if (
       hasObstacleBetweenObjects({ origin: enemy, target: player, colliders })
     ) {
@@ -91,17 +85,6 @@ export function FlyingEnemyAttackSystem({
     return false;
   }
 
-  function handleGreenSingleAttack(): boolean {
-    if (enemy.behavior !== FLYING_ENEMY_SPRITES.GREEN) return false;
-
-    if (attackTimer >= GREEN_SINGLE_ATTACK_DURATION && !hasGreenAttackedOnce) {
-      hasGreenAttackedOnce = true;
-      returnToInitialPosition();
-      return true;
-    }
-    return false;
-  }
-
   engine.onUpdate(() => {
     if (shouldStopAttacking()) {
       attackTimer = 0;
@@ -110,7 +93,6 @@ export function FlyingEnemyAttackSystem({
 
     attackTimer += engine.dt();
 
-    if (handleGreenSingleAttack()) return;
     if (handleObstacles()) return;
     if (handlePursuitLimit()) return;
 

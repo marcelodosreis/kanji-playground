@@ -345,7 +345,7 @@
                 {
                  "height":0,
                  "id":51,
-                 "name":"purple_fly_enemy",
+                 "name":"orange_fly_enemy",
                  "point":true,
                  "rotation":0,
                  "type":"fly_enemy",

@@ -34,10 +34,6 @@ export function FlyingEnemyReturnSystem({
       return false;
     }
 
-    if (enemy.behavior === FLYING_ENEMY_SPRITES.BLACK) {
-      return false;
-    }
-
     return (
       detection.isPlayerWithinCurrentRange() &&
       detection.isWithinCurrentPursuitLimit()
@@ -51,12 +47,13 @@ export function FlyingEnemyReturnSystem({
   function resumeInitialState(): void {
     switch (enemy.behavior) {
       case FLYING_ENEMY_SPRITES.BLUE:
-      case FLYING_ENEMY_SPRITES.BLACK:
+      case FLYING_ENEMY_SPRITES.GREEN:
         stateMachine.dispatch(FLYING_ENEMY_EVENTS.IDLE);
         break;
-      case FLYING_ENEMY_SPRITES.GREEN:
       case FLYING_ENEMY_SPRITES.ORANGE:
       case FLYING_ENEMY_SPRITES.PURPLE:
+      case FLYING_ENEMY_SPRITES.BLACK:
+
       default:
         stateMachine.dispatch(FLYING_ENEMY_EVENTS.PATROL_RIGHT);
         break;

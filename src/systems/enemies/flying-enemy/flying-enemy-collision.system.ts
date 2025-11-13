@@ -24,21 +24,21 @@ export function FlyingEnemyCollisionSystem({
   stateMachine,
 }: CollisionParams) {
   let collisionCooldownTimer = 0;
-  const COLLISION_COOLDOWN = 0.6;
+  const COLLISION_COOLDOWN = 1;
 
   function onSwordHitboxCollision(): void {
     enemy.hurt(1);
-
-    if (enemy.behavior === FLYING_ENEMY_SPRITES.BLACK) {
-      if (stateMachine.isIdle()) {
-        stateMachine.dispatch(FLYING_ENEMY_EVENTS.ALERT);
-      }
-    }
   }
 
   async function onPlayerCollision(): Promise<void> {
     if (collisionCooldownTimer > 0) return;
     if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
+
+    if (enemy.behavior === FLYING_ENEMY_SPRITES.GREEN) {
+      if (stateMachine.isAttacking()) {
+        stateMachine.dispatch(FLYING_ENEMY_EVENTS.RETURN);
+      }
+    }
 
     collisionCooldownTimer = COLLISION_COOLDOWN;
 

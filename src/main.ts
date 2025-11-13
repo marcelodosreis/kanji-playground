@@ -52,4 +52,5 @@ async function main(): Promise<void> {
   await audios();
   engine.go("menu");
 }
+
 main();

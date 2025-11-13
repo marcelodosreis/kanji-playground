@@ -7,11 +7,20 @@ export function createRedFlyingEnemyStateMachine(): StateMachineConfig<FlyingEne
   const handlers = createStateHandlers();
 
   return {
-    initial: FLYING_ENEMY_EVENTS.IDLE,
+    initial: FLYING_ENEMY_EVENTS.PATROL_LEFT,
     states: {
-      [FLYING_ENEMY_EVENTS.IDLE]: {
-        onEnter: handlers[FLYING_ENEMY_EVENTS.IDLE],
+      [FLYING_ENEMY_EVENTS.PATROL_RIGHT]: {
+        onEnter: handlers[FLYING_ENEMY_EVENTS.PATROL_RIGHT],
         transitions: {
+          [FLYING_ENEMY_EVENTS.PATROL_LEFT]: FLYING_ENEMY_EVENTS.PATROL_LEFT,
+          [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
+          [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
+        },
+      },
+      [FLYING_ENEMY_EVENTS.PATROL_LEFT]: {
+        onEnter: handlers[FLYING_ENEMY_EVENTS.PATROL_LEFT],
+        transitions: {
+          [FLYING_ENEMY_EVENTS.PATROL_RIGHT]: FLYING_ENEMY_EVENTS.PATROL_RIGHT,
           [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
           [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
         },
@@ -20,12 +29,23 @@ export function createRedFlyingEnemyStateMachine(): StateMachineConfig<FlyingEne
         onEnter: handlers[FLYING_ENEMY_EVENTS.ALERT],
         transitions: {
           [FLYING_ENEMY_EVENTS.ATTACK]: FLYING_ENEMY_EVENTS.ATTACK,
+          [FLYING_ENEMY_EVENTS.RETURN]: FLYING_ENEMY_EVENTS.RETURN,
           [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
         },
       },
       [FLYING_ENEMY_EVENTS.ATTACK]: {
         onEnter: handlers[FLYING_ENEMY_EVENTS.ATTACK],
         transitions: {
+          [FLYING_ENEMY_EVENTS.RETURN]: FLYING_ENEMY_EVENTS.RETURN,
+          [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
+          [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
+        },
+      },
+      [FLYING_ENEMY_EVENTS.RETURN]: {
+        onEnter: handlers[FLYING_ENEMY_EVENTS.RETURN],
+        transitions: {
+          [FLYING_ENEMY_EVENTS.ALERT]: FLYING_ENEMY_EVENTS.ALERT,
+          [FLYING_ENEMY_EVENTS.PATROL_RIGHT]: FLYING_ENEMY_EVENTS.PATROL_RIGHT,
           [FLYING_ENEMY_EVENTS.EXPLODE]: FLYING_ENEMY_EVENTS.EXPLODE,
         },
       },

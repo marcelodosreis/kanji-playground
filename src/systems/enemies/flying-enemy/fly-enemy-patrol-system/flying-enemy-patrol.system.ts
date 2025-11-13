@@ -41,10 +41,18 @@ export function FlyingEnemyPatrolSystem({
     );
   }
 
+  function shouldAlertPlayer(): boolean {
+    if (enemy.behavior === FLYING_ENEMY_SPRITES.BLACK && enemy.hp() >= 3) {
+      return false;
+    }
+    return true;
+  }
+
   function tryAlertPlayer(): boolean {
     if (!isPatrolling()) return false;
     if (!detection.isPlayerWithinCurrentRange()) return false;
     if (!shouldReactToPlayer()) return false;
+    if (!shouldAlertPlayer()) return false;
 
     stateMachine.dispatch(FLYING_ENEMY_EVENTS.ALERT);
     return true;

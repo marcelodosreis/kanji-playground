@@ -29,7 +29,6 @@ export function FlyingEnemyIdleSystem({
 
   function tryAlertPlayer(): boolean {
     if (!detection.isPlayerWithinCurrentRange()) return false;
-
     stateMachine.dispatch(FLYING_ENEMY_EVENTS.ALERT);
     return true;
   }
