@@ -5,6 +5,7 @@ import { FLYING_ENEMY_EVENTS } from "../../../../types/events.enum";
 import { isPaused } from "../../../../utils/is-paused";
 import type { FlyingEnemyMovementSystem } from "./flying-enemy-movement";
 import type { FlyingEnemyDetectionSystem } from "./flying-enemy-detection";
+import { FLYING_ENEMY_SPRITES } from "../../../../types/sprites.enum";
 
 type ReturnParams = {
   engine: Engine;
@@ -29,6 +30,14 @@ export function FlyingEnemyReturnSystem({
   }
 
   function canReEngagePlayer(): boolean {
+    if (enemy.behavior === FLYING_ENEMY_SPRITES.GREEN) {
+      return false;
+    }
+
+    if (enemy.behavior === FLYING_ENEMY_SPRITES.BLACK) {
+      return false;
+    }
+
     return (
       detection.isPlayerWithinCurrentRange() &&
       detection.isWithinCurrentPursuitLimit()
@@ -39,8 +48,19 @@ export function FlyingEnemyReturnSystem({
     stateMachine.dispatch(FLYING_ENEMY_EVENTS.ALERT);
   }
 
-  function resumePatrol(): void {
-    stateMachine.dispatch(FLYING_ENEMY_EVENTS.PATROL_RIGHT);
+  function resumeInitialState(): void {
+    switch (enemy.behavior) {
+      case FLYING_ENEMY_SPRITES.BLUE:
+      case FLYING_ENEMY_SPRITES.BLACK:
+        stateMachine.dispatch(FLYING_ENEMY_EVENTS.IDLE);
+        break;
+      case FLYING_ENEMY_SPRITES.GREEN:
+      case FLYING_ENEMY_SPRITES.ORANGE:
+      case FLYING_ENEMY_SPRITES.PURPLE:
+      default:
+        stateMachine.dispatch(FLYING_ENEMY_EVENTS.PATROL_RIGHT);
+        break;
+    }
   }
 
   function moveTowardsInitialPosition(): void {
@@ -71,7 +91,7 @@ export function FlyingEnemyReturnSystem({
     }
 
     if (detection.hasReachedInitialPosition(RETURN_THRESHOLD_DISTANCE)) {
-      resumePatrol();
+      resumeInitialState();
       return;
     }
 

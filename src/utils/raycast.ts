@@ -48,18 +48,12 @@ function intersectsRect(
   const topRight = engine.vec2(max.x, min.y);
   const bottomLeft = engine.vec2(min.x, max.y);
 
-  if (pointInRect(a, min, max) || pointInRect(b, min, max)) return true;
-
   return (
     segIntersect(a, b, min, topRight) ||
     segIntersect(a, b, topRight, max) ||
     segIntersect(a, b, max, bottomLeft) ||
     segIntersect(a, b, bottomLeft, min)
   );
-}
-
-function pointInRect(p: Vec2, min: Vec2, max: Vec2) {
-  return p.x >= min.x && p.x <= max.x && p.y >= min.y && p.y <= max.y;
 }
 
 function segIntersect(a1: Vec2, a2: Vec2, b1: Vec2, b2: Vec2) {

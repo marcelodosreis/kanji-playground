@@ -1,6 +1,7 @@
 import type { Engine } from "../../../../types/engine.type";
 import type { Enemy } from "../../../../types/enemy.interface";
 import type { Player } from "../../../../types/player.interface";
+import type { FlyingEnemyStateMachine } from "./flying-enemy-state-machine";
 import {
   ENGINE_DEFAULT_EVENTS,
   FLYING_ENEMY_EVENTS,
@@ -13,27 +14,33 @@ type CollisionParams = {
   engine: Engine;
   enemy: Enemy;
   player: Player;
+  stateMachine: FlyingEnemyStateMachine;
 };
 
 export function FlyingEnemyCollisionSystem({
   engine,
   enemy,
   player,
+  stateMachine,
 }: CollisionParams) {
-  let lastCollisionTime = 0;
-  const collisionCooldown = 0.6;
+  let collisionCooldownTimer = 0;
+  const COLLISION_COOLDOWN = 0.6;
 
   function onSwordHitboxCollision(): void {
     enemy.hurt(1);
+
+    if (enemy.behavior === FLYING_ENEMY_SPRITES.BLACK) {
+      if (stateMachine.isIdle()) {
+        stateMachine.dispatch(FLYING_ENEMY_EVENTS.ALERT);
+      }
+    }
   }
 
   async function onPlayerCollision(): Promise<void> {
-    const now = performance.now() / 1000;
-
-    if (now - lastCollisionTime < collisionCooldown) return;
+    if (collisionCooldownTimer > 0) return;
     if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
 
-    lastCollisionTime = now;
+    collisionCooldownTimer = COLLISION_COOLDOWN;
 
     player.hurt(1, enemy);
     await applyKnockback({
@@ -62,6 +69,13 @@ export function FlyingEnemyCollisionSystem({
     enemy.collisionIgnore = [TAGS.PLAYER];
     enemy.unuse("body");
   }
+
+  engine.onUpdate(() => {
+    if (collisionCooldownTimer > 0) {
+      collisionCooldownTimer -= engine.dt();
+      if (collisionCooldownTimer < 0) collisionCooldownTimer = 0;
+    }
+  });
 
   enemy.onCollide(TAGS.PLAYER, onPlayerCollision);
   enemy.onCollide(HITBOX_TAGS.PLAYER_SWORD, onSwordHitboxCollision);

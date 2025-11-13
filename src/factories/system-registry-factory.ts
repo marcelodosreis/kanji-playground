@@ -31,6 +31,7 @@ import type {
   EnemySystemContext,
   BossSystemContext,
 } from "../types/system.types";
+import { FlyingEnemyIdleSystem } from "../core/system/enemies/flying-enemy/flying-enemy-idle.system";
 
 export class SystemRegistryFactory {
   static registerPlayerSystems(context: PlayerSystemContext): void {
@@ -123,6 +124,14 @@ export class SystemRegistryFactory {
       movement,
     });
 
+    FlyingEnemyIdleSystem({
+      engine: context.engine,
+      enemy: context.enemy,
+      stateMachine: context.stateMachine,
+      movement,
+      detection,
+    });
+
     FlyingEnemyPatrolSystem({
       engine: context.engine,
       enemy: context.enemy,
@@ -170,6 +179,7 @@ export class SystemRegistryFactory {
       engine: context.engine,
       enemy: context.enemy,
       player: context.player,
+      stateMachine: context.stateMachine,
     });
 
     FlyingEnemyAnimationSystem({

@@ -10,6 +10,7 @@ export enum BOSS_EVENTS {
 }
 
 export enum FLYING_ENEMY_EVENTS {
+  IDLE = "idle",
   PATROL_RIGHT = "patrol_right",
   PATROL_LEFT = "patrol_left",
   ALERT = "alert",

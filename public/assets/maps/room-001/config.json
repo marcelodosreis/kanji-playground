@@ -272,18 +272,6 @@
                 }, 
                 {
                  "height":0,
-                 "id":17,
-                 "name":"orange_fly_enemy",
-                 "point":true,
-                 "rotation":0,
-                 "type":"fly_enemy",
-                 "visible":true,
-                 "width":0,
-                 "x":176,
-                 "y":208
-                }, 
-                {
-                 "height":0,
                  "id":18,
                  "name":"boss",
                  "point":true,
@@ -365,18 +353,6 @@
                  "width":0,
                  "x":304,
                  "y":272
-                }, 
-                {
-                 "height":0,
-                 "id":52,
-                 "name":"blue_fly_enemy",
-                 "point":true,
-                 "rotation":0,
-                 "type":"fly_enemy",
-                 "visible":true,
-                 "width":0,
-                 "x":272,
-                 "y":256
                 }],
          "opacity":1,
          "type":"objectgroup",

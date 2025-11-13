@@ -18,6 +18,11 @@ export function FlyingEnemyPatrolDirectionSystem({
   const STUCK_THRESHOLD = 10;
   const MIN_MOVEMENT = 0.5;
 
+  function resetStuckDetection(): void {
+    stuckFrames = 0;
+    lastX = enemy.pos.x;
+  }
+
   function isStuck(): boolean {
     const movement = Math.abs(enemy.pos.x - lastX);
 
@@ -31,7 +36,20 @@ export function FlyingEnemyPatrolDirectionSystem({
     return stuckFrames >= STUCK_THRESHOLD;
   }
 
+  function isPatrolling(): boolean {
+    const state = stateMachine.getState();
+    return (
+      state === FLYING_ENEMY_EVENTS.PATROL_RIGHT ||
+      state === FLYING_ENEMY_EVENTS.PATROL_LEFT
+    );
+  }
+
   function shouldChangeDirection(): boolean {
+    if (!isPatrolling()) {
+      resetStuckDetection();
+      return false;
+    }
+
     const currentState = stateMachine.getState();
     const isMovingRight = currentState === FLYING_ENEMY_EVENTS.PATROL_RIGHT;
     const isMovingLeft = currentState === FLYING_ENEMY_EVENTS.PATROL_LEFT;
@@ -48,7 +66,7 @@ export function FlyingEnemyPatrolDirectionSystem({
   }
 
   function changeDirection(): void {
-    stuckFrames = 0;
+    resetStuckDetection();
     const currentState = stateMachine.getState();
 
     if (currentState === FLYING_ENEMY_EVENTS.PATROL_RIGHT) {
@@ -67,5 +85,6 @@ export function FlyingEnemyPatrolDirectionSystem({
     shouldChangeDirection,
     changeDirection,
     getPatrolDirection,
+    resetStuckDetection,
   };
 }

@@ -10,6 +10,7 @@ import { isPaused } from "../../../../utils/is-paused";
 import type { FlyingEnemyMovementSystem } from "./flying-enemy-movement";
 import type { FlyingEnemyDetectionSystem } from "./flying-enemy-detection";
 import { hasObstacleBetweenObjects } from "../../../../utils/raycast";
+import { FLYING_ENEMY_SPRITES } from "../../../../types/sprites.enum";
 
 type AttackParams = {
   engine: Engine;
@@ -31,16 +32,10 @@ export function FlyingEnemyAttackSystem({
   detection,
 }: AttackParams) {
   const PLAYER_VERTICAL_OFFSET = 12;
-  const MIN_ATTACK_DURATION = 1_000;
-  let attackStartTime = 0;
-
-  function startAttackTimer(): void {
-    if (attackStartTime === 0) attackStartTime = performance.now();
-  }
-
-  function hasAttackDurationPassed(): boolean {
-    return performance.now() - attackStartTime >= MIN_ATTACK_DURATION;
-  }
+  const MIN_ATTACK_DURATION = 1.0;
+  const GREEN_SINGLE_ATTACK_DURATION = 2.0;
+  let attackTimer = 0;
+  let hasGreenAttackedOnce = false;
 
   function shouldStopAttacking(): boolean {
     return (
@@ -53,6 +48,7 @@ export function FlyingEnemyAttackSystem({
 
   function returnToInitialPosition(): void {
     stateMachine.dispatch(FLYING_ENEMY_EVENTS.RETURN);
+    attackTimer = 0;
   }
 
   function getPlayerTargetPosition() {
@@ -68,7 +64,12 @@ export function FlyingEnemyAttackSystem({
   }
 
   function handleObstacles(): boolean {
-    if (!hasAttackDurationPassed()) return false;
+    if (attackTimer < MIN_ATTACK_DURATION) return false;
+
+    if (enemy.behavior === FLYING_ENEMY_SPRITES.RED) {
+      return false;
+    }
+
     if (
       hasObstacleBetweenObjects({ origin: enemy, target: player, colliders })
     ) {
@@ -79,6 +80,10 @@ export function FlyingEnemyAttackSystem({
   }
 
   function handlePursuitLimit(): boolean {
+    if (enemy.behavior === FLYING_ENEMY_SPRITES.RED) {
+      return false;
+    }
+
     if (detection.hasPursuitLimitExceeded()) {
       returnToInitialPosition();
       return true;
@@ -86,11 +91,26 @@ export function FlyingEnemyAttackSystem({
     return false;
   }
 
-  engine.onUpdate(() => {
-    if (stateMachine.isAttacking()) startAttackTimer();
-    else attackStartTime = 0;
+  function handleGreenSingleAttack(): boolean {
+    if (enemy.behavior !== FLYING_ENEMY_SPRITES.GREEN) return false;
 
-    if (shouldStopAttacking()) return;
+    if (attackTimer >= GREEN_SINGLE_ATTACK_DURATION && !hasGreenAttackedOnce) {
+      hasGreenAttackedOnce = true;
+      returnToInitialPosition();
+      return true;
+    }
+    return false;
+  }
+
+  engine.onUpdate(() => {
+    if (shouldStopAttacking()) {
+      attackTimer = 0;
+      return;
+    }
+
+    attackTimer += engine.dt();
+
+    if (handleGreenSingleAttack()) return;
     if (handleObstacles()) return;
     if (handlePursuitLimit()) return;
 

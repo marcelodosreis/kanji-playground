@@ -48,6 +48,48 @@ export function loadEnemiesSprites(): void {
     }
   );
 
+    engine.loadSprite(
+    FLYING_ENEMY_SPRITES.RED,
+    "./v2/assets/sprites/enemies/red-bat.png",
+    {
+      sliceX: 5,
+      sliceY: 3,
+      anims: {
+        [FLYING_ANIMATIONS.EXPLODE]: { from: 6, to: 7 },
+        [FLYING_ANIMATIONS.HURT]: { from: 6, to: 7, speed: 16 },
+        [FLYING_ANIMATIONS.FLYING]: { from: 10, to: 14, loop: true },
+      },
+    }
+  );
+
+    engine.loadSprite(
+    FLYING_ENEMY_SPRITES.BLACK,
+    "./v2/assets/sprites/enemies/black-bat.png",
+    {
+      sliceX: 5,
+      sliceY: 3,
+      anims: {
+        [FLYING_ANIMATIONS.EXPLODE]: { from: 6, to: 7 },
+        [FLYING_ANIMATIONS.HURT]: { from: 6, to: 7, speed: 16 },
+        [FLYING_ANIMATIONS.FLYING]: { from: 10, to: 14, loop: true },
+      },
+    }
+  );
+
+    engine.loadSprite(
+    FLYING_ENEMY_SPRITES.GREEN,
+    "./v2/assets/sprites/enemies/green-bat.png",
+    {
+      sliceX: 5,
+      sliceY: 3,
+      anims: {
+        [FLYING_ANIMATIONS.EXPLODE]: { from: 6, to: 7 },
+        [FLYING_ANIMATIONS.HURT]: { from: 6, to: 7, speed: 16 },
+        [FLYING_ANIMATIONS.FLYING]: { from: 10, to: 14, loop: true },
+      },
+    }
+  );
+
   engine.loadSprite(SPRITES.BURNER, "./assets/sprites/burner.png", {
     sliceX: 5,
     sliceY: 6,
