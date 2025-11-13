@@ -5,7 +5,7 @@ import type { TiledMap } from "./tiled-map.interface";
 import type { Map } from "./map.interface";
 import type { Boss } from "./boss.interface";
 import type { BossStateMachine } from "../core/system/enemies/boss/boss-state-machine";
-import type { FlyingEnemyStateMachine } from "../core/system/enemies/flying-enemy/flying-enemy-state-machine";
+import type { FlyingEnemyStateMachine } from "../core/system/enemies/flying-enemy/fly-enemy-state-machine-system";
 import type { PlayerStateMachine } from "../core/system/player/player-state-machine";
 import type { SCENE_DATA } from "./scenes.enum";
 

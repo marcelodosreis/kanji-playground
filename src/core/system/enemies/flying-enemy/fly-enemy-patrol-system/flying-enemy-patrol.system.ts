@@ -1,6 +1,6 @@
 import type { Engine } from "../../../../../types/engine.type";
 import type { Enemy } from "../../../../../types/enemy.interface";
-import type { FlyingEnemyStateMachine } from "../flying-enemy-state-machine";
+import type { FlyingEnemyStateMachine } from "../fly-enemy-state-machine-system";
 import { FLYING_ENEMY_EVENTS } from "../../../../../types/events.enum";
 import { isPaused } from "../../../../../utils/is-paused";
 import { FLYING_ENEMY_SPRITES } from "../../../../../types/sprites.enum";
