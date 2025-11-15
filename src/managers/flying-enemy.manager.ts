@@ -8,7 +8,7 @@ import {
 import { EntityFactory } from "../factories/entity-factory";
 import type { Enemy } from "../types/enemy.interface";
 import { getPlayer } from "../utils/get-player";
-import { createFlyingEnemyStateMachine } from "../systems/enemies/flying-enemy/fly-enemy-state-machine-system";
+import { createFlyingEnemyStateMachine } from "../systems/enemies/flying-enemy/fly-enemy-state-machine";
 import { SystemRegistryFactory } from "../factories/system-registry-factory";
 import { MapLayer, MapLayerHelper } from "../helpers/map-layer-helper";
 import type { FLYING_ENEMY_SPRITES } from "../types/sprites.enum";

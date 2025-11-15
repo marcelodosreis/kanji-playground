@@ -3,7 +3,6 @@ import type { Engine, EngineGameObj } from "../../types/engine.type";
 import { ENGINE_DEFAULT_EVENTS } from "../../types/events.enum";
 import type { Player } from "../../types/player.interface";
 import { GLOBAL_STATE } from "../../types/global-state.enum";
-import { applyKnockback } from "../../utils/apply-knockback";
 import { createBlink } from "../../utils/create-blink";
 import { GLOBAL_STATE_CONTROLLER } from "../../core/global-state-controller";
 import { type PlayerStateMachine } from "./player-state-machine";
@@ -30,8 +29,8 @@ type HurtLockState = {
 
 const HEALTH_CONFIG = {
   KNOCKBACK_STRENGTH: 1,
-  BLINK_COUNT: 3,
-  HURT_LOCK_DURATION_MS: 300,
+  BLINK_COUNT: 5,
+  HURT_LOCK_DURATION_MS: 400,
 };
 
 const getHealthState = (): HealthState => ({
@@ -91,30 +90,17 @@ export function PlayerHealthSystem({ engine, player, stateMachine }: Params) {
     return newHP;
   };
 
-  const applyKnockbackEffect = (source: EngineGameObj): void => {
-    if (!source) return;
-
-    applyKnockback({
-      engine,
-      target: player,
-      source,
-      strength: HEALTH_CONFIG.KNOCKBACK_STRENGTH,
-    });
-  };
-
   const lockHurtState = async (durationMs: number): Promise<void> => {
     hurtLock.isLocked = true;
     await delay(durationMs);
     hurtLock.isLocked = false;
   };
 
-  const handleHurt = async ({ amount, source }: HurtParams): Promise<void> => {
+  const handleHurt = async ({ amount }: HurtParams): Promise<void> => {
     if (stateMachine.getState() === PLAYER_ANIMATIONS.EXPLODE) return;
 
     stateMachine.dispatch("HURT");
     const playerHp = applyDamage(amount);
-
-    applyKnockbackEffect(source);
 
     if (isDead(playerHp)) return;
 

@@ -10,7 +10,6 @@ type KnockbackParams = {
   source: EngineGameObj;
   strength?: number;
   verticalPower?: number;
-  stunDuration?: number;
 };
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -20,7 +19,6 @@ export async function applyKnockback({
   source,
   strength = 3,
   verticalPower = 40,
-  stunDuration = 0.5,
 }: KnockbackParams) {
   if (target.isKnockedBack) return;
 
@@ -48,8 +46,6 @@ export async function applyKnockback({
 
       await wait(16);
     }
-
-    await wait(stunDuration * 1000);
   } catch (error) {
     console.error("Knockback error:", error);
   } finally {

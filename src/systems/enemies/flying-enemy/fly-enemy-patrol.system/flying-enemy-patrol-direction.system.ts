@@ -1,5 +1,5 @@
 import type { Enemy } from "../../../../types/enemy.interface";
-import type { FlyingEnemyStateMachine } from "../fly-enemy-state-machine-system";
+import type { FlyingEnemyStateMachine } from "../fly-enemy-state-machine";
 import { FLYING_ENEMY_EVENTS } from "../../../../types/events.enum";
 
 type PatrolDirectionParams = {

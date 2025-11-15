@@ -1,7 +1,7 @@
 import type { Engine } from "../../../types/engine.type";
 import type { Enemy } from "../../../types/enemy.interface";
 import type { Player } from "../../../types/player.interface";
-import type { FlyingEnemyStateMachine } from "./fly-enemy-state-machine-system";
+import type { FlyingEnemyStateMachine } from "./fly-enemy-state-machine";
 import {
   ENGINE_DEFAULT_EVENTS,
   FLYING_ENEMY_EVENTS,

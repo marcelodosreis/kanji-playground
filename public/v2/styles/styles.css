@@ -1,7 +1,5 @@
 :root {
   --background-color: #442b40;
-  --game-width: 640;
-  --game-height: 360;
   --scale: 1;
 }
 
@@ -24,27 +22,23 @@ body {
 
 #app {
   position: relative;
-  aspect-ratio: var(--game-width) / var(--game-height);
   display: inline-block;
 }
 
 #game {
-  width: calc(var(--game-width) * 1px);
-  height: calc(var(--game-height) * 1px);
+  width: var(--canvas-width);
+  height: var(--canvas-height);
   display: block;
-  outline: none;
 }
 
 #ui {
   position: absolute;
   top: 0;
   left: 0;
-  width: calc(var(--game-width) * 1px);
-  height: calc(var(--game-height) * 1px);
+  width: var(--canvas-width);
+  height: var(--canvas-height);
   transform-origin: center;
   transform: scale(var(--scale));
-  contain: layout paint size;
-  content-visibility: auto;
   pointer-events: none;
 }
 

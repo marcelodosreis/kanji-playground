@@ -1,6 +1,6 @@
 import type { Player } from "../../../types/player.interface";
-import { PlayerFirstJumpSystem } from "./first-jump-system";
-import { PlayerDoubleJumpSystem } from "./double-jump-system";
+import { PlayerFirstJumpSystem } from "./player-first-jump.system";
+import { PlayerDoubleJumpSystem } from "./player-double-jump.system";
 
 type JumpCoordinatorParams = {
   player: Player;

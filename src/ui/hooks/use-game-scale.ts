@@ -1,7 +1,5 @@
 import { useEffect } from "react";
-
-const GAME_WIDTH = 640;
-const GAME_HEIGHT = 360;
+import { GAME } from "../../constansts/game.constant";
 
 export function useGameScale() {
   useEffect(() => {
@@ -10,8 +8,8 @@ export function useGameScale() {
 
     const updateScale = () => {
       const scale = Math.min(
-        app.offsetWidth / GAME_WIDTH,
-        app.offsetHeight / GAME_HEIGHT
+        app.offsetWidth / GAME.WIDTH,
+        app.offsetHeight / GAME.HEIGHT
       );
       document.documentElement.style.setProperty("--scale", scale.toString());
     };

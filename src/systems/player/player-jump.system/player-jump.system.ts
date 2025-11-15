@@ -1,10 +1,10 @@
 import type { Engine } from "../../../types/engine.type";
 import type { Player } from "../../../types/player.interface";
 import { type PlayerStateMachine } from "../player-state-machine";
-import { PlayerJumpInputSystem } from "./jump-input-system";
-import { PlayerJumpCoordinatorSystem } from "./coordinator-system";
-import { PlayerJumpAnimationSystem } from "./jump-animation-system";
-import { PlayerJumpPhysicsSystem } from "./jump-physics-system";
+import { PlayerJumpInputSystem } from "./player-jump-input.system";
+import { PlayerJumpCoordinatorSystem } from "./player-jump-coordinator.system";
+import { PlayerJumpAnimationSystem } from "./player-jump-animation.system";
+import { PlayerJumpPhysicsSystem } from "./player-jump-physics.system";
 
 type JumpSystemParams = {
   engine: Engine;

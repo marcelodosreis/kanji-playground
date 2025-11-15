@@ -1,6 +1,6 @@
-import type { Engine, EngineGameObj } from "../../types/engine.type";
-import type { Player } from "../../types/player.interface";
-import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
+import type { Engine, EngineGameObj } from "../../../types/engine.type";
+import type { Player } from "../../../types/player.interface";
+import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
 
 type Params = {
   engine: Engine;
@@ -21,7 +21,7 @@ const SLASH_CONFIG = {
   SCALE: 1,
 } as const;
 
-export function PlayerSlashEffectSystem({ engine, player }: Params) {
+export function PlayerAttackSlashEffectSystem({ engine, player }: Params) {
   let lastCheckedFrame = -1;
   let activeSlash: SlashEffect | null = null;
 

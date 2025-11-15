@@ -1,15 +1,15 @@
 import kaplay from "kaplay";
 import type { Engine } from "../types/engine.type";
-
-const scale = 1.2;
+import { GAME } from "../constansts/game.constant";
 
 export const engine: Engine = kaplay({
   canvas: document.getElementById("game") as HTMLCanvasElement,
-  width: 640 * scale,
-  height: 360 * scale,
+  width: GAME.WIDTH,
+  height: GAME.HEIGHT,
+  scale: GAME.SCALE,
+
   letterbox: false,
   touchToMouse: true,
-  scale,
   pixelDensity: devicePixelRatio,
   debug: true,
 });

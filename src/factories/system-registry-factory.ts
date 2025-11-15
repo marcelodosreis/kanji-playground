@@ -1,9 +1,9 @@
 import { FlyingEnemyMovementSystem } from "../systems/enemies/flying-enemy/flying-enemy-movement.system";
 import { FlyingEnemyDetectionSystem } from "../systems/enemies/flying-enemy/flying-enemy-detection.system";
-import { FlyingEnemyPatrolDirectionSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol-direction.system";
-import { FlyingEnemyPatrolHeightSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol-height.system";
+import { FlyingEnemyPatrolDirectionSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol.system/flying-enemy-patrol-direction.system";
+import { FlyingEnemyPatrolHeightSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol.system/flying-enemy-patrol-height.system";
 
-import { FlyingEnemyPatrolSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol.system";
+import { FlyingEnemyPatrolSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol.system/flying-enemy-patrol.system";
 import { FlyingEnemyAlertSystem } from "../systems/enemies/flying-enemy/flying-enemy-alert.system";
 import { FlyingEnemyAttackSystem } from "../systems/enemies/flying-enemy/flying-enemy-attack.system";
 import { FlyingEnemyReturnSystem } from "../systems/enemies/flying-enemy/flying-enemy-return.system";
@@ -16,12 +16,12 @@ import { BossAttackSystem } from "../systems/enemies/boss/boss-attack.system";
 import { BossCollisionSystem } from "../systems/enemies/boss/boss-colision.system";
 
 import { PlayerAnimationSystem } from "../systems/player/player-animation.system";
-import { PlayerAttackSystem } from "../systems/player/player-attack.system";
+import { PlayerAttackSystem } from "../systems/player/player-attack.system/player-attack.system";
 import { PlayerBoundarySystem } from "../systems/player/player-boundary.system";
 import { PlayerCameraSystem } from "../systems/player/player-camera.system";
 import { PlayerHealthSystem } from "../systems/player/player-health.system";
 import { PlayerRespawnSystem } from "../systems/player/player-respawn.system";
-import { PlayerJumpSystem } from "../systems/player/player-jump-system/player-jump.system";
+import { PlayerJumpSystem } from "../systems/player/player-jump.system/player-jump.system";
 import { PlayerPassthroughSystem } from "../systems/player/player-passthrough.system";
 import { PlayerWalkSystem } from "../systems/player/player-walk.system";
 import { PlayerOrientationSystem } from "../systems/player/player-orientation.system";
@@ -33,7 +33,7 @@ import type {
 } from "../types/system.types";
 import { FlyingEnemyIdleSystem } from "../systems/enemies/flying-enemy/flying-enemy-idle.system";
 import { FlyingEnemyOrganicMovementSystem } from "../systems/enemies/flying-enemy/flying-enemy-organic-movement.system";
-import { PlayerSlashEffectSystem } from "../systems/player/player-slash-effect.system";
+import { PlayerAttackSlashEffectSystem } from "../systems/player/player-attack.system/player-attack-slash-effect.system";
 
 export class SystemRegistryFactory {
   static registerPlayerSystems(context: PlayerSystemContext): void {
@@ -65,7 +65,7 @@ export class SystemRegistryFactory {
       orientationSystem,
     });
 
-    PlayerSlashEffectSystem({
+    PlayerAttackSlashEffectSystem({
       engine: context.engine,
       player: context.player,
     });
