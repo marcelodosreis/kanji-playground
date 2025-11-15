@@ -1,7 +1,7 @@
 import kaplay from "kaplay";
 import type { Engine } from "../types/engine.type";
 
-const scale = 1;
+const scale = 1.2;
 
 export const engine: Engine = kaplay({
   canvas: document.getElementById("game") as HTMLCanvasElement,

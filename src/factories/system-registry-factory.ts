@@ -32,6 +32,7 @@ import type {
   BossSystemContext,
 } from "../types/system.types";
 import { FlyingEnemyIdleSystem } from "../systems/enemies/flying-enemy/flying-enemy-idle.system";
+import { FlyingEnemyOrganicMovementSystem } from "../systems/enemies/flying-enemy/flying-enemy-organic-movement";
 
 export class SystemRegistryFactory {
   static registerPlayerSystems(context: PlayerSystemContext): void {
@@ -101,9 +102,14 @@ export class SystemRegistryFactory {
   }
 
   static registerFlyingEnemySystems(context: EnemySystemContext): void {
-    const movement = FlyingEnemyMovementSystem({
+    const organicMovement = FlyingEnemyOrganicMovementSystem({
       engine: context.engine,
       enemy: context.enemy,
+    });
+
+    const movement = FlyingEnemyMovementSystem({
+      enemy: context.enemy,
+      organicMovement,
     });
 
     const detection = FlyingEnemyDetectionSystem({
@@ -164,6 +170,7 @@ export class SystemRegistryFactory {
       engine: context.engine,
       enemy: context.enemy,
       stateMachine: context.stateMachine,
+      organicMovement,
       movement,
       detection,
     });
@@ -172,6 +179,7 @@ export class SystemRegistryFactory {
       engine: context.engine,
       enemy: context.enemy,
       detection,
+      organicMovement,
       stateMachine: context.stateMachine,
     });
 
@@ -179,6 +187,7 @@ export class SystemRegistryFactory {
       engine: context.engine,
       enemy: context.enemy,
       player: context.player,
+      organicMovement,
       stateMachine: context.stateMachine,
     });
 

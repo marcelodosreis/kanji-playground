@@ -9,12 +9,14 @@ import {
 import { HITBOX_TAGS, TAGS } from "../../../types/tags.enum";
 import { applyKnockback } from "../../../utils/apply-knockback";
 import { FLYING_ENEMY_SPRITES } from "../../../types/sprites.enum";
+import type { FlyingEnemyOrganicMovementSystem } from "./flying-enemy-organic-movement";
 
 type CollisionParams = {
   engine: Engine;
   enemy: Enemy;
   player: Player;
   stateMachine: FlyingEnemyStateMachine;
+  organicMovement: ReturnType<typeof FlyingEnemyOrganicMovementSystem>;
 };
 
 export function FlyingEnemyCollisionSystem({
@@ -22,6 +24,7 @@ export function FlyingEnemyCollisionSystem({
   enemy,
   player,
   stateMachine,
+  organicMovement,
 }: CollisionParams) {
   let collisionCooldownTimer = 0;
   const COLLISION_COOLDOWN = 1;
@@ -43,12 +46,15 @@ export function FlyingEnemyCollisionSystem({
     collisionCooldownTimer = COLLISION_COOLDOWN;
 
     player.hurt(1, enemy);
+    
+    organicMovement.resetVelocity();
     await applyKnockback({
       engine,
       target: enemy,
       source: player,
       strength: 5,
     });
+    organicMovement.resetVelocity();
   }
 
   async function onHurt(): Promise<void> {
@@ -56,6 +62,7 @@ export function FlyingEnemyCollisionSystem({
       return enemy.enterState(FLYING_ENEMY_EVENTS.EXPLODE);
     }
 
+    organicMovement.resetVelocity();
     await applyKnockback({
       engine,
       target: enemy,
@@ -63,6 +70,7 @@ export function FlyingEnemyCollisionSystem({
       strength: 2,
       verticalPower: enemy.behavior === FLYING_ENEMY_SPRITES.PURPLE ? 40 : 0,
     });
+    organicMovement.resetVelocity();
   }
 
   function onExplode(): void {

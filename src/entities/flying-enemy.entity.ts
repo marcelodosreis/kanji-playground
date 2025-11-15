@@ -11,17 +11,6 @@ export function FlyingEnemyEntity(
   initialPos: Vec2,
   sprite: FLYING_ENEMY_SPRITES
 ): Enemy {
-  let speed = 90
-
-  switch (sprite) {
-    case FLYING_ENEMY_SPRITES.ORANGE:
-      speed = 75
-      break
-    case FLYING_ENEMY_SPRITES.PURPLE:
-      speed = 90
-      break
-  }
-
   return engine.make([
     TAGS.FLY_ENEMY,
     EXTRA_TAGS.HITTABLE,
@@ -39,7 +28,7 @@ export function FlyingEnemyEntity(
     ]),
     engine.health(3),
     {
-      speed,
+      speed: 80,
       range: 90,
       patrolDistance: 100,
       pursuitSpeed: 130,

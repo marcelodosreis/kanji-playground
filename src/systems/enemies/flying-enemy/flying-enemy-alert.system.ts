@@ -44,6 +44,8 @@ export function FlyingEnemyAlertSystem({
   }
 
   engine.onUpdate(() => {
+
+    console.log('[DEBUG]', stateMachine.getState())
     if (shouldStopAlert()) {
       alertTimer = 0;
       return;

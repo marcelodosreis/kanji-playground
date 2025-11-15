@@ -14,9 +14,11 @@ export function FlyingEnemyPatrolDirectionSystem({
   const initialX = enemy.pos.x;
   let lastX = enemy.pos.x;
   let stuckFrames = 0;
+  let lastDirectionChange = 0;
 
-  const STUCK_THRESHOLD = 10;
-  const MIN_MOVEMENT = 0.5;
+  const STUCK_THRESHOLD = 20;
+  const MIN_MOVEMENT = 0.2;
+  const DIRECTION_CHANGE_COOLDOWN = 300;
 
   function resetStuckDetection(): void {
     stuckFrames = 0;
@@ -44,6 +46,11 @@ export function FlyingEnemyPatrolDirectionSystem({
     );
   }
 
+  function canChangeDirection(): boolean {
+    const now = performance.now();
+    return now - lastDirectionChange >= DIRECTION_CHANGE_COOLDOWN;
+  }
+
   function shouldChangeDirection(): boolean {
     if (!isPatrolling()) {
       resetStuckDetection();
@@ -54,19 +61,25 @@ export function FlyingEnemyPatrolDirectionSystem({
     const isMovingRight = currentState === FLYING_ENEMY_EVENTS.PATROL_RIGHT;
     const isMovingLeft = currentState === FLYING_ENEMY_EVENTS.PATROL_LEFT;
 
+    const hitWall = isStuck();
+
     if (isMovingRight) {
-      return enemy.pos.x >= initialX + enemy.patrolDistance || isStuck();
+      return enemy.pos.x >= initialX + enemy.patrolDistance || hitWall;
     }
 
     if (isMovingLeft) {
-      return enemy.pos.x <= initialX - enemy.patrolDistance || isStuck();
+      return enemy.pos.x <= initialX - enemy.patrolDistance || hitWall;
     }
 
     return false;
   }
 
   function changeDirection(): void {
+    if (!canChangeDirection()) return;
+
     resetStuckDetection();
+    lastDirectionChange = performance.now();
+
     const currentState = stateMachine.getState();
 
     if (currentState === FLYING_ENEMY_EVENTS.PATROL_RIGHT) {

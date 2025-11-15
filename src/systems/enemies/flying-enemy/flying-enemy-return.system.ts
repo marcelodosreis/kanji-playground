@@ -6,6 +6,7 @@ import { isPaused } from "../../../utils/is-paused";
 import type { FlyingEnemyMovementSystem } from "./flying-enemy-movement";
 import type { FlyingEnemyDetectionSystem } from "./flying-enemy-detection";
 import { FLYING_ENEMY_SPRITES } from "../../../types/sprites.enum";
+import type { FlyingEnemyOrganicMovementSystem } from "./flying-enemy-organic-movement";
 
 type ReturnParams = {
   engine: Engine;
@@ -13,6 +14,7 @@ type ReturnParams = {
   stateMachine: FlyingEnemyStateMachine;
   movement: ReturnType<typeof FlyingEnemyMovementSystem>;
   detection: ReturnType<typeof FlyingEnemyDetectionSystem>;
+  organicMovement: ReturnType<typeof FlyingEnemyOrganicMovementSystem>;
 };
 
 const RETURN_THRESHOLD_DISTANCE = 5;
@@ -24,6 +26,7 @@ export function FlyingEnemyReturnSystem({
   stateMachine,
   movement,
   detection,
+  organicMovement,
 }: ReturnParams) {
   function shouldStopReturning(): boolean {
     return !stateMachine.isReturning() || isPaused() || enemy.hp() <= 0;
@@ -45,6 +48,8 @@ export function FlyingEnemyReturnSystem({
   }
 
   function resumeInitialState(): void {
+    organicMovement.setTargetVelocity(0, 0);
+    
     switch (enemy.behavior) {
       case FLYING_ENEMY_SPRITES.BLUE:
       case FLYING_ENEMY_SPRITES.GREEN:
@@ -61,16 +66,25 @@ export function FlyingEnemyReturnSystem({
   }
 
   function moveTowardsInitialPosition(): void {
-    movement.moveToPosition(
-      enemy.initialPos.x,
-      enemy.initialPos.y,
-      enemy.speed
-    );
+    const dx = enemy.initialPos.x - enemy.pos.x;
+    const dy = enemy.initialPos.y - enemy.pos.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < RETURN_THRESHOLD_DISTANCE * 2) {
+      organicMovement.setTargetVelocity(0, 0);
+    } else {
+      movement.moveToPosition(
+        enemy.initialPos.x,
+        enemy.initialPos.y,
+        enemy.speed
+      );
+    }
   }
 
   function teleportToInitialPosition(): void {
     enemy.pos.x = enemy.initialPos.x;
     enemy.pos.y = enemy.initialPos.y;
+    organicMovement.resetVelocity();
   }
 
   function handleExitScreen(): void {

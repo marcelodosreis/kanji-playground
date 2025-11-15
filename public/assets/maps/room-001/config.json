@@ -351,8 +351,8 @@
                  "type":"fly_enemy",
                  "visible":true,
                  "width":0,
-                 "x":304,
-                 "y":272
+                 "x":368,
+                 "y":256
                 }],
          "opacity":1,
          "type":"objectgroup",

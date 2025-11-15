@@ -1,13 +1,13 @@
-import type { Engine } from "../../../types/engine.type";
 import type { Enemy } from "../../../types/enemy.interface";
 import { isPaused } from "../../../utils/is-paused";
+import type { FlyingEnemyOrganicMovementSystem } from "./flying-enemy-organic-movement";
 
 type Params = {
-  engine: Engine;
   enemy: Enemy;
+  organicMovement: ReturnType<typeof FlyingEnemyOrganicMovementSystem>;
 };
 
-export function FlyingEnemyMovementSystem({ engine, enemy }: Params) {
+export function FlyingEnemyMovementSystem({ enemy, organicMovement }: Params) {
   function canMove(): boolean {
     return enemy.hp() > 0 && !isPaused() && !enemy.isKnockedBack;
   }
@@ -33,7 +33,7 @@ export function FlyingEnemyMovementSystem({ engine, enemy }: Params) {
       faceLeft();
     }
 
-    enemy.move(direction * enemy.speed, 0);
+    organicMovement.setTargetVelocity(direction * enemy.speed, 0);
   }
 
   function moveToPosition(
@@ -43,12 +43,32 @@ export function FlyingEnemyMovementSystem({ engine, enemy }: Params) {
   ): void {
     if (!canMove()) return;
     faceDirection(targetX);
-    enemy.moveTo(engine.vec2(targetX, targetY), speed);
+
+    const dx = targetX - enemy.pos.x;
+    const dy = targetY - enemy.pos.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance > 1) {
+      const vx = (dx / distance) * speed;
+      const vy = (dy / distance) * speed;
+      organicMovement.setTargetVelocity(vx, vy);
+    } else {
+      organicMovement.setTargetVelocity(0, 0);
+    }
   }
 
   function returnToHeight(targetY: number): void {
     if (!canMove()) return;
-    enemy.moveTo(engine.vec2(enemy.pos.x, targetY), enemy.speed);
+
+    const dy = targetY - enemy.pos.y;
+    const distance = Math.abs(dy);
+
+    if (distance > 5) {
+      const vy = (dy / distance) * (enemy.speed * 0.4);
+      organicMovement.setTargetVelocity(0, vy);
+    } else {
+      organicMovement.setTargetVelocity(0, 0);
+    }
   }
 
   return {

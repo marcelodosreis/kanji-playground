@@ -3,23 +3,26 @@ import type { Enemy } from "../../../types/enemy.interface";
 import type { FlyingEnemyStateMachine } from "./fly-enemy-state-machine-system";
 import { isPaused } from "../../../utils/is-paused";
 import type { FlyingEnemyDetectionSystem } from "./flying-enemy-detection";
+import type { FlyingEnemyOrganicMovementSystem } from "./flying-enemy-organic-movement";
 
 type UnstuckParams = {
   engine: Engine;
   enemy: Enemy;
   stateMachine: FlyingEnemyStateMachine;
   detection: ReturnType<typeof FlyingEnemyDetectionSystem>;
+  organicMovement: ReturnType<typeof FlyingEnemyOrganicMovementSystem>;
 };
 
 const STUCK_CHECK_DURATION = 1_000;
 const POSITION_TOLERANCE = 10;
-const UNSTUCK_SPEED = 50;
+const UNSTUCK_SPEED = 80;
 
 export function FlyingEnemyUnstuckSystem({
   engine,
   enemy,
   detection,
   stateMachine,
+  organicMovement,
 }: UnstuckParams) {
   let stuckCheckStartTime = 0;
   let lastCheckedX = 0;
@@ -63,7 +66,8 @@ export function FlyingEnemyUnstuckSystem({
   function applyUnstuckMovement(): void {
     if (!isUnstucking) return;
 
-    enemy.pos.y -= UNSTUCK_SPEED * engine.dt();
+    const currentVel = organicMovement.getCurrentVelocity();
+    organicMovement.setTargetVelocity(currentVel.x, -UNSTUCK_SPEED);
 
     const hasMovedEnough =
       Math.abs(enemy.pos.x - lastCheckedX) > POSITION_TOLERANCE;
