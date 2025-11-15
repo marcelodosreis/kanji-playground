@@ -82,7 +82,7 @@ export function PlayerAttackSystem({
           engine,
           position: target.pos,
           isRight: target.pos.x > player.pos.x,
-          scale: 1.4,
+          scale: 1.2,
         });
       },
     });

@@ -34,7 +34,7 @@ export function spawnHitConfirm({
     engine.sprite(FRONT),
     engine.pos(position.x + frontOffset, position.y),
     engine.anchor("center"),
-    engine.scale(0.4),
+    engine.scale(scale),
     engine.rotate(frontRot),
     engine.z(100),
   ]) as HitEffect;
