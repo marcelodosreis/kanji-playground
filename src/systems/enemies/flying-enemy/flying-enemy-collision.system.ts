@@ -9,7 +9,7 @@ import {
 import { HITBOX_TAGS, TAGS } from "../../../types/tags.enum";
 import { applyKnockback } from "../../../utils/apply-knockback";
 import { FLYING_ENEMY_SPRITES } from "../../../types/sprites.enum";
-import type { FlyingEnemyOrganicMovementSystem } from "./flying-enemy-organic-movement";
+import type { FlyingEnemyOrganicMovementSystem } from "./flying-enemy-organic-movement.system";
 
 type CollisionParams = {
   engine: Engine;

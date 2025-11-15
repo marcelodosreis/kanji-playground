@@ -2,8 +2,8 @@ import type { Engine } from "../../../types/engine.type";
 import type { Enemy } from "../../../types/enemy.interface";
 import type { FlyingEnemyStateMachine } from "./fly-enemy-state-machine-system";
 import { isPaused } from "../../../utils/is-paused";
-import type { FlyingEnemyDetectionSystem } from "./flying-enemy-detection";
-import type { FlyingEnemyOrganicMovementSystem } from "./flying-enemy-organic-movement";
+import type { FlyingEnemyDetectionSystem } from "./flying-enemy-detection.system";
+import type { FlyingEnemyOrganicMovementSystem } from "./flying-enemy-organic-movement.system";
 
 type UnstuckParams = {
   engine: Engine;

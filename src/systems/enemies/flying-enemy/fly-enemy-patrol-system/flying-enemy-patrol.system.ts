@@ -4,9 +4,9 @@ import type { FlyingEnemyStateMachine } from "../fly-enemy-state-machine-system"
 import { FLYING_ENEMY_EVENTS } from "../../../../types/events.enum";
 import { isPaused } from "../../../../utils/is-paused";
 import { FLYING_ENEMY_SPRITES } from "../../../../types/sprites.enum";
-import type { FlyingEnemyMovementSystem } from "../flying-enemy-movement";
-import type { FlyingEnemyDetectionSystem } from "../flying-enemy-detection";
-import type { FlyingEnemyPatrolDirectionSystem } from "./flying-enemy-patrol-direction";
+import type { FlyingEnemyMovementSystem } from "../flying-enemy-movement.system";
+import type { FlyingEnemyDetectionSystem } from "../flying-enemy-detection.system";
+import type { FlyingEnemyPatrolDirectionSystem } from "./flying-enemy-patrol-direction.system";
 
 type PatrolParams = {
   engine: Engine;

@@ -27,7 +27,7 @@ const ATTACK_CONFIG = {
   HITBOX_START_FRAME: 1,
   HITBOX_END_FRAME: 5,
   HITBOX_DIMENSIONS: {
-    width: 18,
+    width: 32,
     height: 16,
     offsetY: 9,
   },

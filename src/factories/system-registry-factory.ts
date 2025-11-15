@@ -1,6 +1,6 @@
-import { FlyingEnemyMovementSystem } from "../systems/enemies/flying-enemy/flying-enemy-movement";
-import { FlyingEnemyDetectionSystem } from "../systems/enemies/flying-enemy/flying-enemy-detection";
-import { FlyingEnemyPatrolDirectionSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol-direction";
+import { FlyingEnemyMovementSystem } from "../systems/enemies/flying-enemy/flying-enemy-movement.system";
+import { FlyingEnemyDetectionSystem } from "../systems/enemies/flying-enemy/flying-enemy-detection.system";
+import { FlyingEnemyPatrolDirectionSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol-direction.system";
 import { FlyingEnemyPatrolHeightSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol-height.system";
 
 import { FlyingEnemyPatrolSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol-system/flying-enemy-patrol.system";
@@ -32,7 +32,8 @@ import type {
   BossSystemContext,
 } from "../types/system.types";
 import { FlyingEnemyIdleSystem } from "../systems/enemies/flying-enemy/flying-enemy-idle.system";
-import { FlyingEnemyOrganicMovementSystem } from "../systems/enemies/flying-enemy/flying-enemy-organic-movement";
+import { FlyingEnemyOrganicMovementSystem } from "../systems/enemies/flying-enemy/flying-enemy-organic-movement.system";
+import { PlayerSlashEffectSystem } from "../systems/player/player-slash-effect.system";
 
 export class SystemRegistryFactory {
   static registerPlayerSystems(context: PlayerSystemContext): void {
@@ -62,6 +63,11 @@ export class SystemRegistryFactory {
       player: context.player,
       stateMachine: context.stateMachine,
       orientationSystem,
+    });
+
+    PlayerSlashEffectSystem({
+      engine: context.engine,
+      player: context.player,
     });
 
     PlayerBoundarySystem({

@@ -7,8 +7,8 @@ import type { Player } from "../../../types/player.interface";
 import type { FlyingEnemyStateMachine } from "./fly-enemy-state-machine-system";
 import { FLYING_ENEMY_EVENTS } from "../../../types/events.enum";
 import { isPaused } from "../../../utils/is-paused";
-import type { FlyingEnemyMovementSystem } from "./flying-enemy-movement";
-import type { FlyingEnemyDetectionSystem } from "./flying-enemy-detection";
+import type { FlyingEnemyMovementSystem } from "./flying-enemy-movement.system";
+import type { FlyingEnemyDetectionSystem } from "./flying-enemy-detection.system";
 import { hasObstacleBetweenObjects } from "../../../utils/raycast";
 import { FLYING_ENEMY_SPRITES } from "../../../types/sprites.enum";
 

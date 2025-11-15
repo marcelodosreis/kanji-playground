@@ -1,6 +1,6 @@
 import type { Enemy } from "../../../types/enemy.interface";
 import { isPaused } from "../../../utils/is-paused";
-import type { FlyingEnemyOrganicMovementSystem } from "./flying-enemy-organic-movement";
+import type { FlyingEnemyOrganicMovementSystem } from "./flying-enemy-organic-movement.system";
 
 type Params = {
   enemy: Enemy;

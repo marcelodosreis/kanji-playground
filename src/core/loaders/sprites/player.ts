@@ -8,7 +8,7 @@ export function loadPlayerSprites(): void {
     sliceY: 14,
     anims: {
       [PLAYER_ANIMATIONS.IDLE]: { from: 0, to: 7, loop: true },
-      [PLAYER_ANIMATIONS.ATTACK]: { from: 8, to: 13, speed: 24 },
+      [PLAYER_ANIMATIONS.ATTACK]: { from: 8, to: 13, speed: 32 },
       // [PLAYER_ANIMATIONS.ATTACK_BOTTOM]: { from: 16, to: 21, speed: 16 },
       [PLAYER_ANIMATIONS.HURT]: { from: 32, to: 33, speed: 32 },
       // [PLAYER_ANIMATIONS.ACHIVE]: { from: 40, to: 45, speed: 10 },
@@ -20,6 +20,19 @@ export function loadPlayerSprites(): void {
       // [PLAYER_ANIMATIONS.WALL]: { from: 88, to: 88, loop: true },
       // [PLAYER_ANIMATIONS.SPELL]: { from: 96, to: 99 },
       [PLAYER_ANIMATIONS.EXPLODE]: { from: 104, to: 109 },
+    },
+  });
+
+  engine.loadSprite("slash-effect", "./v2/assets/sprites/effects/slash-001.png", {
+    sliceX: 3,
+    sliceY: 1,
+    anims: {
+      slash: {
+        from: 0,
+        to: 2,
+        speed: 24,
+        loop: false,
+      },
     },
   });
 }
