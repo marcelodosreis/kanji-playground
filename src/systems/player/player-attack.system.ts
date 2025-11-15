@@ -1,3 +1,4 @@
+import { spawnHitConfirm } from "../../helpers/hit-confirm.helper";
 import { createTransientHitbox } from "../../helpers/hitbox.helper";
 import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import type { Engine } from "../../types/engine.type";
@@ -29,7 +30,7 @@ const ATTACK_CONFIG = {
   HITBOX_DIMENSIONS: {
     width: 32,
     height: 16,
-    offsetY: 9,
+    offsetY: -8,
   },
 };
 
@@ -78,11 +79,18 @@ export function PlayerAttackSystem({
       tag: HITBOX_TAGS.PLAYER_SWORD,
       collideWithTag: EXTRA_TAGS.HITTABLE,
       onCollide: (enemy) => {
+        spawnHitConfirm({
+          engine,
+          position: { x: enemy.pos.x, y: enemy.pos.y },
+          scale: 1.4,
+          rotation: 180,
+        });
+
         applyKnockback({
           engine,
           target: player,
           source: enemy,
-          strength: 0.4,
+          strength: 0.8,
         });
       },
     });

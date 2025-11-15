@@ -17,7 +17,7 @@ const SLASH_CONFIG = {
   ANIMATION_NAME: "slash",
   SPAWN_FRAME: 0,
   OFFSET_X: 54,
-  OFFSET_Y: 24,
+  OFFSET_Y: 8,
   SCALE: 1,
 } as const;
 

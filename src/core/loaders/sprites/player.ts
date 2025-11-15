@@ -35,4 +35,17 @@ export function loadPlayerSprites(): void {
       },
     },
   });
+
+  engine.loadSprite("hit-effect", "./v2/assets/sprites/effects/hit.png", {
+    sliceX: 7,
+    sliceY: 1,
+    anims: {
+      hit: {
+        from: 0,
+        to: 6,
+        speed: 32,
+        loop: false,
+      },
+    },
+  });
 }
