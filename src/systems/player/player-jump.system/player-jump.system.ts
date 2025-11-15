@@ -5,7 +5,6 @@ import { PlayerStateTransition } from "../player-state-machine";
 import type { PlayerSystemWithAPI } from "../../../types/player-system.interface";
 import { PlayerFirstJumpSystem } from "./player-first-jump.system";
 import { PlayerDoubleJumpSystem } from "./player-double-jump.system";
-import { PlayerJumpAnimationSystem } from "./player-jump-animation.system";
 
 type Params = {
   engine: Engine;
@@ -48,11 +47,6 @@ export function PlayerJumpSystem({
     getLastReleaseTimestamp: firstJumpSystem.getLastReleaseTimestamp,
   });
 
-  const animationSystem = PlayerJumpAnimationSystem({
-    player,
-    stateMachine,
-  });
-
   const handleJumpPress = (): void => {
     const didFirstJump = firstJumpSystem.executeFirstJump();
     if (didFirstJump) return;
@@ -68,7 +62,6 @@ export function PlayerJumpSystem({
   const updateJumpState = (): void => {
     firstJumpSystem.updateEachFrame();
     doubleJumpSystem.updateEachFrame();
-    animationSystem.updateAnimationState();
   };
 
   const update = (): void => {

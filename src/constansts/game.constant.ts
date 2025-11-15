@@ -1,5 +1,5 @@
 export const GAME = {
-  WIDTH: 854,
-  HEIGHT: 480,
+  WIDTH: 640,
+  HEIGHT: 360,
   SCALE: 1,
 };
