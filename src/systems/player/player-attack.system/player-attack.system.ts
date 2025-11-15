@@ -80,12 +80,9 @@ export function PlayerAttackSystem({
       onCollide: (target) => {
         spawnHitConfirm({
           engine,
-          position: {
-            x: target.pos.x + (target.pos.x < player.pos.x ? -12 : 12),
-            y: target.pos.y,
-          },
+          position: target.pos,
+          isRight: target.pos.x > player.pos.x,
           scale: 1.4,
-          rotation: target.pos.x < player.pos.x ? 0 : 180,
         });
       },
     });

@@ -48,4 +48,17 @@ export function loadPlayerSprites(): void {
       },
     },
   });
+
+    engine.loadSprite("hit-effect-back", "./v2/assets/sprites/effects/hit-02.png", {
+    sliceX: 6,
+    sliceY: 1,
+    anims: {
+      hit: {
+        from: 0,
+        to: 5,
+        speed: 32,
+        loop: false,
+      },
+    },
+  });
 }

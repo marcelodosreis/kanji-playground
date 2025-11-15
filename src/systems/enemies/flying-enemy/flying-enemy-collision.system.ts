@@ -26,24 +26,45 @@ export function FlyingEnemyCollisionSystem({
   stateMachine,
   organicMovement,
 }: CollisionParams) {
-  let collisionCooldownTimer = 0;
-  const COLLISION_COOLDOWN = 1;
+  let swordCooldown = 0;
+  let bodyCooldown = 0;
+
+  const COOLDOWN_SWORD_HIT = 0.15;
+  const COOLDOWN_ENEMY_BODY_HIT = 1;
+
+  function canSwordHit() {
+    return swordCooldown === 0;
+  }
+
+  function canBodyHit() {
+    return bodyCooldown === 0;
+  }
+
+  function startSwordCooldown() {
+    swordCooldown = COOLDOWN_SWORD_HIT;
+  }
+
+  function startBodyCooldown() {
+    bodyCooldown = COOLDOWN_ENEMY_BODY_HIT;
+  }
 
   function onSwordHitboxCollision(): void {
+    if (!canSwordHit()) return;
+    startSwordCooldown();
     enemy.hurt(1);
   }
 
   async function onPlayerCollision(): Promise<void> {
-    if (collisionCooldownTimer > 0) return;
+    if (!canBodyHit()) return;
     if (enemy.hp() <= 0 || enemy.isKnockedBack) return;
+
+    startBodyCooldown();
 
     if (enemy.behavior === FLYING_ENEMY_SPRITES.GREEN) {
       if (stateMachine.isAttacking()) {
         stateMachine.dispatch(FLYING_ENEMY_EVENTS.RETURN);
       }
     }
-
-    collisionCooldownTimer = COLLISION_COOLDOWN;
 
     player.hurt(1, enemy);
 
@@ -58,6 +79,9 @@ export function FlyingEnemyCollisionSystem({
   }
 
   async function onHurt(): Promise<void> {
+    const directionToPlayer = player.pos.x - enemy.pos.x;
+    enemy.flipX = directionToPlayer < 0;
+
     organicMovement.resetVelocity();
     await applyKnockback({
       engine,
@@ -79,9 +103,13 @@ export function FlyingEnemyCollisionSystem({
   }
 
   engine.onUpdate(() => {
-    if (collisionCooldownTimer > 0) {
-      collisionCooldownTimer -= engine.dt();
-      if (collisionCooldownTimer < 0) collisionCooldownTimer = 0;
+    if (swordCooldown > 0) {
+      swordCooldown -= engine.dt();
+      if (swordCooldown < 0) swordCooldown = 0;
+    }
+    if (bodyCooldown > 0) {
+      bodyCooldown -= engine.dt();
+      if (bodyCooldown < 0) bodyCooldown = 0;
     }
   });
 
