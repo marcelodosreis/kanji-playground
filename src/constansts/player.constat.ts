@@ -45,6 +45,9 @@ export const PLAYER_CONFIG = {
         offsetY: 8,
         scale: 1,
       },
+      hitConfirm: {
+        scale: 1.2,
+      },
     },
     hurt: {
       lockDurationMs: 400,
@@ -62,6 +65,7 @@ export const PLAYER_CONFIG = {
     minHpForFullRespawn: 1,
     deathWaitSeconds: 2,
     fadeDurationSeconds: 0.4,
+    outOfBoundsPenalty: 1,
   },
 
   camera: {

@@ -5,7 +5,10 @@ import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import type { PlayerSystemWithAPI } from "../../../types/player-system.interface";
 import type { Player } from "../../../types/player.interface";
 import { EXTRA_TAGS, HITBOX_TAGS } from "../../../types/tags.enum";
-import { AnimationChecks, AnimationFrameChecks } from "../../../utils/animation.utils";
+import {
+  AnimationChecks,
+  AnimationFrameChecks,
+} from "../../../utils/animation.utils";
 import { applyKnockback } from "../../../utils/apply-knockback";
 import type { PlayerStateMachine } from "../player-state-machine";
 import { PlayerStateTransition } from "../player-state-machine";
@@ -24,8 +27,11 @@ type AttackSystemAPI = {
   executeAttack: () => void;
 };
 
-const { hitbox: HITBOX_CONFIG, knockbackStrength: KNOCKBACK } =
-  PLAYER_CONFIG.combat.attack;
+const {
+  hitbox: HITBOX_CONFIG,
+  knockbackStrength: KNOCKBACK,
+  hitConfirm: HIT_CONFIRM_CONFIG,
+} = PLAYER_CONFIG.combat.attack;
 
 const createHitboxConfig = (isFlipped: boolean) => ({
   width: HITBOX_CONFIG.width,
@@ -64,7 +70,7 @@ export function PlayerAttackSystem({
           engine,
           position: target.pos,
           isRight: target.pos.x > player.pos.x,
-          scale: 1.2,
+          scale: HIT_CONFIRM_CONFIG.scale,
         });
       },
     });
@@ -113,7 +119,7 @@ export function PlayerAttackSystem({
 
   const updateAttackAnimation = (): void => {
     const currentAnim = player.curAnim();
-    if (!AnimationChecks.isAttack(currentAnim!)) return;
+    if (!currentAnim || !AnimationChecks.isAttack(currentAnim)) return;
 
     const currentFrame = player.animFrame;
     if (currentFrame === ctx.combat.lastCheckedAttackFrame) return;

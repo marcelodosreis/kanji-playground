@@ -1,5 +1,7 @@
 import type { Collision } from "kaplay";
 import type { Player } from "../../types/player.interface";
+import type { PlayerSystemWithAPI } from "../../types/player-system.interface";
+import { MAP_TAGS } from "../../types/tags.enum";
 
 type Params = {
   player: Player;
@@ -13,18 +15,16 @@ type CollisionWithTarget = Collision & {
   target: CollisionTarget;
 };
 
-const COLLISION_TAGS = {
-  PASSTHROUGH: "passthrough",
-};
-
 const shouldPreventResolution = (
   collision: CollisionWithTarget,
   player: Player
 ): boolean => {
-  return collision.target.is(COLLISION_TAGS.PASSTHROUGH) && player.isJumping();
+  return collision.target.is(MAP_TAGS.PASSTHROUGH) && player.isJumping();
 };
 
-export function PlayerPassthroughSystem({ player }: Params) {
+export function PlayerPassthroughSystem({
+  player,
+}: Params): PlayerSystemWithAPI<{}> {
   const handleBeforePhysicsResolve = (collision: Collision): void => {
     const typedCollision = collision as CollisionWithTarget;
 
@@ -34,4 +34,6 @@ export function PlayerPassthroughSystem({ player }: Params) {
   };
 
   player.onBeforePhysicsResolve(handleBeforePhysicsResolve);
+
+  return {};
 }

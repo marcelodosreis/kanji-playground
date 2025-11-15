@@ -4,7 +4,7 @@ import type { Player } from "../../types/player.interface";
 import { GLOBAL_STATE } from "../../types/global-state.enum";
 import { createBlink } from "../../utils/create-blink";
 import { GLOBAL_STATE_CONTROLLER } from "../../core/global-state-controller";
-import type { PlayerStateMachine } from "./player-state-machine";
+import type { PlayerStateMachine, PlayerContext } from "./player-state-machine";
 import { PlayerStateTransition } from "./player-state-machine";
 import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import { PLAYER_CONFIG } from "../../constansts/player.constat";
@@ -39,22 +39,45 @@ const setPlayerHP = (hp: number): void => {
   GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.PLAYER_HP, hp);
 };
 
-const isDead = (hp: number): boolean => hp <= 0;
-
-const calculateDamage = (current: number, amount: number): number =>
-  current - amount;
-
 const delay = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-const applyBlinkEffect = async (
-  engine: Engine,
-  player: Player,
-  count: number
-): Promise<void> => {
-  for (let i = 0; i < count; i++) {
-    await createBlink(engine, player);
-  }
+const DamageManager = {
+  calculate: (current: number, amount: number): number => current - amount,
+
+  isDead: (hp: number): boolean => hp <= 0,
+
+  apply: (player: Player, amount: number): number => {
+    const { current } = getHealthState();
+    const newHP = DamageManager.calculate(current, amount);
+
+    setPlayerHP(newHP);
+    player.setHP(newHP);
+
+    return newHP;
+  },
+};
+
+const HurtLockManager = {
+  lock: async (ctx: PlayerContext, durationMs: number): Promise<void> => {
+    ctx.health.isHurtLocked = true;
+    await delay(durationMs);
+    ctx.health.isHurtLocked = false;
+  },
+
+  isLocked: (ctx: PlayerContext): boolean => ctx.health.isHurtLocked,
+};
+
+const BlinkEffectManager = {
+  apply: async (
+    engine: Engine,
+    player: Player,
+    count: number
+  ): Promise<void> => {
+    for (let i = 0; i < count; i++) {
+      await createBlink(engine, player);
+    }
+  },
 };
 
 export function PlayerHealthSystem({
@@ -73,23 +96,13 @@ export function PlayerHealthSystem({
   };
 
   const applyDamage = (amount: number): number => {
-    const { current } = getHealthState();
-    const newHP = calculateDamage(current, amount);
+    const newHP = DamageManager.apply(player, amount);
 
-    setPlayerHP(newHP);
-    player.setHP(newHP);
-
-    if (isDead(newHP)) {
+    if (DamageManager.isDead(newHP)) {
       handleDeath();
     }
 
     return newHP;
-  };
-
-  const lockHurtState = async (durationMs: number): Promise<void> => {
-    ctx.health.isHurtLocked = true;
-    await delay(durationMs);
-    ctx.health.isHurtLocked = false;
   };
 
   const handleHurt = async ({ amount }: HurtParams): Promise<void> => {
@@ -98,11 +111,11 @@ export function PlayerHealthSystem({
     stateMachine.transitionTo(PlayerStateTransition.HURT);
     const playerHp = applyDamage(amount);
 
-    if (isDead(playerHp)) return;
+    if (DamageManager.isDead(playerHp)) return;
 
-    lockHurtState(HURT_LOCK_DURATION);
+    HurtLockManager.lock(ctx, HURT_LOCK_DURATION);
 
-    await applyBlinkEffect(engine, player, BLINK_COUNT);
+    await BlinkEffectManager.apply(engine, player, BLINK_COUNT);
 
     if (stateMachine.isKnockedBack()) {
       stateMachine.transitionTo(PlayerStateTransition.IDLE);
@@ -110,7 +123,7 @@ export function PlayerHealthSystem({
   };
 
   const handleAnimationEnd = async (anim: string): Promise<void> => {
-    if (AnimationChecks.isHurt(anim) && !ctx.health.isHurtLocked) {
+    if (AnimationChecks.isHurt(anim) && !HurtLockManager.isLocked(ctx)) {
       stateMachine.transitionTo(PlayerStateTransition.IDLE);
     }
   };

@@ -2,7 +2,10 @@ import { PLAYER_CONFIG } from "../../../constansts/player.constat";
 import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import type { PlayerSystemWithAPI } from "../../../types/player-system.interface";
 import type { Player } from "../../../types/player.interface";
-import { AnimationChecks, AnimationFrameChecks } from "../../../utils/animation.utils";
+import {
+  AnimationChecks,
+  AnimationFrameChecks,
+} from "../../../utils/animation.utils";
 
 type Params = {
   engine: Engine;
@@ -66,7 +69,7 @@ export function PlayerAttackSlashEffectSystem({
   const updateSlashEffect = (): void => {
     const currentAnim = player.curAnim();
 
-    if (!AnimationChecks.isAttack(currentAnim!)) {
+    if (!currentAnim || !AnimationChecks.isAttack(currentAnim)) {
       lastCheckedFrame = -1;
       return;
     }

@@ -17,4 +17,5 @@ export enum HITBOX_TAGS {
 export enum MAP_TAGS {
   COLLIDER = "collider",
   BOSS_BARRIER = "boss-barrier",
+  PASSTHROUGH = "passthrough",
 }
