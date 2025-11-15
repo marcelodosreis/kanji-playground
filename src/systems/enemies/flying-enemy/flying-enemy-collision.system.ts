@@ -29,7 +29,6 @@ export function FlyingEnemyCollisionSystem({
   let swordCooldown = 0;
   let bodyCooldown = 0;
 
-  const COOLDOWN_SWORD_HIT = 0.15;
   const COOLDOWN_ENEMY_BODY_HIT = 1;
 
   function canSwordHit() {
@@ -40,17 +39,12 @@ export function FlyingEnemyCollisionSystem({
     return bodyCooldown === 0;
   }
 
-  function startSwordCooldown() {
-    swordCooldown = COOLDOWN_SWORD_HIT;
-  }
-
   function startBodyCooldown() {
     bodyCooldown = COOLDOWN_ENEMY_BODY_HIT;
   }
 
   function onSwordHitboxCollision(): void {
     if (!canSwordHit()) return;
-    startSwordCooldown();
     enemy.hurt(1);
   }
 

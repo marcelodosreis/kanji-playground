@@ -26,7 +26,7 @@ export function FlyingEnemyEntity(
     engine.state(FLYING_ENEMY_EVENTS.PATROL_RIGHT, [
       ...Object.values(FLYING_ENEMY_EVENTS),
     ]),
-    engine.health(30),
+    engine.health(10),
     {
       speed: 80,
       range: 90,
