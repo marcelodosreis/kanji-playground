@@ -1,7 +1,6 @@
 import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import type { Engine } from "../../types/engine.type";
 import type { Player } from "../../types/player.interface";
-import { isPaused } from "../../utils/is-paused";
 import { type PlayerStateMachine } from "./player-state-machine";
 
 type Params = {
@@ -10,6 +9,9 @@ type Params = {
   stateMachine: PlayerStateMachine;
   orientationSystem: {
     requestOrientation: (direction: "left" | "right") => void;
+  };
+  inputSystem: {
+    isMovementKeyPressed: () => boolean;
   };
 };
 
@@ -20,33 +22,17 @@ type MovementState = {
 };
 
 const MOVEMENT = {
-  KEYS: {
-    LEFT: "left",
-    RIGHT: "right",
-  },
   DIRECTION: {
     LEFT: -1 as Direction,
     RIGHT: 1 as Direction,
   },
 } as const;
 
-const isMovementKey = (key: string): boolean =>
-  key === MOVEMENT.KEYS.LEFT || key === MOVEMENT.KEYS.RIGHT;
-
-const getDirection = (key: string): Direction | null => {
-  if (key === MOVEMENT.KEYS.LEFT) return MOVEMENT.DIRECTION.LEFT;
-  if (key === MOVEMENT.KEYS.RIGHT) return MOVEMENT.DIRECTION.RIGHT;
-  return null;
-};
-
 const getOrientationDirection = (direction: Direction): "left" | "right" =>
   direction === MOVEMENT.DIRECTION.LEFT ? "left" : "right";
 
 const calculateVelocity = (direction: Direction, speed: number): number =>
   direction * speed;
-
-const isAnyMovementKeyPressed = (engine: Engine): boolean =>
-  engine.isKeyDown(MOVEMENT.KEYS.LEFT) || engine.isKeyDown(MOVEMENT.KEYS.RIGHT);
 
 const shouldRun = (
   player: Player,
@@ -73,9 +59,8 @@ export function PlayerWalkSystem({
   player,
   stateMachine,
   orientationSystem,
+  inputSystem,
 }: Params) {
-  player.controlHandlers = player.controlHandlers || [];
-
   const movement: MovementState = { isMoving: false };
 
   const applyMovement = (direction: Direction): void => {
@@ -99,15 +84,9 @@ export function PlayerWalkSystem({
     }
   };
 
-  const onKeyDown = (key: string): void => {
-    if (isPaused() || !isMovementKey(key)) return;
-    const direction = getDirection(key);
-    if (direction) move(direction);
-  };
-
   const handleMovementStop = (): void => {
     if (!movement.isMoving) return;
-    if (isAnyMovementKeyPressed(engine)) return;
+    if (inputSystem.isMovementKeyPressed()) return;
 
     movement.isMoving = false;
     if (shouldIdle(player, stateMachine)) {
@@ -122,10 +101,13 @@ export function PlayerWalkSystem({
     }
   };
 
-  player.controlHandlers.push(engine.onKeyDown(onKeyDown));
-
   engine.onUpdate(() => {
     handleMovementStop();
     handleFallTransition();
   });
+
+  return {
+    moveLeft: () => move(MOVEMENT.DIRECTION.LEFT),
+    moveRight: () => move(MOVEMENT.DIRECTION.RIGHT),
+  };
 }

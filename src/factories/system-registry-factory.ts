@@ -25,6 +25,7 @@ import { PlayerJumpSystem } from "../systems/player/player-jump.system/player-ju
 import { PlayerPassthroughSystem } from "../systems/player/player-passthrough.system";
 import { PlayerWalkSystem } from "../systems/player/player-walk.system";
 import { PlayerOrientationSystem } from "../systems/player/player-orientation.system";
+import { PlayerInputSystem } from "../systems/player/player-input.system";
 
 import type {
   PlayerSystemContext,
@@ -39,30 +40,44 @@ export class SystemRegistryFactory {
   static registerPlayerSystems(context: PlayerSystemContext): void {
     if (!context.boundValue) return;
 
+    const inputSystem = PlayerInputSystem({
+      engine: context.engine,
+      player: context.player,
+    });
+
     const orientationSystem = PlayerOrientationSystem({
       engine: context.engine,
       player: context.player,
       stateMachine: context.stateMachine,
     });
 
-    PlayerJumpSystem({
+    const jumpSystem = PlayerJumpSystem({
       engine: context.engine,
       player: context.player,
       stateMachine: context.stateMachine,
     });
 
-    PlayerWalkSystem({
+    const walkSystem = PlayerWalkSystem({
+      engine: context.engine,
+      player: context.player,
+      stateMachine: context.stateMachine,
+      orientationSystem,
+      inputSystem,
+    });
+
+    const attackSystem = PlayerAttackSystem({
       engine: context.engine,
       player: context.player,
       stateMachine: context.stateMachine,
       orientationSystem,
     });
 
-    PlayerAttackSystem({
-      engine: context.engine,
-      player: context.player,
-      stateMachine: context.stateMachine,
-      orientationSystem,
+    inputSystem.registerCallbacks({
+      onMoveLeft: walkSystem.moveLeft,
+      onMoveRight: walkSystem.moveRight,
+      onJumpPress: jumpSystem.handleJumpPress,
+      onJumpRelease: jumpSystem.handleJumpRelease,
+      onAttack: attackSystem.executeAttack,
     });
 
     PlayerAttackSlashEffectSystem({

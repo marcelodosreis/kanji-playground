@@ -5,7 +5,6 @@ import type { Engine, EngineGameObj } from "../../../types/engine.type";
 import type { Player } from "../../../types/player.interface";
 import { EXTRA_TAGS, HITBOX_TAGS } from "../../../types/tags.enum";
 import { applyKnockback } from "../../../utils/apply-knockback";
-import { isPaused } from "../../../utils/is-paused";
 import { type PlayerStateMachine } from "../player-state-machine";
 
 type Params = {
@@ -24,7 +23,6 @@ type AttackState = {
 };
 
 const ATTACK_CONFIG = {
-  KEY: "z",
   HITBOX_START_FRAME: 1,
   HITBOX_END_FRAME: 5,
   HITBOX_DIMENSIONS: {
@@ -50,8 +48,8 @@ const shouldDestroyHitbox = (frame: number, hasHitbox: boolean): boolean =>
 const isAttackAnimation = (anim: string): boolean =>
   anim === PLAYER_ANIMATIONS.ATTACK;
 
-const canAttack = (key: string, stateMachine: PlayerStateMachine): boolean =>
-  !isPaused() && key === ATTACK_CONFIG.KEY && !stateMachine.isAttacking();
+const canAttack = (stateMachine: PlayerStateMachine): boolean =>
+  !stateMachine.isAttacking();
 
 export function PlayerAttackSystem({
   engine,
@@ -59,8 +57,6 @@ export function PlayerAttackSystem({
   stateMachine,
   orientationSystem,
 }: Params) {
-  player.controlHandlers = player.controlHandlers || [];
-
   const state: AttackState = {
     currentHitboxDestroy: null,
     lastCheckedFrame: -1,
@@ -138,8 +134,8 @@ export function PlayerAttackSystem({
     });
   };
 
-  const handleKeyPress = async (key: string): Promise<void> => {
-    if (!canAttack(key, stateMachine)) return;
+  const executeAttack = (): void => {
+    if (!canAttack(stateMachine)) return;
 
     orientationSystem.lockOrientation();
     stateMachine.dispatch("ATTACK");
@@ -157,7 +153,10 @@ export function PlayerAttackSystem({
     }
   };
 
-  player.controlHandlers.push(engine.onKeyPress(handleKeyPress));
   player.onAnimEnd(onAttackAnimationEnd);
   engine.onUpdate(checkAnimationFrame);
+
+  return {
+    executeAttack,
+  };
 }
