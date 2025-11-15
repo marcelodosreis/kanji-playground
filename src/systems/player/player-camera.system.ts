@@ -7,11 +7,13 @@ import { GLOBAL_STATE_CONTROLLER } from "../../core/global-state-controller";
 import { MapLayer, MapLayerHelper } from "../../helpers/map-layer-helper";
 import type { SCENE_DATA } from "../../types/scenes.enum";
 import type { Player } from "../../types/player.interface";
+import { PLAYER_CONFIG } from "../../constansts/player.constat";
+import type { PlayerSystemWithAPI } from "../../types/player-system.interface";
 
 type Params = {
   engine: Engine;
   map: Map;
-  player: Player,
+  player: Player;
   tiledMap: TiledMap;
   initialCameraPos: { x: number; y: number };
   previousSceneData?: SCENE_DATA;
@@ -26,22 +28,18 @@ type CameraBounds = {
   right: number;
 };
 
-const CAMERA_CONFIG = {
-  SCALE: 2,
-  HORIZONTAL_OFFSET: 160,
-  TRANSITION_DURATION: 0.8,
-} as const;
+const CAMERA_CONFIG = PLAYER_CONFIG.camera;
 
 const setCameraPosition = (engine: Engine, x: number, y: number): void => {
   engine.camPos(x, y);
 };
 
 const calculateBounds = (map: Map, tiledMap: TiledMap): CameraBounds => ({
-  left: map.pos.x + CAMERA_CONFIG.HORIZONTAL_OFFSET,
+  left: map.pos.x + CAMERA_CONFIG.horizontalOffset,
   right:
     map.pos.x +
     tiledMap.width * tiledMap.tilewidth -
-    CAMERA_CONFIG.HORIZONTAL_OFFSET,
+    CAMERA_CONFIG.horizontalOffset,
 });
 
 const clampCameraX = (playerX: number, bounds: CameraBounds): number => {
@@ -82,7 +80,7 @@ const applyCameraTransition = (engine: Engine, targetY: number): void => {
     engine,
     startValue: engine.camPos().y,
     endValue: targetY,
-    durationSeconds: CAMERA_CONFIG.TRANSITION_DURATION,
+    durationSeconds: CAMERA_CONFIG.transitionDuration,
     onUpdate: (val) => setCameraPosition(engine, engine.camPos().x, val),
     easingFunction: engine.easings.linear,
   });
@@ -95,8 +93,8 @@ export function PlayerCameraSystem({
   tiledMap,
   initialCameraPos,
   previousSceneData,
-}: Params): void {
-  engine.camScale(CAMERA_CONFIG.SCALE);
+}: Params): PlayerSystemWithAPI<{}> {
+  engine.camScale(CAMERA_CONFIG.scale);
 
   const bounds = calculateBounds(map, tiledMap);
 
@@ -108,7 +106,7 @@ export function PlayerCameraSystem({
     }
   };
 
-  const handleCameraFollow = (): void => {
+  const updateCameraFollow = (): void => {
     if (isInBossFight()) return;
 
     const targetX = clampCameraX(player.pos.x, bounds);
@@ -138,5 +136,14 @@ export function PlayerCameraSystem({
 
   setInitialPosition();
   setupCameraZones();
-  engine.onUpdate(handleCameraFollow);
+
+  const update = (): void => {
+    updateCameraFollow();
+  };
+
+  engine.onUpdate(update);
+
+  return {
+    update,
+  };
 }

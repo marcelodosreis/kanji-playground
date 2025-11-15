@@ -52,4 +52,8 @@ export class StateMachine<Context> {
   getState() {
     return this.currentState;
   }
+
+  getContext() {
+    return this.context;
+  }
 }

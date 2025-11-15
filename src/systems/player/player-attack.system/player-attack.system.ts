@@ -1,66 +1,52 @@
+import { PLAYER_CONFIG } from "../../../constansts/player.constat";
 import { spawnHitConfirm } from "../../../helpers/hit-confirm.helper";
 import { createTransientHitbox } from "../../../helpers/hitbox.helper";
-import { PLAYER_ANIMATIONS } from "../../../types/animations.enum";
 import type { Engine, EngineGameObj } from "../../../types/engine.type";
+import type { PlayerSystemWithAPI } from "../../../types/player-system.interface";
 import type { Player } from "../../../types/player.interface";
 import { EXTRA_TAGS, HITBOX_TAGS } from "../../../types/tags.enum";
+import { AnimationChecks, AnimationFrameChecks } from "../../../utils/animation.utils";
 import { applyKnockback } from "../../../utils/apply-knockback";
-import { type PlayerStateMachine } from "../player-state-machine";
+import type { PlayerStateMachine } from "../player-state-machine";
+import { PlayerStateTransition } from "../player-state-machine";
 
 type Params = {
   engine: Engine;
   player: Player;
   stateMachine: PlayerStateMachine;
   orientationSystem: {
-    lockOrientation: () => void;
-    unlockOrientation: () => void;
+    lockDirection: () => void;
+    unlockDirection: () => void;
   };
 };
 
-type AttackState = {
-  currentHitboxDestroy: (() => void) | null;
-  lastCheckedFrame: number;
+type AttackSystemAPI = {
+  executeAttack: () => void;
 };
 
-const ATTACK_CONFIG = {
-  HITBOX_START_FRAME: 1,
-  HITBOX_END_FRAME: 5,
-  HITBOX_DIMENSIONS: {
-    width: 32,
-    height: 16,
-    offsetY: -8,
-  },
-};
+const { hitbox: HITBOX_CONFIG, knockbackStrength: KNOCKBACK } =
+  PLAYER_CONFIG.combat.attack;
 
 const createHitboxConfig = (isFlipped: boolean) => ({
-  width: ATTACK_CONFIG.HITBOX_DIMENSIONS.width,
-  height: ATTACK_CONFIG.HITBOX_DIMENSIONS.height,
-  offsetX: isFlipped ? -ATTACK_CONFIG.HITBOX_DIMENSIONS.width : 0,
-  offsetY: ATTACK_CONFIG.HITBOX_DIMENSIONS.offsetY,
+  width: HITBOX_CONFIG.width,
+  height: HITBOX_CONFIG.height,
+  offsetX: isFlipped ? -HITBOX_CONFIG.width : 0,
+  offsetY: HITBOX_CONFIG.offsetY,
 });
 
 const shouldCreateHitbox = (frame: number, hasHitbox: boolean): boolean =>
-  frame === ATTACK_CONFIG.HITBOX_START_FRAME && !hasHitbox;
+  AnimationFrameChecks.isAtFrame(frame, HITBOX_CONFIG.startFrame) && !hasHitbox;
 
 const shouldDestroyHitbox = (frame: number, hasHitbox: boolean): boolean =>
-  frame === ATTACK_CONFIG.HITBOX_END_FRAME && hasHitbox;
-
-const isAttackAnimation = (anim: string): boolean =>
-  anim === PLAYER_ANIMATIONS.ATTACK;
-
-const canAttack = (stateMachine: PlayerStateMachine): boolean =>
-  !stateMachine.isAttacking();
+  AnimationFrameChecks.isAtFrame(frame, HITBOX_CONFIG.endFrame) && hasHitbox;
 
 export function PlayerAttackSystem({
   engine,
   player,
   stateMachine,
   orientationSystem,
-}: Params) {
-  const state: AttackState = {
-    currentHitboxDestroy: null,
-    lastCheckedFrame: -1,
-  };
+}: Params): PlayerSystemWithAPI<AttackSystemAPI> {
+  const ctx = stateMachine.getContext();
 
   const createSwordHitbox = () => {
     const config = createHitboxConfig(player.flipX);
@@ -83,43 +69,34 @@ export function PlayerAttackSystem({
       },
     });
 
-    state.currentHitboxDestroy = destroy;
+    ctx.combat.currentHitboxDestroy = destroy;
   };
 
   const destroySwordHitbox = (): void => {
-    if (state.currentHitboxDestroy) {
-      state.currentHitboxDestroy();
-      state.currentHitboxDestroy = null;
+    if (ctx.combat.currentHitboxDestroy) {
+      ctx.combat.currentHitboxDestroy();
+      ctx.combat.currentHitboxDestroy = null;
     }
   };
 
   const resetAttackState = (): void => {
     destroySwordHitbox();
-    state.lastCheckedFrame = -1;
+    ctx.combat.lastCheckedAttackFrame = -1;
   };
 
-  const handleHitboxLifecycle = (currentFrame: number): void => {
-    if (shouldCreateHitbox(currentFrame, !!state.currentHitboxDestroy)) {
+  const updateHitboxLifecycle = (currentFrame: number): void => {
+    const hasHitbox = !!ctx.combat.currentHitboxDestroy;
+
+    if (shouldCreateHitbox(currentFrame, hasHitbox)) {
       createSwordHitbox();
     }
 
-    if (shouldDestroyHitbox(currentFrame, !!state.currentHitboxDestroy)) {
+    if (shouldDestroyHitbox(currentFrame, hasHitbox)) {
       destroySwordHitbox();
     }
   };
 
-  const checkAnimationFrame = (): void => {
-    if (!isAttackAnimation(player.curAnim() as PLAYER_ANIMATIONS)) return;
-
-    const currentFrame = player.animFrame;
-    if (currentFrame === state.lastCheckedFrame) return;
-
-    state.lastCheckedFrame = currentFrame;
-    handleHitboxLifecycle(currentFrame);
-    knockbackPlayer();
-  };
-
-  const knockbackPlayer = () => {
+  const applyAttackKnockback = () => {
     const fakeSource = {
       pos: {
         x: player.pos.x - (player.flipX ? 1 : -1),
@@ -130,33 +107,50 @@ export function PlayerAttackSystem({
       engine,
       target: player,
       source: fakeSource as unknown as EngineGameObj,
-      strength: 0.2,
+      strength: KNOCKBACK,
     });
   };
 
-  const executeAttack = (): void => {
-    if (!canAttack(stateMachine)) return;
+  const updateAttackAnimation = (): void => {
+    const currentAnim = player.curAnim();
+    if (!AnimationChecks.isAttack(currentAnim!)) return;
 
-    orientationSystem.lockOrientation();
-    stateMachine.dispatch("ATTACK");
+    const currentFrame = player.animFrame;
+    if (currentFrame === ctx.combat.lastCheckedAttackFrame) return;
+
+    ctx.combat.lastCheckedAttackFrame = currentFrame;
+    updateHitboxLifecycle(currentFrame);
+    applyAttackKnockback();
+  };
+
+  const executeAttack = (): void => {
+    if (stateMachine.isAttacking()) return;
+
+    orientationSystem.lockDirection();
+    stateMachine.transitionTo(PlayerStateTransition.ATTACK);
     resetAttackState();
   };
 
-  const onAttackAnimationEnd = (anim: string): void => {
-    if (!isAttackAnimation(anim)) return;
+  const handleAttackAnimationEnd = (anim: string): void => {
+    if (!AnimationChecks.isAttack(anim)) return;
 
     resetAttackState();
-    orientationSystem.unlockOrientation();
+    orientationSystem.unlockDirection();
 
-    if (stateMachine.getState() === PLAYER_ANIMATIONS.ATTACK) {
-      stateMachine.dispatch("IDLE");
+    if (stateMachine.isAttacking()) {
+      stateMachine.transitionTo(PlayerStateTransition.IDLE);
     }
   };
 
-  player.onAnimEnd(onAttackAnimationEnd);
-  engine.onUpdate(checkAnimationFrame);
+  const update = (): void => {
+    updateAttackAnimation();
+  };
+
+  player.onAnimEnd(handleAttackAnimationEnd);
+  engine.onUpdate(update);
 
   return {
     executeAttack,
+    update,
   };
 }

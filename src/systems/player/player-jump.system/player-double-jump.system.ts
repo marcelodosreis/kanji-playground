@@ -1,24 +1,28 @@
 import type { Player } from "../../../types/player.interface";
 import { GLOBAL_STATE } from "../../../types/global-state.enum";
 import { GLOBAL_STATE_CONTROLLER } from "../../../core/global-state-controller";
+import type { PlayerStateMachine } from "../player-state-machine";
+import { PLAYER_CONFIG } from "../../../constansts/player.constat";
 
 type DoubleJumpParams = {
   player: Player;
+  stateMachine: PlayerStateMachine;
   onJumpExecuted: () => void;
   getLastJumpTimestamp: () => number;
   getLastReleaseTimestamp: () => number;
 };
 
-const MAX_JUMPS = 2;
-const DOUBLE_JUMP_FORCE = 320;
+const { maxJumps: MAX_JUMPS, doubleJumpForce: DOUBLE_JUMP_FORCE } =
+  PLAYER_CONFIG.jump;
 
 export function PlayerDoubleJumpSystem({
   player,
+  stateMachine,
   onJumpExecuted,
   getLastJumpTimestamp,
   getLastReleaseTimestamp,
 }: DoubleJumpParams) {
-  let jumpsPerformed = 0;
+  const ctx = stateMachine.getContext();
 
   const syncDoubleJumpUnlock = (): void => {
     const isUnlocked =
@@ -29,57 +33,45 @@ export function PlayerDoubleJumpSystem({
   };
 
   const canExecuteDoubleJump = (): boolean => {
-    if (jumpsPerformed !== 1) {
-      return false;
-    }
-
-    if (player.numJumps < 2) {
-      return false;
-    }
-
-    if (player.isGrounded()) {
-      return false;
-    }
+    if (ctx.jump.jumpsPerformed !== 1) return false;
+    if (player.numJumps < 2) return false;
+    if (player.isGrounded()) return false;
 
     const hadReleaseAfterJump =
       getLastReleaseTimestamp() > getLastJumpTimestamp();
 
-    if (!hadReleaseAfterJump) {
-      return false;
-    }
+    if (!hadReleaseAfterJump) return false;
 
     return true;
   };
 
   const executeDoubleJump = (): boolean => {
-    if (!canExecuteDoubleJump()) {
-      return false;
-    }
+    if (!canExecuteDoubleJump()) return false;
 
     player.doubleJump(DOUBLE_JUMP_FORCE);
-    jumpsPerformed = 2;
+    ctx.jump.jumpsPerformed = 2;
     onJumpExecuted();
     return true;
   };
 
   const notifyFirstJumpExecuted = (): void => {
-    jumpsPerformed = 1;
+    ctx.jump.jumpsPerformed = 1;
   };
 
-  const resetOnGrounded = (): void => {
+  const updateOnGrounded = (): void => {
     if (player.isGrounded()) {
-      jumpsPerformed = 0;
+      ctx.jump.jumpsPerformed = 0;
     }
   };
 
-  const resetEachFrame = (): void => {
+  const updateEachFrame = (): void => {
     syncDoubleJumpUnlock();
-    resetOnGrounded();
+    updateOnGrounded();
   };
 
   return {
     executeDoubleJump,
     notifyFirstJumpExecuted,
-    resetEachFrame,
+    updateEachFrame,
   };
 }

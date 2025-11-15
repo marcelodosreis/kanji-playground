@@ -1,18 +1,22 @@
 import type { Player } from "../../../types/player.interface";
+import type { PlayerStateMachine } from "../player-state-machine";
 import { PlayerFirstJumpSystem } from "./player-first-jump.system";
 import { PlayerDoubleJumpSystem } from "./player-double-jump.system";
 
 type JumpCoordinatorParams = {
   player: Player;
+  stateMachine: PlayerStateMachine;
   onJumpExecuted: () => void;
 };
 
 export function PlayerJumpCoordinatorSystem({
   player,
+  stateMachine,
   onJumpExecuted,
 }: JumpCoordinatorParams) {
   const firstJumpSystem = PlayerFirstJumpSystem({
     player,
+    stateMachine,
     onJumpExecuted: () => {
       doubleJumpSystem.notifyFirstJumpExecuted();
       onJumpExecuted();
@@ -21,6 +25,7 @@ export function PlayerJumpCoordinatorSystem({
 
   const doubleJumpSystem = PlayerDoubleJumpSystem({
     player,
+    stateMachine,
     onJumpExecuted,
     getLastJumpTimestamp: firstJumpSystem.getLastJumpTimestamp,
     getLastReleaseTimestamp: firstJumpSystem.getLastReleaseTimestamp,
@@ -28,28 +33,24 @@ export function PlayerJumpCoordinatorSystem({
 
   const handleJumpPress = (): void => {
     const didFirstJump = firstJumpSystem.executeFirstJump();
-    if (didFirstJump) {
-      return;
-    }
+    if (didFirstJump) return;
 
     const didDoubleJump = doubleJumpSystem.executeDoubleJump();
-    if (didDoubleJump) {
-      return;
-    }
+    if (didDoubleJump) return;
   };
 
   const handleJumpRelease = (): void => {
     firstJumpSystem.handleJumpRelease();
   };
 
-  const resetEachFrame = (): void => {
-    firstJumpSystem.resetEachFrame();
-    doubleJumpSystem.resetEachFrame();
+  const updateEachFrame = (): void => {
+    firstJumpSystem.updateEachFrame();
+    doubleJumpSystem.updateEachFrame();
   };
 
   return {
     handleJumpPress,
     handleJumpRelease,
-    resetEachFrame,
+    updateEachFrame,
   };
 }

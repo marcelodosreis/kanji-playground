@@ -58,7 +58,7 @@ export class PlayerManager extends BaseEntityManager<Player> {
   }
 
   private initializeSystems(player: Player): Player {
-    const stateMachine = createPlayerStateMachine({ player });
+    const stateMachine = createPlayerStateMachine(player);
     SystemRegistryFactory.registerPlayerSystems({
       engine: this.engine,
       player,

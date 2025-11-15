@@ -1,6 +1,10 @@
 import type { Engine } from "../../types/engine.type";
+import type { PlayerSystemWithAPI } from "../../types/player-system.interface";
 import type { Player } from "../../types/player.interface";
-import type { PlayerStateMachine } from "./player-state-machine";
+import type {
+  PlayerStateMachine,
+  PlayerDirection,
+} from "./player-state-machine";
 
 type Params = {
   engine: Engine;
@@ -8,71 +12,77 @@ type Params = {
   stateMachine: PlayerStateMachine;
 };
 
-type Direction = "left" | "right";
-
-type OrientationState = {
-  desired: Direction | null;
-  locked: Direction | null;
+type OrientationSystemAPI = {
+  requestDirection: (direction: PlayerDirection) => void;
+  lockDirection: () => void;
+  unlockDirection: () => void;
 };
 
-const getPlayerDirection = (player: Player): Direction =>
-  player.flipX ? "left" : "right";
+const getPlayerDirection = (player: Player): PlayerDirection =>
+  player.flipX ? -1 : 1;
 
-const setPlayerDirection = (player: Player, direction: Direction): void => {
-  player.flipX = direction === "left";
+const setPlayerDirection = (
+  player: Player,
+  direction: PlayerDirection
+): void => {
+  player.flipX = direction === -1;
 };
 
 export function PlayerOrientationSystem({
   engine,
   player,
   stateMachine,
-}: Params) {
-  const state: OrientationState = {
-    desired: null,
-    locked: null,
+}: Params): PlayerSystemWithAPI<OrientationSystemAPI> {
+  const ctx = stateMachine.getContext();
+
+  const requestDirection = (direction: PlayerDirection): void => {
+    ctx.orientation.desiredDirection = direction;
   };
 
-  const requestOrientation = (direction: Direction): void => {
-    state.desired = direction;
+  const lockDirection = (): void => {
+    ctx.orientation.isLocked = true;
+    ctx.orientation.lockedDirection = getPlayerDirection(player);
   };
 
-  const lockOrientation = (): void => {
-    state.locked = getPlayerDirection(player);
-  };
-
-  const unlockOrientation = (): void => {
-    state.locked = null;
+  const unlockDirection = (): void => {
+    ctx.orientation.isLocked = false;
+    ctx.orientation.lockedDirection = null;
   };
 
   const applyOrientation = (): void => {
-    if (state.locked !== null) {
-      setPlayerDirection(player, state.locked);
+    if (ctx.orientation.isLocked && ctx.orientation.lockedDirection !== null) {
+      setPlayerDirection(player, ctx.orientation.lockedDirection);
       return;
     }
 
-    if (state.desired !== null) {
-      setPlayerDirection(player, state.desired);
+    if (ctx.orientation.desiredDirection !== null) {
+      setPlayerDirection(player, ctx.orientation.desiredDirection);
     }
   };
 
-  const handleStateLocking = (): void => {
-    if (stateMachine.isAttacking() && state.locked === null) {
-      lockOrientation();
+  const updateLockBasedOnState = (): void => {
+    const isAttacking = stateMachine.isAttacking();
+
+    if (isAttacking && !ctx.orientation.isLocked) {
+      lockDirection();
     }
 
-    if (!stateMachine.isAttacking() && state.locked !== null) {
-      unlockOrientation();
+    if (!isAttacking && ctx.orientation.isLocked) {
+      unlockDirection();
     }
   };
 
-  engine.onUpdate(() => {
-    handleStateLocking();
+  const update = (): void => {
+    updateLockBasedOnState();
     applyOrientation();
-  });
+  };
+
+  engine.onUpdate(update);
 
   return {
-    requestOrientation,
-    lockOrientation,
-    unlockOrientation,
+    requestDirection,
+    lockDirection,
+    unlockDirection,
+    update,
   };
 }

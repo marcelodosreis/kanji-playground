@@ -2,7 +2,6 @@ import { FlyingEnemyMovementSystem } from "../systems/enemies/flying-enemy/flyin
 import { FlyingEnemyDetectionSystem } from "../systems/enemies/flying-enemy/flying-enemy-detection.system";
 import { FlyingEnemyPatrolDirectionSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol.system/flying-enemy-patrol-direction.system";
 import { FlyingEnemyPatrolHeightSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol.system/flying-enemy-patrol-height.system";
-
 import { FlyingEnemyPatrolSystem } from "../systems/enemies/flying-enemy/fly-enemy-patrol.system/flying-enemy-patrol.system";
 import { FlyingEnemyAlertSystem } from "../systems/enemies/flying-enemy/flying-enemy-alert.system";
 import { FlyingEnemyAttackSystem } from "../systems/enemies/flying-enemy/flying-enemy-attack.system";
@@ -10,6 +9,8 @@ import { FlyingEnemyReturnSystem } from "../systems/enemies/flying-enemy/flying-
 import { FlyingEnemyUnstuckSystem } from "../systems/enemies/flying-enemy/flying-enemy-unstuck.system";
 import { FlyingEnemyCollisionSystem } from "../systems/enemies/flying-enemy/flying-enemy-collision.system";
 import { FlyingEnemyAnimationSystem } from "../systems/enemies/flying-enemy/flying-enemy-animation.system";
+import { FlyingEnemyIdleSystem } from "../systems/enemies/flying-enemy/flying-enemy-idle.system";
+import { FlyingEnemyOrganicMovementSystem } from "../systems/enemies/flying-enemy/flying-enemy-organic-movement.system";
 
 import { BossAnimationSystem } from "../systems/enemies/boss/boss-animation.system";
 import { BossAttackSystem } from "../systems/enemies/boss/boss-attack.system";
@@ -26,15 +27,13 @@ import { PlayerPassthroughSystem } from "../systems/player/player-passthrough.sy
 import { PlayerWalkSystem } from "../systems/player/player-walk.system";
 import { PlayerOrientationSystem } from "../systems/player/player-orientation.system";
 import { PlayerInputSystem } from "../systems/player/player-input.system";
+import { PlayerAttackSlashEffectSystem } from "../systems/player/player-attack.system/player-attack-slash-effect.system";
 
 import type {
   PlayerSystemContext,
   EnemySystemContext,
   BossSystemContext,
 } from "../types/system.types";
-import { FlyingEnemyIdleSystem } from "../systems/enemies/flying-enemy/flying-enemy-idle.system";
-import { FlyingEnemyOrganicMovementSystem } from "../systems/enemies/flying-enemy/flying-enemy-organic-movement.system";
-import { PlayerAttackSlashEffectSystem } from "../systems/player/player-attack.system/player-attack-slash-effect.system";
 
 export class SystemRegistryFactory {
   static registerPlayerSystems(context: PlayerSystemContext): void {
@@ -43,6 +42,7 @@ export class SystemRegistryFactory {
     const inputSystem = PlayerInputSystem({
       engine: context.engine,
       player: context.player,
+      stateMachine: context.stateMachine,
     });
 
     const orientationSystem = PlayerOrientationSystem({

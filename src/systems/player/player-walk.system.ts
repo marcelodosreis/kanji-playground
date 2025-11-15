@@ -1,40 +1,35 @@
+import { PLAYER_CONFIG } from "../../constansts/player.constat";
 import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import type { Engine } from "../../types/engine.type";
+import type { PlayerSystemWithAPI } from "../../types/player-system.interface";
 import type { Player } from "../../types/player.interface";
-import { type PlayerStateMachine } from "./player-state-machine";
+import type {
+  PlayerStateMachine,
+  PlayerDirection,
+} from "./player-state-machine";
+import { PlayerStateTransition } from "./player-state-machine";
 
 type Params = {
   engine: Engine;
   player: Player;
   stateMachine: PlayerStateMachine;
   orientationSystem: {
-    requestOrientation: (direction: "left" | "right") => void;
+    requestDirection: (direction: PlayerDirection) => void;
   };
   inputSystem: {
     isMovementKeyPressed: () => boolean;
   };
 };
 
-type Direction = -1 | 1;
-
-type MovementState = {
-  isMoving: boolean;
+type WalkSystemAPI = {
+  moveLeft: () => void;
+  moveRight: () => void;
 };
 
-const MOVEMENT = {
-  DIRECTION: {
-    LEFT: -1 as Direction,
-    RIGHT: 1 as Direction,
-  },
-} as const;
-
-const getOrientationDirection = (direction: Direction): "left" | "right" =>
-  direction === MOVEMENT.DIRECTION.LEFT ? "left" : "right";
-
-const calculateVelocity = (direction: Direction, speed: number): number =>
+const calculateVelocity = (direction: PlayerDirection, speed: number): number =>
   direction * speed;
 
-const shouldRun = (
+const shouldTransitionToRun = (
   player: Player,
   stateMachine: PlayerStateMachine
 ): boolean => {
@@ -46,12 +41,20 @@ const shouldRun = (
   );
 };
 
-const shouldIdle = (
+const shouldTransitionToIdle = (
   player: Player,
   stateMachine: PlayerStateMachine
 ): boolean => {
   const state = stateMachine.getState();
   return state === PLAYER_ANIMATIONS.RUN && player.isGrounded();
+};
+
+const shouldTransitionToFall = (
+  player: Player,
+  stateMachine: PlayerStateMachine
+): boolean => {
+  const state = stateMachine.getState();
+  return state === PLAYER_ANIMATIONS.RUN && !player.isGrounded();
 };
 
 export function PlayerWalkSystem({
@@ -60,54 +63,60 @@ export function PlayerWalkSystem({
   stateMachine,
   orientationSystem,
   inputSystem,
-}: Params) {
-  const movement: MovementState = { isMoving: false };
+}: Params): PlayerSystemWithAPI<WalkSystemAPI> {
+  const ctx = stateMachine.getContext();
 
-  const applyMovement = (direction: Direction): void => {
+  const applyMovement = (direction: PlayerDirection): void => {
     const velocity = calculateVelocity(direction, player.speed);
     player.move(velocity, 0);
   };
 
-  const updateOrientation = (direction: Direction): void => {
-    orientationSystem.requestOrientation(getOrientationDirection(direction));
-  };
-
-  const move = (direction: Direction): void => {
+  const move = (direction: PlayerDirection): void => {
     if (!stateMachine.canMove()) return;
 
-    movement.isMoving = true;
-    updateOrientation(direction);
+    ctx.movement.isMoving = true;
+    ctx.movement.direction = direction;
+
+    orientationSystem.requestDirection(direction);
     applyMovement(direction);
 
-    if (!stateMachine.isAttacking() && shouldRun(player, stateMachine)) {
-      stateMachine.dispatch("RUN");
+    if (
+      !stateMachine.isAttacking() &&
+      shouldTransitionToRun(player, stateMachine)
+    ) {
+      stateMachine.transitionTo(PlayerStateTransition.RUN);
     }
   };
 
-  const handleMovementStop = (): void => {
-    if (!movement.isMoving) return;
+  const updateMovementState = (): void => {
+    if (!ctx.movement.isMoving) return;
     if (inputSystem.isMovementKeyPressed()) return;
 
-    movement.isMoving = false;
-    if (shouldIdle(player, stateMachine)) {
-      stateMachine.dispatch("IDLE");
+    ctx.movement.isMoving = false;
+
+    if (shouldTransitionToIdle(player, stateMachine)) {
+      stateMachine.transitionTo(PlayerStateTransition.IDLE);
     }
   };
 
-  const handleFallTransition = (): void => {
-    const state = stateMachine.getState();
-    if (state === PLAYER_ANIMATIONS.RUN && !player.isGrounded()) {
-      stateMachine.dispatch("FALL");
+  const updateFallTransition = (): void => {
+    if (shouldTransitionToFall(player, stateMachine)) {
+      stateMachine.transitionTo(PlayerStateTransition.FALL);
     }
   };
 
-  engine.onUpdate(() => {
-    handleMovementStop();
-    handleFallTransition();
-  });
+  const update = (): void => {
+    updateMovementState();
+    updateFallTransition();
+  };
+
+  engine.onUpdate(update);
 
   return {
-    moveLeft: () => move(MOVEMENT.DIRECTION.LEFT),
-    moveRight: () => move(MOVEMENT.DIRECTION.RIGHT),
+    moveLeft: () =>
+      move(PLAYER_CONFIG.movement.direction.left as PlayerDirection),
+    moveRight: () =>
+      move(PLAYER_CONFIG.movement.direction.right as PlayerDirection),
+    update,
   };
 }
