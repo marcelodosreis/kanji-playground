@@ -46,7 +46,7 @@ export function FlyingEnemyCollisionSystem({
     collisionCooldownTimer = COLLISION_COOLDOWN;
 
     player.hurt(1, enemy);
-    
+
     organicMovement.resetVelocity();
     await applyKnockback({
       engine,
@@ -58,19 +58,19 @@ export function FlyingEnemyCollisionSystem({
   }
 
   async function onHurt(): Promise<void> {
-    if (enemy.hp() === 0) {
-      return enemy.enterState(FLYING_ENEMY_EVENTS.EXPLODE);
-    }
-
     organicMovement.resetVelocity();
     await applyKnockback({
       engine,
       target: enemy,
       source: player,
-      strength: 2,
+      strength: 3,
       verticalPower: enemy.behavior === FLYING_ENEMY_SPRITES.PURPLE ? 40 : 0,
     });
     organicMovement.resetVelocity();
+
+    if (enemy.hp() === 0) {
+      return enemy.enterState(FLYING_ENEMY_EVENTS.EXPLODE);
+    }
   }
 
   function onExplode(): void {

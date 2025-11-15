@@ -31,24 +31,26 @@ export function PlayerSlashEffectSystem({ engine, player }: Params) {
       return;
     }
 
-    const offsetX = player.flipX ? -SLASH_CONFIG.OFFSET_X : SLASH_CONFIG.OFFSET_X;
+    const offsetX = player.flipX
+      ? -SLASH_CONFIG.OFFSET_X
+      : SLASH_CONFIG.OFFSET_X;
     activeSlash.pos = engine.vec2(
       player.pos.x + offsetX,
       player.pos.y + SLASH_CONFIG.OFFSET_Y
     );
 
-    // Atualiza o espelhamento se o player virou
     const shouldFlip = player.flipX;
     activeSlash.flipX = shouldFlip;
   };
 
   const spawnSlash = (): void => {
-    // Destroi slash anterior se existir
     if (activeSlash && activeSlash.exists()) {
       activeSlash.destroy();
     }
 
-    const offsetX = player.flipX ? -SLASH_CONFIG.OFFSET_X : SLASH_CONFIG.OFFSET_X;
+    const offsetX = player.flipX
+      ? -SLASH_CONFIG.OFFSET_X
+      : SLASH_CONFIG.OFFSET_X;
 
     activeSlash = engine.add([
       engine.sprite(SLASH_CONFIG.SPRITE_NAME),
@@ -57,13 +59,10 @@ export function PlayerSlashEffectSystem({ engine, player }: Params) {
       engine.scale(SLASH_CONFIG.SCALE),
     ]) as SlashEffect;
 
-    // Aplica o flip inicial
     activeSlash.flipX = player.flipX;
 
-    // Inicia a animação
     activeSlash.play(SLASH_CONFIG.ANIMATION_NAME);
 
-    // Quando a animação terminar, destroi o slash
     activeSlash.onAnimEnd(() => {
       if (activeSlash) {
         activeSlash.destroy();
@@ -74,8 +73,7 @@ export function PlayerSlashEffectSystem({ engine, player }: Params) {
 
   const checkAnimationFrame = (): void => {
     const currentAnim = player.curAnim();
-    
-    // Reseta se não estiver atacando
+
     if (currentAnim !== PLAYER_ANIMATIONS.ATTACK) {
       lastCheckedFrame = -1;
       return;
@@ -83,8 +81,10 @@ export function PlayerSlashEffectSystem({ engine, player }: Params) {
 
     const currentFrame = player.animFrame;
 
-    // Spawna o slash no frame correto
-    if (currentFrame === SLASH_CONFIG.SPAWN_FRAME && currentFrame !== lastCheckedFrame) {
+    if (
+      currentFrame === SLASH_CONFIG.SPAWN_FRAME &&
+      currentFrame !== lastCheckedFrame
+    ) {
       spawnSlash();
     }
 

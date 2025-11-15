@@ -23,14 +23,14 @@ export function loadPlayerSprites(): void {
     },
   });
 
-  engine.loadSprite("slash-effect", "./v2/assets/sprites/effects/slash-001.png", {
+  engine.loadSprite("slash-effect", "./v2/assets/sprites/effects/slash.png", {
     sliceX: 3,
     sliceY: 1,
     anims: {
       slash: {
         from: 0,
         to: 2,
-        speed: 24,
+        speed: 32,
         loop: false,
       },
     },
