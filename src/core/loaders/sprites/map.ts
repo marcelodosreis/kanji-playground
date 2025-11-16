@@ -2,16 +2,6 @@ import { SPRITES } from "../../../types/sprites.enum";
 import { engine } from "../../engine";
 
 export function loadMapSprites(): void {
-  engine.loadSpriteAtlas("./assets/ui.png", {
-    healthBar: {
-      x: 16,
-      y: 16,
-      width: 60,
-      height: 48,
-      sliceY: 3,
-    },
-  });
-
   engine.loadSpriteAtlas("./assets/animations.png", {
     [SPRITES.CARTRIDGE]: {
       x: 125,

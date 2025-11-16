@@ -9,9 +9,10 @@ type SetupUIParams = {
 type HPFrameMapping = Record<number, number>;
 
 const HP_FRAME_MAPPING: HPFrameMapping = {
-  1: 2,
-  2: 1,
-  3: 0,
+  1: 3,
+  2: 2,
+  3: 1,
+  4: 0,
 };
 
 const getFrameForHP = (hp: number): number => HP_FRAME_MAPPING[hp] ?? 0;

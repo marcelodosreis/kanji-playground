@@ -1,7 +1,7 @@
 import { atom, createStore } from "jotai";
 
-export const playerHpAtom = atom(3);
-export const maxPlayerHpAtom = atom(3);
+export const playerHpAtom = atom(4);
+export const maxPlayerHpAtom = atom(4);
 
 export const isDoubleJumpUnlockedAtom = atom(false);
 

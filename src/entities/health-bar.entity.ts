@@ -2,8 +2,8 @@ import type { Engine, EngineGameObj } from "../types/engine.type";
 
 const HEALTH_BAR_CONFIG = {
   sprite: "healthBar",
-  position: { x: 10, y: -10 },
-  scale: 3,
+  position: { x: 16, y: -16 },
+  scale: 2,
 };
 
 export function HealthBarEntity(engine: Engine): EngineGameObj {

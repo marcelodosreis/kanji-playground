@@ -76,6 +76,16 @@ export function PlayerInputSystem({
     return engine.isKeyDown(KEYS.moveLeft) || engine.isKeyDown(KEYS.moveRight);
   };
 
+  engine.onUpdate((): void => {
+    if (isPaused()) {
+      player.paused = true;
+      return;
+    }
+    if (player.paused) {
+      player.paused = false;
+    }
+  });
+
   player.controlHandlers.push(engine.onKeyDown(handleKeyDown));
   player.controlHandlers.push(engine.onKeyPress(handleKeyPress));
   player.controlHandlers.push(engine.onKeyRelease(handleKeyRelease));
