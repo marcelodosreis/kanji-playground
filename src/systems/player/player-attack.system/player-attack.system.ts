@@ -25,12 +25,14 @@ type Params = {
 
 type AttackSystemAPI = {
   executeAttack: () => void;
+  canAttack: () => boolean;
 };
 
 const {
   hitbox: HITBOX_CONFIG,
   knockbackStrength: KNOCKBACK,
   hitConfirm: HIT_CONFIRM_CONFIG,
+  cooldownMs: COOLDOWN_MS,
 } = PLAYER_CONFIG.combat.attack;
 
 const createHitboxConfig = (isFlipped: boolean) => ({
@@ -53,6 +55,8 @@ export function PlayerAttackSystem({
   orientationSystem,
 }: Params): PlayerSystemWithAPI<AttackSystemAPI> {
   const ctx = stateMachine.getContext();
+
+  let lastAttackTime = 0;
 
   const createSwordHitbox = () => {
     const config = createHitboxConfig(player.flipX);
@@ -129,9 +133,17 @@ export function PlayerAttackSystem({
     applyAttackKnockback();
   };
 
+  const canAttack = (): boolean => {
+    const currentTime = performance.now();
+    const timeSinceLastAttack = currentTime - lastAttackTime;
+    return timeSinceLastAttack >= COOLDOWN_MS;
+  };
+
   const executeAttack = (): void => {
     if (stateMachine.isAttacking()) return;
+    if (!canAttack()) return; 
 
+    lastAttackTime = performance.now(); 
     orientationSystem.lockDirection();
     stateMachine.transitionTo(PlayerStateTransition.ATTACK);
     resetAttackState();
@@ -157,6 +169,7 @@ export function PlayerAttackSystem({
 
   return {
     executeAttack,
+    canAttack,
     update,
   };
 }

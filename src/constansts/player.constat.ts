@@ -29,6 +29,7 @@ export const PLAYER_CONFIG = {
 
   combat: {
     attack: {
+      cooldownMs: 300,
       knockbackStrength: 0.2,
       hitbox: {
         startFrame: 1,
