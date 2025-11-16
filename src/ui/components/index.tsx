@@ -1,11 +1,13 @@
-import PauseComponent from "./Pause";
-import { ScreenFade } from "./ScreenFade";
+import MainMenuComponent from "./MainMenu";
+import { PauseComponent } from "./Pause";
+import { ScreenFadeComponent } from "./ScreenFade";
 
 function Components() {
   return (
     <>
       <PauseComponent />
-      <ScreenFade />
+      <MainMenuComponent />
+      <ScreenFadeComponent />
     </>
   );
 }

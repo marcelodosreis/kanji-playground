@@ -1,15 +1,11 @@
-import type { Engine, EngineGameObj } from "../types/engine.type";
+import type { Engine } from "../types/engine.type";
+import { effect } from "../utils/effect.utils";
 
 type HitConfirmParams = {
   engine: Engine;
   position: { x: number; y: number };
   isRight: boolean;
   scale?: number;
-};
-
-type HitEffect = EngineGameObj & {
-  play: (anim: string) => void;
-  onAnimEnd: (callback: () => void) => void;
 };
 
 const FRONT = "hit-effect";
@@ -30,23 +26,25 @@ export function spawnHitConfirm({
   const frontRot = isRight ? 180 : 0;
   const backRot = isRight ? 0 : 180;
 
-  const front = engine.add([
-    engine.sprite(FRONT),
-    engine.pos(position.x + frontOffset, position.y),
-    engine.anchor("center"),
-    engine.scale(scale),
-    engine.rotate(frontRot),
-    engine.z(100),
-  ]) as HitEffect;
+  const front = effect({
+    engine,
+    sprite: FRONT,
+    x: position.x + frontOffset,
+    y: position.y,
+    scale,
+    rotate: frontRot,
+    z: 100,
+  });
 
-  const back = engine.add([
-    engine.sprite(BACK),
-    engine.pos(position.x + backOffset, position.y),
-    engine.anchor("center"),
-    engine.scale(scale),
-    engine.rotate(backRot),
-    engine.z(99),
-  ]) as HitEffect;
+  const back = effect({
+    engine,
+    sprite: BACK,
+    x: position.x + backOffset,
+    y: position.y,
+    scale,
+    rotate: backRot,
+    z: 99,
+  });
 
   front.play(ANIM);
   back.play(ANIM);

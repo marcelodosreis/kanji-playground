@@ -35,10 +35,10 @@ const RESPAWN_CONFIG = {
   outOfBoundsPenalty: PLAYER_CONFIG.respawn.outOfBoundsPenalty,
 };
 
-const shouldRespawnWithFullLife = (hp: number): boolean =>
+const shouldRespawnWithFullLife = (hp: number) =>
   hp <= RESPAWN_CONFIG.minHpForFullRespawn;
 
-const isDeathAnimationComplete = (anim: string, frame: number): boolean =>
+const isDeathAnimationComplete = (anim: string, frame: number) =>
   AnimationChecks.isExplode(anim) &&
   AnimationFrameChecks.isAtFrame(frame, RESPAWN_CONFIG.explodeLastFrame);
 
@@ -51,31 +51,34 @@ export function PlayerRespawnSystem({
   const setPlayerHp = (hp: number) => store.set(playerHpAtom, hp);
   const getPlayerHp = () => store.get(playerHpAtom);
 
-  const exitBossFight = () => {
-    store.set(isPlayerInBossFightAtom, false);
-  };
+  const exitBossFight = () => store.set(isPlayerInBossFightAtom, false);
 
   const respawnAtStart = async () => {
     store.set(isScreenFadeOnAtom, true);
     exitBossFight();
+
     await engine.wait(1);
+
     engine.go(LEVEL_SCENES.ROOM_001, { exitName: null });
+
     setPlayerHp(store.get(maxPlayerHpAtom));
+
     store.set(isScreenFadeOnAtom, false);
   };
 
-  const respawnAtCurrentRoom = () => {
+  const respawnInSameRoom = () => {
     setPlayerHp(getPlayerHp() - 1);
     engine.go(destinationName, previousSceneData);
   };
 
   const handleOutOfBounds = async () => {
-    const playerHp = getPlayerHp();
-    if (shouldRespawnWithFullLife(playerHp)) {
-      setPlayerHp(playerHp - 1);
+    const hp = getPlayerHp();
+
+    if (shouldRespawnWithFullLife(hp)) {
+      setPlayerHp(hp - 1);
       await respawnAtStart();
     } else {
-      respawnAtCurrentRoom();
+      respawnInSameRoom();
     }
   };
 

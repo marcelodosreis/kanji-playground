@@ -6,6 +6,7 @@ import {
   AnimationChecks,
   AnimationFrameChecks,
 } from "../../../utils/animation.utils";
+import { effect } from "../../../utils/effect.utils";
 
 type Params = {
   engine: Engine;
@@ -48,12 +49,15 @@ export function PlayerAttackSlashEffectSystem({
 
     const offsetX = player.flipX ? -SLASH_CONFIG.offsetX : SLASH_CONFIG.offsetX;
 
-    activeSlash = engine.add([
-      engine.sprite(SLASH_CONFIG.spriteName),
-      engine.pos(player.pos.x + offsetX, player.pos.y + SLASH_CONFIG.offsetY),
-      engine.anchor("center"),
-      engine.scale(SLASH_CONFIG.scale),
-    ]) as SlashEffect;
+    activeSlash = effect({
+      engine,
+      sprite: SLASH_CONFIG.spriteName,
+      x: player.pos.x + offsetX,
+      y: player.pos.y + SLASH_CONFIG.offsetY,
+      scale: SLASH_CONFIG.scale,
+      rotate: 0,
+      z: 1,
+    }) as SlashEffect;
 
     activeSlash.flipX = player.flipX;
     activeSlash.play(SLASH_CONFIG.animationName);

@@ -7,7 +7,7 @@ const variants = {
   off: { width: "0%" },
 };
 
-export function ScreenFade() {
+export function ScreenFadeComponent() {
   const [isOn] = useAtom(isScreenFadeOnAtom);
 
   return (

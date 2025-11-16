@@ -1,13 +1,14 @@
 import { motion } from "framer-motion";
-import { useAtom } from "jotai";
-import { isPausedAtom } from "../../stores";
+import { useAtom, useSetAtom } from "jotai";
+import { isMainMenuOpened, emitStartGameEvent } from "../../stores";
 
 const variants = {
   open: { opacity: 1, scale: 1 },
   close: { opacity: 0, scale: 0.5 },
 };
-export function PauseComponent() {
-  const [isVisible] = useAtom(isPausedAtom);
+function MainMenuComponent() {
+  const emit = useSetAtom(emitStartGameEvent);
+  const [isVisible] = useAtom(isMainMenuOpened);
 
   return (
     isVisible && (
@@ -19,14 +20,13 @@ export function PauseComponent() {
         style={{ width: "100%", height: "100%" }}
       >
         <div data-ui="full">
-          <div data-ui="top-left">🏀</div>
-          <div data-ui="top-right">⚡</div>
-          <div data-ui="bottom-left">❤️</div>
-          <div data-ui="bottom-right">⭐</div>
-          <div data-ui="center">🎮</div>
+          <div data-ui="center" style={{ width: 200 }}>
+            <button onClick={() => emit()}>Novo Jogo</button>
+          </div>
         </div>
       </motion.div>
     )
   );
 }
 
+export default MainMenuComponent;
