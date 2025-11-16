@@ -9,6 +9,7 @@ import {
 import { PLAYER_CONFIG } from "../../constansts/player.constat";
 import {
   isPlayerInBossFightAtom,
+  isScreenFadeOnAtom,
   maxPlayerHpAtom,
   playerHpAtom,
   store,
@@ -34,12 +35,8 @@ const RESPAWN_CONFIG = {
   outOfBoundsPenalty: PLAYER_CONFIG.respawn.outOfBoundsPenalty,
 };
 
-const exitBossFight = (): void => {
-  store.set(isPlayerInBossFightAtom, false);
-};
-
-const shouldRespawnWithFullLife = (currentHp: number): boolean =>
-  currentHp <= RESPAWN_CONFIG.minHpForFullRespawn;
+const shouldRespawnWithFullLife = (hp: number): boolean =>
+  hp <= RESPAWN_CONFIG.minHpForFullRespawn;
 
 const isDeathAnimationComplete = (anim: string, frame: number): boolean =>
   AnimationChecks.isExplode(anim) &&
@@ -51,32 +48,40 @@ export function PlayerRespawnSystem({
   destinationName,
   previousSceneData,
 }: Params): PlayerSystemWithAPI<RespawnSystemAPI> {
-  const respawnAtStartWithFullLife = async (): Promise<void> => {
-    exitBossFight();
+  const setPlayerHp = (hp: number) => store.set(playerHpAtom, hp);
+  const getPlayerHp = () => store.get(playerHpAtom);
 
-    engine.go(LEVEL_SCENES.ROOM_001, { exitName: null });
-    store.set(playerHpAtom, store.get(maxPlayerHpAtom));
+  const exitBossFight = () => {
+    store.set(isPlayerInBossFightAtom, false);
   };
 
-  const respawnAtCurrentRoom = (): void => {
-    store.set(playerHpAtom, store.get(playerHpAtom) - 1);
+  const respawnAtStart = async () => {
+    store.set(isScreenFadeOnAtom, true);
+    exitBossFight();
+    await engine.wait(1);
+    engine.go(LEVEL_SCENES.ROOM_001, { exitName: null });
+    setPlayerHp(store.get(maxPlayerHpAtom));
+    store.set(isScreenFadeOnAtom, false);
+  };
+
+  const respawnAtCurrentRoom = () => {
+    setPlayerHp(getPlayerHp() - 1);
     engine.go(destinationName, previousSceneData);
   };
 
-  const handleOutOfBounds = async (): Promise<void> => {
-    if (shouldRespawnWithFullLife(store.get(playerHpAtom))) {
-      respawnAtStartWithFullLife();
+  const handleOutOfBounds = async () => {
+    const playerHp = getPlayerHp();
+    if (shouldRespawnWithFullLife(playerHp)) {
+      setPlayerHp(playerHp - 1);
+      await respawnAtStart();
     } else {
       respawnAtCurrentRoom();
     }
   };
 
-  const handleDeathAnimation = async (anim: string): Promise<void> => {
-    if (!isDeathAnimationComplete(anim, player.animFrame)) {
-      return;
-    }
-
-    await respawnAtStartWithFullLife();
+  const handleDeathAnimation = async (anim: string) => {
+    if (!isDeathAnimationComplete(anim, player.animFrame)) return;
+    await respawnAtStart();
   };
 
   player.on("outOfBounds", handleOutOfBounds);

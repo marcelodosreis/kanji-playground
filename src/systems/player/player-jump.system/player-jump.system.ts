@@ -5,6 +5,7 @@ import { PlayerStateTransition } from "../player-state-machine";
 import type { PlayerSystemWithAPI } from "../../../types/player-system.interface";
 import { PlayerFirstJumpSystem } from "./player-first-jump.system";
 import { PlayerDoubleJumpSystem } from "./player-double-jump.system";
+import { isPaused } from "../../../utils/is-paused";
 
 type Params = {
   engine: Engine;
@@ -15,6 +16,7 @@ type Params = {
 type JumpSystemAPI = {
   handleJumpPress: () => void;
   handleJumpRelease: () => void;
+  update: () => void;
 };
 
 const shouldTransitionToJump = (): boolean => true;
@@ -50,7 +52,6 @@ export function PlayerJumpSystem({
   const handleJumpPress = (): void => {
     const didFirstJump = firstJumpSystem.executeFirstJump();
     if (didFirstJump) return;
-
     const didDoubleJump = doubleJumpSystem.executeDoubleJump();
     if (didDoubleJump) return;
   };
@@ -65,6 +66,10 @@ export function PlayerJumpSystem({
   };
 
   const update = (): void => {
+    if (isPaused()) {
+      player.vel.y = 0;
+      return;
+    }
     updateJumpState();
   };
 

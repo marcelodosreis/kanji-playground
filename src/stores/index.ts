@@ -9,5 +9,6 @@ export const isPlayerInBossFightAtom = atom(false);
 export const isBossDefeatedAtom = atom(false);
 
 export const isPausedAtom = atom(false);
+export const isScreenFadeOnAtom = atom(false);
 
 export const store = createStore();
