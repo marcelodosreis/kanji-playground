@@ -1,15 +1,12 @@
 import type { Boss } from "../../../types/boss.interface";
 import type { Engine } from "../../../types/engine.type";
-import {
-  BOSS_EVENTS,
-  ENGINE_DEFAULT_EVENTS,
-} from "../../../types/events.enum";
+import { BOSS_EVENTS, ENGINE_DEFAULT_EVENTS } from "../../../types/events.enum";
 import type { Player } from "../../../types/player.interface";
 import { isPaused } from "../../../utils/is-paused";
-import { GLOBAL_STATE_CONTROLLER } from "../../../core/global-state-controller";
 import type { BossStateMachine } from "./boss-state-machine";
 import { HITBOX_TAGS, TAGS } from "../../../types/tags.enum";
 import { createTransientHitbox } from "../../../helpers/hitbox.helper";
+import { isPlayerInBossFightAtom, store } from "../../../stores";
 
 type Params = {
   engine: Engine;
@@ -95,7 +92,7 @@ export function BossAttackSystem({
   engine.onUpdate(() => {
     if (boss.hp() <= 0 || isPaused()) return;
     const state = stateMachine.getState();
-    
+
     if (state !== prevState) {
       if (state === BOSS_EVENTS.FIRE) {
         createFireHitbox();
@@ -114,10 +111,7 @@ export function BossAttackSystem({
       prevState = state;
     }
 
-    if (
-      stateMachine.isIdle() &&
-      GLOBAL_STATE_CONTROLLER.current().isPlayerInBossFight
-    ) {
+    if (stateMachine.isIdle() && store.get(isPlayerInBossFightAtom)) {
       stateMachine.dispatch(BOSS_EVENTS.RUN);
     } else if (stateMachine.isRunning()) {
       runUpdate();

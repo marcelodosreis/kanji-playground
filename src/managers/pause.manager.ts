@@ -1,7 +1,5 @@
 import type { Engine } from "../types/engine.type";
-import { GLOBAL_STATE } from "../types/global-state.enum";
 import { isPausedAtom, store } from "../stores";
-import { GLOBAL_STATE_CONTROLLER } from "../core/global-state-controller";
 
 type PauseManagerParams = { engine: Engine };
 
@@ -29,9 +27,6 @@ export class PauseManager {
   }
 
   private togglePause(): void {
-    const current = GLOBAL_STATE_CONTROLLER.current().isPaused;
-    GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_PAUSED, !current);
-
     store.set(isPausedAtom, (prev) => !prev);
   }
 }

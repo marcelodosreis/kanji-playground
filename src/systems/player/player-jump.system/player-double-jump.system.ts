@@ -1,8 +1,7 @@
 import type { Player } from "../../../types/player.interface";
-import { GLOBAL_STATE } from "../../../types/global-state.enum";
-import { GLOBAL_STATE_CONTROLLER } from "../../../core/global-state-controller";
 import type { PlayerStateMachine } from "../player-state-machine";
 import { PLAYER_CONFIG } from "../../../constansts/player.constat";
+import { isDoubleJumpUnlockedAtom, store } from "../../../stores";
 
 type DoubleJumpParams = {
   player: Player;
@@ -25,8 +24,7 @@ export function PlayerDoubleJumpSystem({
   const ctx = stateMachine.getContext();
 
   const syncDoubleJumpUnlock = (): void => {
-    const isUnlocked =
-      GLOBAL_STATE_CONTROLLER.current()[GLOBAL_STATE.IS_DOUBLE_JUMP_UNLOCKED];
+    const isUnlocked = store.get(isDoubleJumpUnlockedAtom);
     if (isUnlocked && player.numJumps !== MAX_JUMPS) {
       player.numJumps = MAX_JUMPS;
     }

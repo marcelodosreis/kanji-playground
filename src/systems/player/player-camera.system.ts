@@ -3,12 +3,12 @@ import type { Map } from "../../types/map.interface";
 import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { smoothTransition } from "../../utils/smooth-transition";
-import { GLOBAL_STATE_CONTROLLER } from "../../core/global-state-controller";
 import { MapLayer, MapLayerHelper } from "../../helpers/map-layer-helper";
 import type { SCENE_DATA } from "../../types/scenes.enum";
 import type { Player } from "../../types/player.interface";
 import { PLAYER_CONFIG } from "../../constansts/player.constat";
 import type { PlayerSystemWithAPI } from "../../types/player-system.interface";
+import { isPlayerInBossFightAtom, store } from "../../stores";
 
 type Params = {
   engine: Engine;
@@ -52,8 +52,7 @@ const shouldUsePlayerPosition = (
   previousSceneExitName?: string | null
 ): boolean => !!previousSceneExitName;
 
-const isInBossFight = (): boolean =>
-  GLOBAL_STATE_CONTROLLER.current().isPlayerInBossFight;
+const isInBossFight = (): boolean => store.get(isPlayerInBossFightAtom);
 
 const getCameraTargetY = (camera: TiledObject): number =>
   Number(camera.properties[0].value);

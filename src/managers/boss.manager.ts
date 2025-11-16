@@ -11,8 +11,7 @@ import { getPlayer } from "../utils/get-player";
 import { SystemRegistryFactory } from "../factories/system-registry-factory";
 import { createBossStateMachine } from "../systems/enemies/boss/boss-state-machine";
 import { MapLayer, MapLayerHelper } from "../helpers/map-layer-helper";
-import { GLOBAL_STATE_CONTROLLER } from "../core/global-state-controller";
-import { GLOBAL_STATE } from "../types/global-state.enum";
+import { isBossDefeatedAtom, store } from "../stores";
 
 export type BossManagerParams = BaseManagerParams;
 
@@ -40,11 +39,7 @@ export class BossManager extends BaseEntityManager<Boss[]> {
 
   private spawnEntities(spawnPoints: TiledObject[]): Boss[] {
     const player = getPlayer({ engine: this.engine });
-    if (
-      !player ||
-      GLOBAL_STATE_CONTROLLER.current()[GLOBAL_STATE.IS_BOSS_DEFEATED]
-    )
-      return [];
+    if (!player || store.get(isBossDefeatedAtom)) return [];
 
     return spawnPoints.map((point) => {
       const boss = this.createEntity(point);

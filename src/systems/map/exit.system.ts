@@ -4,7 +4,6 @@ import { MENU_SCENES } from "../../types/scenes.enum";
 import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { MapLayer, MapLayerHelper } from "../../helpers/map-layer-helper";
-import { screenFadeIn } from "../../utils/screen-fade-in";
 
 type ExitSystemParams = {
   engine: Engine;
@@ -53,13 +52,6 @@ async function triggerExitTransition(
     );
     return;
   }
-
-  const fadeDuration = 0.4;
-
-  await screenFadeIn({
-    engine,
-    durationSeconds: fadeDuration,
-  });
 
   navigateToNextScene(engine, exit, exitRoomName);
 }

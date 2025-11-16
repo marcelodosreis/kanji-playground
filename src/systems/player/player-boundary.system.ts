@@ -23,7 +23,6 @@ export function PlayerBoundarySystem({
 }: Params): PlayerSystemWithAPI<{}> {
   const checkOutOfBounds = (): void => {
     if (isOutOfBounds(player.pos.y, boundValue)) {
-      player.hurt(1);
       triggerOutOfBoundsEvent(player);
     }
   };

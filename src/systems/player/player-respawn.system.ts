@@ -2,14 +2,17 @@ import type { Engine } from "../../types/engine.type";
 import type { Player } from "../../types/player.interface";
 import type { PlayerSystemWithAPI } from "../../types/player-system.interface";
 import { LEVEL_SCENES } from "../../types/scenes.enum";
-import { GLOBAL_STATE } from "../../types/global-state.enum";
-import { screenFadeIn } from "../../utils/screen-fade-in";
-import { GLOBAL_STATE_CONTROLLER } from "../../core/global-state-controller";
 import {
   AnimationChecks,
   AnimationFrameChecks,
 } from "../../utils/animation.utils";
 import { PLAYER_CONFIG } from "../../constansts/player.constat";
+import {
+  isPlayerInBossFightAtom,
+  maxPlayerHpAtom,
+  playerHpAtom,
+  store,
+} from "../../stores";
 
 type Params = {
   engine: Engine;
@@ -32,7 +35,7 @@ const RESPAWN_CONFIG = {
 };
 
 const exitBossFight = (): void => {
-  GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, false);
+  store.set(isPlayerInBossFightAtom, false);
 };
 
 const shouldRespawnWithFullLife = (currentHp: number): boolean =>
@@ -41,9 +44,6 @@ const shouldRespawnWithFullLife = (currentHp: number): boolean =>
 const isDeathAnimationComplete = (anim: string, frame: number): boolean =>
   AnimationChecks.isExplode(anim) &&
   AnimationFrameChecks.isAtFrame(frame, RESPAWN_CONFIG.explodeLastFrame);
-
-const delay = (seconds: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 
 export function PlayerRespawnSystem({
   engine,
@@ -54,21 +54,18 @@ export function PlayerRespawnSystem({
   const respawnAtStartWithFullLife = async (): Promise<void> => {
     exitBossFight();
 
-    await screenFadeIn({
-      engine,
-      durationSeconds: RESPAWN_CONFIG.fadeDurationSeconds,
-    });
-
     engine.go(LEVEL_SCENES.ROOM_001, { exitName: null });
+    store.set(playerHpAtom, store.get(maxPlayerHpAtom));
   };
 
   const respawnAtCurrentRoom = (): void => {
+    store.set(playerHpAtom, store.get(playerHpAtom) - 1);
     engine.go(destinationName, previousSceneData);
   };
 
   const handleOutOfBounds = async (): Promise<void> => {
-    if (shouldRespawnWithFullLife(player.hp())) {
-      await respawnAtStartWithFullLife();
+    if (shouldRespawnWithFullLife(store.get(playerHpAtom))) {
+      respawnAtStartWithFullLife();
     } else {
       respawnAtCurrentRoom();
     }
@@ -79,7 +76,6 @@ export function PlayerRespawnSystem({
       return;
     }
 
-    await delay(RESPAWN_CONFIG.deathWaitSeconds);
     await respawnAtStartWithFullLife();
   };
 

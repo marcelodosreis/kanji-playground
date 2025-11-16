@@ -3,13 +3,12 @@ import { TAGS } from "../types/tags.enum";
 
 import { MapLayer, MapLayerHelper } from "../helpers/map-layer-helper";
 import type { EngineGameObj } from "../types/engine.type";
-import type { Player } from "../types/player.interface";
 import { HealthPickupEntity } from "../entities/health-pickup.entity";
-import { GLOBAL_STATE_CONTROLLER } from "../core/global-state-controller";
 import {
   BaseEntityManager,
   type BaseManagerParams,
 } from "../types/entity-manager.abstract";
+import { maxPlayerHpAtom, playerHpAtom, store } from "../stores";
 
 export type HealthPickupManagerParams = BaseManagerParams;
 
@@ -49,14 +48,14 @@ export class HealthPickupManager extends BaseEntityManager<EngineGameObj[]> {
   }
 
   private initializeCollision(healthPickup: EngineGameObj): void {
-    healthPickup.onCollide(TAGS.PLAYER, (player: Player) => {
-      this.handlePickup(healthPickup, player);
+    healthPickup.onCollide(TAGS.PLAYER, () => {
+      this.handlePickup(healthPickup);
     });
   }
 
-  private handlePickup(healthPickup: EngineGameObj, player: Player): void {
-    if (player.hp() < GLOBAL_STATE_CONTROLLER.current().maxPlayerHp) {
-      player.heal(1);
+  private handlePickup(healthPickup: EngineGameObj): void {
+    if (store.get(playerHpAtom) < store.get(maxPlayerHpAtom)) {
+      store.set(playerHpAtom, store.get(playerHpAtom) + 1);
     }
     this.engine.destroy(healthPickup);
   }

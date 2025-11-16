@@ -1,7 +1,6 @@
 import type { Engine, EngineGameObj } from "../types/engine.type";
-import { GLOBAL_STATE } from "../types/global-state.enum";
 import { HealthBarEntity } from "../entities/health-bar.entity";
-import { GLOBAL_STATE_CONTROLLER } from "../core/global-state-controller";
+import { playerHpAtom, store } from "../stores";
 
 type SetupUIParams = {
   engine: Engine;
@@ -16,12 +15,12 @@ const HP_FRAME_MAPPING: HPFrameMapping = {
 };
 
 const getFrameForHP = (hp: number): number => HP_FRAME_MAPPING[hp] ?? 0;
-
 const shouldDestroyHealthBar = (hp: number): boolean => hp === 0;
 
 export class UIManager {
   private readonly engine: Engine;
   private healthBar: EngineGameObj | null = null;
+  private unsub: (() => void) | null = null;
 
   private constructor(params: SetupUIParams) {
     this.engine = params.engine;
@@ -47,7 +46,6 @@ export class UIManager {
         this.engine.destroy(healthBar);
         return;
       }
-
       healthBar.frame = getFrameForHP(hp);
     };
 
@@ -55,12 +53,16 @@ export class UIManager {
       updateHealthBarFrame(newHP);
     };
 
-    GLOBAL_STATE_CONTROLLER.subscribe(
-      GLOBAL_STATE.PLAYER_HP,
-      handleHealthChange
-    );
+    this.unsub = store.sub(playerHpAtom, () => {
+      handleHealthChange(store.get(playerHpAtom));
+    });
 
-    const initialHP = GLOBAL_STATE_CONTROLLER.current()[GLOBAL_STATE.PLAYER_HP];
+    healthBar.on("destroy", () => {
+      if (this.unsub) this.unsub();
+      this.unsub = null;
+    });
+
+    const initialHP = store.get(playerHpAtom);
     updateHealthBarFrame(initialHP);
   }
 }

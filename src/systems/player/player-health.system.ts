@@ -1,15 +1,14 @@
 import type { Engine, EngineGameObj } from "../../types/engine.type";
 import { ENGINE_DEFAULT_EVENTS } from "../../types/events.enum";
 import type { Player } from "../../types/player.interface";
-import { GLOBAL_STATE } from "../../types/global-state.enum";
 import { createBlink } from "../../utils/create-blink";
-import { GLOBAL_STATE_CONTROLLER } from "../../core/global-state-controller";
 import type { PlayerStateMachine, PlayerContext } from "./player-state-machine";
 import { PlayerStateTransition } from "./player-state-machine";
 import { PLAYER_ANIMATIONS } from "../../types/animations.enum";
 import { PLAYER_CONFIG } from "../../constansts/player.constat";
 import type { PlayerSystemWithAPI } from "../../types/player-system.interface";
 import { AnimationChecks } from "../../utils/animation.utils";
+import { maxPlayerHpAtom, playerHpAtom, store } from "../../stores";
 
 type Params = {
   engine: Engine;
@@ -31,12 +30,12 @@ const { lockDurationMs: HURT_LOCK_DURATION, blinkCount: BLINK_COUNT } =
   PLAYER_CONFIG.combat.hurt;
 
 const getHealthState = (): HealthState => ({
-  current: GLOBAL_STATE_CONTROLLER.current()[GLOBAL_STATE.PLAYER_HP],
-  max: GLOBAL_STATE_CONTROLLER.current()[GLOBAL_STATE.MAX_PLAYER_HP],
+  current: store.get(playerHpAtom),
+  max: store.get(maxPlayerHpAtom),
 });
 
 const setPlayerHP = (hp: number): void => {
-  GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.PLAYER_HP, hp);
+  store.set(playerHpAtom, hp);
 };
 
 const delay = (ms: number): Promise<void> =>
@@ -87,9 +86,7 @@ export function PlayerHealthSystem({
 }: Params): PlayerSystemWithAPI<{}> {
   const ctx = stateMachine.getContext();
 
-  const syncPlayerHealth = (): void => {
-    setPlayerHP(player.hp());
-  };
+
 
   const handleDeath = (): void => {
     stateMachine.transitionTo(PlayerStateTransition.EXPLODE);
@@ -129,7 +126,6 @@ export function PlayerHealthSystem({
   };
 
   player.onAnimEnd(handleAnimationEnd);
-  player.on(ENGINE_DEFAULT_EVENTS.HEAL, syncPlayerHealth);
   player.on(ENGINE_DEFAULT_EVENTS.HURT, handleHurt);
 
   return {};

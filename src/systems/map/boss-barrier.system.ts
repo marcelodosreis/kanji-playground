@@ -4,10 +4,13 @@ import type { TiledMap, TiledObject } from "../../types/tiled-map.interface";
 import { MapLayer, MapLayerHelper } from "../../helpers/map-layer-helper";
 import { MAP_TAGS, TAGS } from "../../types/tags.enum";
 import { BossBarrierEntity } from "../../entities/boss-barrier.entity";
-import { GLOBAL_STATE_CONTROLLER } from "../../core/global-state-controller";
-import { GLOBAL_STATE } from "../../types/global-state.enum";
 import { smoothTransition } from "../../utils/smooth-transition";
 import type { Player } from "../../types/player.interface";
+import {
+  isBossDefeatedAtom,
+  isPlayerInBossFightAtom,
+  store,
+} from "../../stores";
 
 type Params = {
   engine: Engine;
@@ -16,8 +19,8 @@ type Params = {
 };
 
 export function BossBarrierSystem({ engine, map, tiledMap }: Params): void {
-  if (GLOBAL_STATE_CONTROLLER.current()[GLOBAL_STATE.IS_BOSS_DEFEATED]) return;
-  
+  if (store.get(isBossDefeatedAtom)) return;
+
   const colliders = MapLayerHelper.getObjects(tiledMap, MapLayer.COLLIDERS);
   const barriers = colliders.filter(isBossBarrier);
 
@@ -95,7 +98,7 @@ function createDeactivateAction(engine: Engine) {
 function setupCollisions(engine: Engine, barrier: BossBarrier): void {
   barrier.onCollide(TAGS.PLAYER, (player: Player) => {
     if (canDeactivate()) {
-      GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, false);
+      store.set(isPlayerInBossFightAtom, false);
       barrier.deactivate(player.pos.x);
       return;
     }
@@ -106,22 +109,21 @@ function setupCollisions(engine: Engine, barrier: BossBarrier): void {
     if (isInBossFight() || canDeactivate()) return;
 
     barrier.activate();
-    GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_PLAYER_IN_BOSS_FIGHT, true);
+    store.set(isPlayerInBossFightAtom, true);
     barrier.use(engine.body({ isStatic: true }));
   });
 }
 
 function canActivate(): boolean {
-  const s = GLOBAL_STATE_CONTROLLER.current();
-  return !s.isPlayerInBossFight && !s.isBossDefeated;
+  return !store.get(isPlayerInBossFightAtom) && !store.get(isBossDefeatedAtom);
 }
 
 function canDeactivate(): boolean {
-  return GLOBAL_STATE_CONTROLLER.current().isBossDefeated;
+  return store.get(isBossDefeatedAtom);
 }
 
 function isInBossFight(): boolean {
-  return GLOBAL_STATE_CONTROLLER.current().isPlayerInBossFight;
+  return store.get(isPlayerInBossFightAtom);
 }
 
 function getCameraTargetX(collider: TiledObject, fallback: number): number {

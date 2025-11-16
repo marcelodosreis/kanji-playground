@@ -1,12 +1,15 @@
+import {
+  isBossDefeatedAtom,
+  isDoubleJumpUnlockedAtom,
+  store,
+} from "../../../stores";
 import type { Boss } from "../../../types/boss.interface";
 import type { Engine } from "../../../types/engine.type";
 import { ENGINE_DEFAULT_EVENTS } from "../../../types/events.enum";
-import { GLOBAL_STATE } from "../../../types/global-state.enum";
 import type { Player } from "../../../types/player.interface";
 import { HITBOX_TAGS, TAGS } from "../../../types/tags.enum";
 import { createBlink } from "../../../utils/create-blink";
 import { createNotification } from "../../../utils/create-notification";
-import { GLOBAL_STATE_CONTROLLER } from "../../../core/global-state-controller";
 
 type Params = {
   engine: Engine;
@@ -33,8 +36,8 @@ export function BossCollisionSystem({ engine, boss, player }: Params) {
   }
 
   function updateGlobalStateOnBossDefeat(): void {
-    GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_BOSS_DEFEATED, true);
-    GLOBAL_STATE_CONTROLLER.set(GLOBAL_STATE.IS_DOUBLE_JUMP_UNLOCKED, true);
+    store.set(isBossDefeatedAtom, true);
+    store.set(isDoubleJumpUnlockedAtom, true);
   }
 
   function disableBossCollisions(boss: Boss): void {
@@ -42,7 +45,9 @@ export function BossCollisionSystem({ engine, boss, player }: Params) {
     boss.unuse("body");
   }
 
-  async function showAbilityUnlockedNotification(engine: Engine): Promise<void> {
+  async function showAbilityUnlockedNotification(
+    engine: Engine
+  ): Promise<void> {
     await engine.wait(0.5);
     const notification = engine.add(
       createNotification(
