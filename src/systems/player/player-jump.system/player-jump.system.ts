@@ -67,9 +67,13 @@ export function PlayerJumpSystem({
 
   const update = (): void => {
     if (isPaused()) {
-      player.vel.y = 0;
+      player.paused = true;
       return;
     }
+    if (player.paused) {
+      player.paused = false;
+    }
+
     updateJumpState();
   };
 

@@ -1,0 +1,63 @@
+@font-face {
+  font-family: "GlyphMesss";
+  src: url("/v2/fonts/glyphmesss.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --primary: #442b40;
+  --accent: #5f9c50;
+  --text: #ffffff;
+  --muted: rgba(68, 43, 64, 0.1);
+  --focus: rgba(95, 156, 80, 0.3);
+  --shadow: rgba(0, 0, 0, 0.3);
+}
+
+* {
+  font-family: "GlyphMesss" !important;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.pause {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  text-shadow: 2px 2px var(--shadow);
+}
+
+.pause [data-ui="center"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(360px, 92%);
+  text-align: center;
+}
+
+.pause .submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.pause h1 {
+  font-size: 48px;
+  color: var(--accent);
+}
+
+.pause h3 {
+  font-size: 32px;
+  color: var(--accent);
+}
+
+.pause p {
+  font-size: 18px;
+  color: var(--muted);
+}
