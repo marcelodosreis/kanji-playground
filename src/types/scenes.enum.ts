@@ -5,6 +5,7 @@ export enum LEVEL_SCENES {
 
 export enum MENU_SCENES {
   HOME = "menu",
+  FINAL = "final",
 }
 
 export type SCENE_DATA = {

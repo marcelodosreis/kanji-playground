@@ -12,4 +12,5 @@ export const engine: Engine = kaplay({
   touchToMouse: true,
   pixelDensity: devicePixelRatio,
   debug: true,
+  background: [0, 0, 0, 0],
 });

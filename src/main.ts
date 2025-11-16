@@ -41,12 +41,7 @@ async function main(): Promise<void> {
   await loadUiAssets();
   await audios();
 
-  engine.load(
-    new Promise((resolve) => {
-      engine.go("menu");
-      resolve("ok");
-    })
-  );
+  engine.go("menu");
 }
 
 main();
