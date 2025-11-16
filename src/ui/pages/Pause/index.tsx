@@ -21,12 +21,19 @@ const containerVariants = {
 export function Pause() {
   const [isVisible] = useAtom(isPausedAtom);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [currentMenu, setCurrentMenu] = useState<"main" | "options">("main");
+  const [currentMenu, setCurrentMenu] = useState<"main" | "options" | "exit">(
+    "main"
+  );
 
   const mainButtons = [
-    { label: "Continuar", action: () => { store.set(isPausedAtom, false) } },
+    {
+      label: "Continuar",
+      action: () => {
+        store.set(isPausedAtom, false);
+      },
+    },
     { label: "Opcoes", action: () => setCurrentMenu("options") },
-    { label: "Sair para o Menu", action: () => {} },
+    { label: "Sair para o Menu", action: () => setCurrentMenu("exit") },
   ];
 
   const optionsButtons = [
@@ -35,12 +42,23 @@ export function Pause() {
     { label: "Voltar", action: () => setCurrentMenu("main") },
   ];
 
-  const buttons = currentMenu === "main" ? mainButtons : optionsButtons;
+  const exitButtons = [
+    { label: "Sim", action: () => {} },
+    { label: "Não", action: () => setCurrentMenu("main") },
+  ];
+
+  const getButtons = (menu: "main" | "options" | "exit") => {
+    if (menu === "main") return mainButtons;
+    if (menu === "options") return optionsButtons;
+    return exitButtons;
+  };
+
+  const buttons = getButtons(currentMenu);
 
   const getTitle = () => {
     if (currentMenu === "main") return "Pause";
     if (currentMenu === "options") return "Opcoes";
-    return "";
+    return "Sair";
   };
 
   useEffect(() => {
